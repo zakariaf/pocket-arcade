@@ -8,7 +8,7 @@ import { randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { summarizeCell } from '@e07/game-kit/testing/sim-stats.ts';
 import { traceBot } from '@e07/game-kit/testing/trace-bot.ts';
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
-import { create } from '@e07/jump-chain/rules/create.ts';
+import { createLayout } from '@e07/jump-chain/rules/create.ts';
 import { listMoves } from '@e07/jump-chain/rules/list-moves.ts';
 import { outcome } from '@e07/jump-chain/rules/outcome.ts';
 import {
@@ -34,7 +34,15 @@ type Move = JumpChainMove;
 
 const GAME_ID = 'jump-chain';
 const BANDS = parseBands(bandsJson);
-const GAME: BotGame<State, Move, JumpChainEvent> = { create, listMoves, applyMove, outcome };
+// The bands measure the rules' own difficulty on raw layouts, as the level generator sees them.
+// create() keeps only boards the greedy witness wins (a daily is always winnable), which would
+// measure greedy against boards chosen because greedy wins them.
+const GAME: BotGame<State, Move, JumpChainEvent> = {
+  create: createLayout,
+  listMoves,
+  applyMove,
+  outcome,
+};
 
 /** The three standard players: the baseline, the reasonable player and the upper bound of skill. */
 const POLICIES: Readonly<Record<string, () => BotPolicy<State, Move>>> = {
