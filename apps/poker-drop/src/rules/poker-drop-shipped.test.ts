@@ -1,5 +1,6 @@
-// apps/poker-drop/src/levels/poker-drop-shipped.test.ts
-import { POKER_DROP_LEVELS } from './poker-drop-levels.ts';
+// apps/poker-drop/src/rules/poker-drop-shipped.test.ts
+import { POKER_DROP_LEVELS } from '@e07/poker-drop/levels/poker-drop-levels.ts';
+
 import { isShippedLevel } from './poker-drop-shipped.ts';
 
 describe('isShippedLevel', () => {

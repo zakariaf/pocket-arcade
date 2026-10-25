@@ -6,10 +6,10 @@
 // proven when its pack was generated, so it is not searched again at every start.
 import { clampDifficulty, isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
-import { isShippedLevel } from '@e07/poker-drop/levels/poker-drop-shipped.ts';
 
 import { deckOf, shuffled } from './cards.ts';
 import { dealOpening } from './opening.ts';
+import { isShippedLevel } from './poker-drop-shipped.ts';
 import { TUNING, knobsFor } from './poker-drop-tuning.ts';
 import { POKER_DROP_WITNESS, WITNESS_MAX_NODES } from './poker-drop-witness.ts';
 
