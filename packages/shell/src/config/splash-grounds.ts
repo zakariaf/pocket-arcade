@@ -10,4 +10,5 @@ export const SPLASH_GROUNDS: Readonly<Partial<Record<string, SplashColors>>> = {
   'merge-siege': { light: '#FFD6B8', dark: '#2B1838', accent: '#A98BFF' },
   'scrap-shove': { light: '#F7DF7E', dark: '#261C45', accent: '#1FB5A9' },
   'snare-snake': { light: '#C9B8F0', dark: '#10302B', accent: '#3FA34D' },
+  'trail-clear': { light: '#F3D6A4', dark: '#2B2030', accent: '#4FA8F0' },
 };
