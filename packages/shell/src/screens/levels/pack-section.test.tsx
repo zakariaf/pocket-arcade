@@ -2,6 +2,7 @@
 import { screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
+import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { PackSection } from './pack-section.tsx';
@@ -47,6 +48,7 @@ describe('PackSection', () => {
 
     // allow-style-assertion: the row-or-stack layout of the header is the behaviour under test.
     expect(await headingBoxStyle()).toStrictEqual({ flex: 1 });
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
   it('stacks the level count under the heading at 200 % text (spec 8.11)', async () => {
@@ -55,5 +57,6 @@ describe('PackSection', () => {
     // allow-style-assertion: a full-width heading pushes "30 levels" onto its own line instead
     // of squeezing "Pack 1 – Green meadow" into three lines beside it.
     expect(await headingBoxStyle()).toStrictEqual({ flexGrow: 1, flexBasis: '100%' });
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
