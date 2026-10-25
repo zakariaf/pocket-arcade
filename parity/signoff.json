@@ -25058,6 +25058,184 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "af6d8140f319edf20234129840abfd94ebe8ce796e76170fd69feab6cceab34e",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "a4bf17963aa238cb19d740f0e1ac4f46e65907b8d2da7c16baac14f287cdebcb",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b484cea34e01d800c4e713b46bd0d794e1935eb002ba72f9aa3912d017608efe",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "0b47ff20fe13a88f04a6a9f8087d6a6b05122e819eab75a40809909aea2b122e",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "4054621a512f816304dc434e47ce8c44b13b9d18493bb2211d6ee3e28e1770eb",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "147335a17549a29630ea6dcf3d3a57921daf5c47a009206cdf53a2feb2dd6cfa",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8eb219500387b650279990bd4fd596094004f3c308681e0906dc727f6668b0d1",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "snareSnake",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c43ce978afd788982a9196740879b784b6de254b802a2c9f67c3b48568d17bdb",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The how-to picture is the game's own example board (a 7 x 8 field with the tutorial hand) where the design draws a 6 x 4 illustration; the picture is masked for every game, and the stage size matches the default 320 x 206, so no exampleAspect is needed.",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }

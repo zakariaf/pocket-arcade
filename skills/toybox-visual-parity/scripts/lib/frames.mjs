@@ -30,7 +30,8 @@ export function readDeck(designPath) {
  * Returns Map<frameKey, frame>, where frame = { key, kind, selector, entries: [{screen, variant}],
  * elements: [...map elements with screen id], root, state, notes }.
  */
-export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.frames } = {}) {
+export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.frames, tokensPath = DEFAULTS.tokens } = {}) {
+  const designGames = tokensPath === DEFAULTS.tokens ? DESIGN_GAMES : readDesignGames(tokensPath);
   const map = readJson(mapPath, 'screen testID map');
   const extra = readJson(framesPath, 'frames manifest');
   if (!Array.isArray(map.screens)) fail(`${mapPath} has no "screens" list`, 'Restore the shared screen-testids.json (sync-shared.mjs).');
@@ -78,8 +79,8 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
     frame.designFixes = checkDesignFixes(key, entry.designFixes);
     frame.designMasks = checkDesignMasks(key, entry.designMasks);
   }
-  checkGameFixture(extra);
-  return { frames, map, manifest: extra, designFacts };
+  checkGameFixture(extra, designGames);
+  return { frames, map, manifest: extra, designFacts, designGames };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -96,7 +97,26 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+
+/**
+ * The design games: every game of the Toybox token file (color.games), each with its logo layers
+ * (logos.games). The token file is the one place a game joins the design (its design pass), so no
+ * script keeps its own list; a game without a logo has no complete design to render and is refused.
+ */
+export function readDesignGames(tokensPath = DEFAULTS.tokens) {
+  const tokens = readJson(tokensPath, 'Toybox token file');
+  const games = Object.keys(tokens.color?.games ?? {});
+  if (games.length === 0) fail(`the token file ${tokensPath} names no design game (color.games is empty)`, 'Use the shared toybox-tokens.json (node skills/_library/sync-shared.mjs).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) {
+      fail(`the token file ${tokensPath} names the design game ${game} without logo layers (logos.games.${game})`, 'A design game has its paint and its logo in the token file: add the logo layers in the design pass, then run refresh-shared.mjs and sync-shared.mjs.');
+    }
+  }
+  return Object.freeze(games);
+}
+
+export const DESIGN_GAMES = readDesignGames();
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).
@@ -311,13 +331,13 @@ export function withModal(layout, frame) {
 }
 
 /** The design's game-frame numbers (fixture) and their save-terms copy (fixtureSave.gameFrame) agree. */
-function checkGameFixture(manifest) {
+function checkGameFixture(manifest, designGames) {
   const f = manifest.fixture;
   const g = manifest.fixtureSave?.gameFrame;
   if (!f || !g) return;
   const same = [['currentLevel', 'level'], ['score', 'score'], ['movesCount', 'movesCount'], ['par', 'par']];
   for (const [a, b] of same) if (f[a] !== g[b]) fail(`frames.json fixture.${a} (${f[a]}) differs from fixtureSave.gameFrame.${b} (${g[b]})`, 'Keep the two descriptions of the design player equal.');
-  for (const game of DESIGN_GAMES) {
+  for (const game of designGames) {
     const d = f.games?.[game];
     const s = g.games?.[game];
     if (!d || !s) fail(`frames.json has no game-frame fixture for ${game}`, 'Give fixture.games and fixtureSave.gameFrame.games every design game.');
@@ -356,7 +376,7 @@ export function referenceName(frameKey, variantId) {
  * uses and must equal the entry's designGame. Anything missing or mismatched stops with exit 2: a
  * reference is never guessed.
  */
-export function readGameFacts(path, { app = null, game = null } = {}) {
+export function readGameFacts(path, { app = null, game = null, designGames = DESIGN_GAMES } = {}) {
   if (!existsSync(path)) fail(`the game facts file ${path} does not exist, so the reference of a frame with variants cannot be chosen`, `Copy the skill's templates/parity/game-facts.json to parity/game-facts.json in the app repo and fill in each app's facts (its test, apps/<id>/src/parity-game-facts.test.ts, pins them to the game module); pass --facts <file> when the repo root is not the working directory.`);
   const json = readJson(path, 'game facts file');
   if (json.version !== 1 || !json.games || typeof json.games !== 'object' || Array.isArray(json.games)) fail(`${path} must be { "version": 1, "games": { "<app id>": { ... } } }`, "Start from the skill's templates/parity/game-facts.json.");
@@ -365,7 +385,7 @@ export function readGameFacts(path, { app = null, game = null } = {}) {
     const entry = json.games[id];
     const at = `${path} games.${id}`;
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) fail(`${at}: the key must be the app id (kebab-case, as in apps/<id>)`, 'Use the app folder name.');
-    if (!entry || !DESIGN_GAMES.includes(entry.designGame)) fail(`${at}.designGame must be one of ${DESIGN_GAMES.join(', ')}`, 'Name the design game whose references this app is compared with.');
+    if (!entry || !designGames.includes(entry.designGame)) fail(`${at}.designGame must be one of ${designGames.join(', ')}`, 'Name the design game whose references this app is compared with.');
     const extra = Object.keys(entry).filter((k) => k !== 'designGame' && !FACT_VALUES[k]);
     if (extra.length) fail(`${at} has unknown fields ${extra.join(', ')}`, `An entry holds designGame, ${Object.keys(FACT_VALUES).join(' and ')}.`);
     const { designGame: _designGame, ...facts } = entry;

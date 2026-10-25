@@ -1,0 +1,17 @@
+{
+  "edge": "edge",
+  "text": [["label", "badge"]],
+  "graphics": [
+    ["spot", "critter"],
+    ["frost", "cell"],
+    ["hint", "cell"],
+    ["spot", "eye"]
+  ],
+  "shapes": [
+    ["snake", "cell"],
+    ["head", "cell"],
+    ["critter", "cell"],
+    ["badge", "background"]
+  ],
+  "distinct": [["snake", "critter"]]
+}

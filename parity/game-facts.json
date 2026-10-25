@@ -18,6 +18,12 @@
       "hasMusic": false,
       "winLine": "moves",
       "hasHints": true
+    },
+    "snare-snake": {
+      "designGame": "snareSnake",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }
