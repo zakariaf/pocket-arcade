@@ -5,7 +5,7 @@
 - Where logos appear
 - GAME_ART: how the Shell gets the logo and the credits
 - The logo grid and the six roles
-- The painted games' logos
+- The design games' logos
 - Designing a logo for a new game
 - The logo tile (frame) per place
 - The rating star (two colours)
@@ -57,14 +57,15 @@ Logos use a `viewBox 0 0 48 48` and are drawn at 88 % of the tile's content box.
 
 A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: `LogoArt` in `packages/shell/src/art/logo-art.ts`; each game exports `LOGO_ART` from `apps/<game>/src/art/logo-art.ts`; `logoOps()` expands roles into paint operations (a fill before its edge) for both the in-app canvas and the Node art script.
 
-## The painted games' logos
+## The design games' logos
 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
+- **Snare Snake** (its design pass, 2026-10-19; the layers in the token file's `logos.games.snareSnake`): a white snake curled into a closed ring (`w`, a rounded square with a hole), a pop tongue (`pl`), the white head overlapping the ring's top end (`w`) with an ink eye (`k`) and its white glint (`w0`), a pop ladybird inside the loop (`p`), one ink-line layer (`kl`) holding the ring's four segment marks and the ladybird's wing line, and the ladybird's spots (`k`): eight layers, the recipe's limit.
 - **Swap Guard** (`examples/swap-guard-logo-art.ts`, added by its design pass on 2026-10-19): a white shield (`w`) whose left half is pop (`p`, its edge drawing the split down the middle), with two ink swap arrows (`kl`) across it, one pointing to the end and one back.
 
-`check-icons-and-logos` fails if any of them differs from the Toybox data (every game of the token file's `logos.games` is a painted game).
+`check-icons-and-logos` fails if a design game's logo differs from the Toybox data.
 
 ## Designing a logo for a new game
 

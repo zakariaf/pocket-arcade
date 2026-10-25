@@ -1,9 +1,9 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-10-19",
+ "rendered": "2026-10-24",
  "renderer": {
-  "chrome": "155.0.8059.84",
+  "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "134b99067e40ca290f6e6bbe7a6db264cf4c478c64838210fee1788ab05a229f",
+  "design": "00ac0c1224c4e81599aff197a2031fca3a750dc2afb31172df8127a67585bd34",
   "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "142e43c3b8c5389b4eb54e956f3b5648e84d23d2939fd13c77a4adda699f4c55",
+  "frames": "f78a5380d0734c1e3b14a116a475c1903f3aa3948263f89c642c42eb860c114c",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -798,8 +798,8 @@
    "bytes": 12390
   },
   "dark-fa/s7-result-win--score.png": {
-   "sha256": "66b394d2086abc1df1666cf3663fa6fd68948034092ca87f4ece9139648d4325",
-   "bytes": 142603,
+   "sha256": "f073924f546dec0a1a751ac56dd3d4ba1923d8a309365c197158c4c80ab93fb8",
+   "bytes": 142599,
    "width": 1206,
    "height": 2622
   },
@@ -808,8 +808,8 @@
    "bytes": 12064
   },
   "dark-fa/s7-result-win.png": {
-   "sha256": "f560de743b6df7ff7914fb5f74796ca00f019ffa1128cec4ee9be6fa7db1f796",
-   "bytes": 139896,
+   "sha256": "33667003d4e01d05a56a2c1ff10b682a5808c2db63d51560f973c9c58771efb1",
+   "bytes": 139876,
    "width": 1206,
    "height": 2622
   },
@@ -1558,8 +1558,8 @@
    "bytes": 12397
   },
   "light-fa/s7-result-win--score.png": {
-   "sha256": "ea08b91f86c72114015dd5b50afe9112dffd72f4d2b17bb3988ca788174d20aa",
-   "bytes": 138699,
+   "sha256": "98c0745d16d26135d0e5abbb96f235a01d35d38e5af9434f46d9ffaa9d222d07",
+   "bytes": 138696,
    "width": 1206,
    "height": 2622
   },
@@ -1568,8 +1568,8 @@
    "bytes": 12071
   },
   "light-fa/s7-result-win.png": {
-   "sha256": "67e188cd78dc9102a1c9d252de3b27ca9879b628cdd4375116944e68da4a9428",
-   "bytes": 136302,
+   "sha256": "6db4c8c41bc5c20e021e16fa8df1120a0f09f738e488ae21d32d7474ce4aab04",
+   "bytes": 136298,
    "width": 1206,
    "height": 2622
   },
@@ -1804,24 +1804,28 @@
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
   },
   {
+   "id": "G-snare-snake",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Snare Snake added to the design as a design game: its paint, logo and texts in the mockup, the token file and the copy deck, and its sample counters in the fixture. The manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en, which came out byte-identical; no committed PNG or layout moved. Chrome 155 (installed after the 2026-09-30 render) moves 156 pixels of s7-result-win and s7-result-win--score in light-fa and dark-fa on its own: that drift is left for the lead and is not re-rendered here.",
+   "why": "spec 13: its design pass (epic E21-T01), drafted 2026-10-19 with the proposed defaults; the owner's approval comes with the design notes, and the drafted design applies until then."
+  },
+  {
+   "id": "G-snare-snake-logo-layers",
+   "date": "2026-10-24",
+   "frames": [],
+   "variants": [],
+   "what": "Snare Snake's logo draws its four ring marks and the ladybird's wing line as one ink-line (kl) layer instead of two, so the logo has the eight layers the new-logo recipe allows. Rendered before and after, the snareSnake logo frames differ only in 16 to 30 anti-aliased edge pixels per frame; no line siege frame uses the logo. The manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en; no committed PNG or layout moved.",
+   "why": "spec 8.12 and the new-logo recipe of code-drawn-art-and-icons (at most eight layers), found when E21-T13 drew the logo in code (lead's helper, 2026-10-24)."
+  },
+  {
    "id": "G-swap-guard",
    "date": "2026-10-19",
    "frames": [],
    "variants": [],
    "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves",
    "why": "spec 13: its design pass (E25-T01), drafted on 2026-10-19 with the proposed defaults; the owner approves it with the lead’s combined message"
-  },
-  {
-   "id": "R-chrome-155",
-   "date": "2026-10-19",
-   "frames": [
-    "s7-result-win"
-   ],
-   "variants": [
-    "s7-result-win--score"
-   ],
-   "what": "Re-rendered with Chrome 155.0.8059.84 (was 154.0.8037.58) when the Swap Guard design pass re-rendered the set: in fa (light and dark, base and score variant) 156 pixels of the Premium nudge line at the bottom of the win card moved (y 826 to 828 pt, a sub-pixel shift of the Persian text and its edge); no layout.json and no other PNG changed.",
-   "why": "A renderer change, not a design change: shoot-design --check had already flagged these four PNGs with the earlier design copy (G-swap-guard leaves every Line Siege frame as it was), and the crops of both renders look the same by eye."
   }
  ]
 }

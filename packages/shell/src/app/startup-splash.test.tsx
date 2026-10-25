@@ -1,5 +1,7 @@
 // packages/shell/src/app/startup-splash.test.tsx
-import { screen } from '@testing-library/react-native';
+// allow-style-assertion: the tagline's box width is the contract the S1 parity gate measures (CSS
+// fits a one-line tagline to its text and gives a wrapping one the whole 290 pt).
+import { fireEvent, screen } from '@testing-library/react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -60,6 +62,32 @@ describe('StartupSplash', () => {
     expect(screen.getByTestId('splash.loader')).toHaveAccessibleName(
       /^در حال بارگذاری .*Line Siege.*…$/,
     );
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  // The design's .spl-tag is a centred flex item with max-width 290 px: CSS sizes it to its text
+  // when the tagline fits on one line (Flock Tilt's en tagline is 248.7 pt wide) and gives a
+  // wrapping tagline the whole 290 pt.
+  it('fits a one-line tagline to its text and gives a wrapping one the full 290 pt', async () => {
+    await renderWithShell(
+      <StartupSplash
+        logo={LOGO}
+        gameName="Flock Tilt"
+        tagline="Tilt the field. Pen every sheep."
+        isReducedMotion={false}
+      />,
+    );
+    const tagline = (): ReturnType<typeof screen.getByTestId> =>
+      screen.getByTestId('splash.tagline', { includeHiddenElements: true });
+
+    await fireEvent(tagline(), 'textLayout', { nativeEvent: { lines: [{ width: 248.7 }] } });
+    expect(tagline().parent).not.toHaveStyle({ width: 290 });
+    expect(tagline().parent).toHaveStyle({ maxWidth: 290 });
+
+    await fireEvent(tagline(), 'textLayout', {
+      nativeEvent: { lines: [{ width: 280 }, { width: 120 }] },
+    });
+    expect(tagline().parent).toHaveStyle({ width: 290 });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

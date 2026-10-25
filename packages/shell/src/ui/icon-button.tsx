@@ -23,6 +23,8 @@ export type IconButtonProps = {
   /** 'regular' 48 pt (top bars, pause) or 'small' 44 pt (undo and hint in the game top bar). */
   readonly size?: 'regular' | 'small';
   readonly isDisabled?: boolean;
+  /** Drawn at rest but unpressable and reported disabled (RaisedSurface's isInert). */
+  readonly isInert?: boolean;
   readonly hint?: string;
 };
 
@@ -47,6 +49,7 @@ export function IconButton(props: IconButtonProps): ReactNode {
       squash={PRESS_SQUASH.iconButton}
       isReducedMotion={props.isReducedMotion}
       isDisabled={isDisabled}
+      {...(props.isInert === true ? { isInert: true } : {})}
       {...(props.hint === undefined ? {} : { hint: props.hint })}
       faceStyle={size === 'regular' ? styles.regular : styles.small}
     >

@@ -1033,6 +1033,141 @@
         }
       ]
     },
+    "snareSnake": {
+      "id": "snare-snake",
+      "modes": [
+        "levels",
+        "daily"
+      ],
+      "name": {
+        "en": "Snare Snake",
+        "de": "Snare Snake",
+        "fa": "Snare Snake",
+        "ckb": "Snare Snake"
+      },
+      "tagline": {
+        "en": "Loop the snake. Snare the critters.",
+        "de": "Leg die Schlinge. Fang die Krabbler.",
+        "fa": "مار را حلقه کنید و جانورها را به دام بیندازید.",
+        "ckb": "مارەکە بکە بە ئەڵقە و گیانلەبەرەکان بگرە."
+      },
+      "goal": {
+        "en": "Catch every critter before your moves run out.",
+        "de": "Fang jeden Krabbler, bevor deine Züge aufgebraucht sind.",
+        "fa": "پیش از تمام شدن حرکت‌ها، همهٔ جانورها را بگیرید.",
+        "ckb": "پێش ئەوەی جووڵەکانت تەواو ببن، هەموو گیانلەبەرەکان بگرە."
+      },
+      "progress": {
+        "en": "Critters {caught, number} / {total, number}",
+        "de": "Krabbler {caught, number} / {total, number}",
+        "fa": "جانور {caught, number} / {total, number}",
+        "ckb": "گیانلەبەر {caught, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Every critter snared!",
+        "de": "Alle Krabbler gefangen!",
+        "fa": "همهٔ جانورها به دام افتادند!",
+        "ckb": "هەموو گیانلەبەرەکان گیران!"
+      },
+      "loseReason": {
+        "en": "The snake got tangled",
+        "de": "Die Schlange hat sich verknotet",
+        "fa": "مار گره خورد",
+        "ckb": "مارەکە گرێی خوارد"
+      },
+      "stats": {
+        "crittersCaught": {
+          "en": "Critters caught",
+          "de": "Krabbler gefangen",
+          "fa": "جانورهای گرفته‌شده",
+          "ckb": "گیانلەبەری گیراو"
+        },
+        "loopsClosed": {
+          "en": "Loops closed",
+          "de": "Schlingen geschlossen",
+          "fa": "حلقه‌های بسته‌شده",
+          "ckb": "ئەڵقەی داخراو"
+        },
+        "longestSnake": {
+          "en": "Longest snake",
+          "de": "Längste Schlange",
+          "fa": "بلندترین مار",
+          "ckb": "درێژترین مار"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Swipe to steer the snake one cell at a time.",
+          "de": "Wisch, um die Schlange Feld für Feld zu lenken.",
+          "fa": "انگشتتان را بکشید تا مار یک خانه جلو برود.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە خانەیەک بڕوات."
+        },
+        {
+          "en": "Critters freeze when the snake is next to them.",
+          "de": "Krabbler erstarren, wenn die Schlange neben ihnen ist.",
+          "fa": "جانورها وقتی مار کنارشان باشد، از جایشان تکان نمی‌خورند.",
+          "ckb": "گیانلەبەرەکان کاتێک مارەکە لە تەنیشتیانە، ناجووڵێن."
+        },
+        {
+          "en": "Bump into your own body to close a loop.",
+          "de": "Stoß an deinen eigenen Körper, um eine Schlinge zu schließen.",
+          "fa": "سر مار را به بدنش برسانید تا حلقه بسته شود.",
+          "ckb": "سەری مارەکە بگەیەنە لەشی خۆی بۆ داخستنی ئەڵقەیەک."
+        },
+        {
+          "en": "Critters in or next to the loop are caught, and the loop uses up its segments.",
+          "de": "Krabbler in oder neben der Schlinge sind gefangen, und die Schlinge kostet ihre Glieder.",
+          "fa": "جانورهای داخل یا کنار حلقه گرفته می‌شوند و حلقه بندهای خودش را مصرف می‌کند.",
+          "ckb": "گیانلەبەرەکانی ناو ئەڵقەکە یان تەنیشتی دەگیرێن، و ئەڵقەکە بەشەکانی خۆی بەکاردەهێنێت."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Swipe to steer the snake into the gap.",
+          "de": "Wisch, um die Schlange in die Lücke zu lenken.",
+          "fa": "انگشتتان را بکشید تا مار وارد شکاف شود.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە بچێتە ناو کەلێنەکە."
+        },
+        {
+          "en": "Keep going: the critters freeze beside you.",
+          "de": "Weiter so: Die Krabbler neben dir erstarren.",
+          "fa": "ادامه دهید؛ جانورهای کنار مار تکان نمی‌خورند.",
+          "ckb": "بەردەوام بە؛ گیانلەبەرەکانی تەنیشتت ناجووڵێن."
+        },
+        {
+          "en": "Now bump into your body to close the loop!",
+          "de": "Jetzt stoß an deinen Körper und schließ die Schlinge!",
+          "fa": "حالا سر مار را به بدنش برسانید و حلقه را ببندید!",
+          "ckb": "ئێستا سەری مارەکە بگەیەنە لەشی و ئەڵقەکە دابخە!"
+        },
+        {
+          "en": "Snared! Catch the rest before your moves run out.",
+          "de": "Gefangen! Fang den Rest, bevor deine Züge aufgebraucht sind.",
+          "fa": "به دام افتادند! بقیه را پیش از تمام شدن حرکت‌ها بگیرید.",
+          "ckb": "گیران! ئەوانی تر بگرە پێش ئەوەی جووڵەکانت تەواو ببن."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Garden patch",
+          "de": "Gartenbeet",
+          "fa": "باغچه",
+          "ckb": "باخچە"
+        },
+        {
+          "en": "Mossy rocks",
+          "de": "Moosige Felsen",
+          "fa": "سنگ‌های خزه‌پوش",
+          "ckb": "بەردە قەوزاوییەکان"
+        },
+        {
+          "en": "Bramble wood",
+          "de": "Brombeerwald",
+          "fa": "جنگل تمشک",
+          "ckb": "دارستانی دڕک"
+        }
+      ]
+    },
     "swapGuard": {
       "id": "swap-guard",
       "modes": [

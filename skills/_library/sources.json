@@ -4,11 +4,11 @@
   "skills": {
     "_library": {
       "shared/copy-deck.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           }
         ]
       },
@@ -121,11 +121,11 @@
         ]
       },
       "shared/toybox-tokens.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       }
@@ -225,11 +225,11 @@
         ]
       },
       "references/text-scaling-and-motion.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -508,15 +508,15 @@
         ]
       },
       "references/consent-flow.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -542,15 +542,15 @@
         ]
       },
       "references/placements-and-lifecycle.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -1628,12 +1628,30 @@
           }
         ]
       },
-      "examples/line-siege/line-siege-board.golden.test.ts": {
-        "recorded": "2026-10-03",
+      "examples/line-siege/golden-font.ts": {
+        "recorded": "2026-10-20",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "test/goldens/boards/golden-font.ts",
+            "sha256": "c4b35838a145cf7943bd9cfb17aa1fbd402a3a03246cb89668c885526f89836f"
+          }
+        ]
+      },
+      "examples/line-siege/line-siege-board.golden.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "test/goldens/boards/line-siege-board.golden.test.ts",
+            "sha256": "23e378824df35edbdcc7eac9093342d8eaf97ebd3563241ef4e7bb052ff9a134"
+          }
+        ]
+      },
+      "examples/line-siege/line-siege-tutorial.golden.test.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "test/goldens/boards/line-siege-tutorial.golden.test.ts",
+            "sha256": "7b63b3f16eb8da8f566c9cc0d55e1b9a063c9b9030ce0ee5d82ce6902b982b51"
           }
         ]
       },
@@ -1669,11 +1687,11 @@
         ]
       },
       "references/drawing.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -1897,21 +1915,79 @@
           }
         ]
       },
-      "templates/shell/game-host/board-canvas.tsx": {
-        "recorded": "2026-10-03",
+      "templates/shell/game-host/board-canvas.test.tsx": {
+        "recorded": "2026-10-24",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/board-canvas.test.tsx",
+            "sha256": "585f4da9ab65a02b21ac9ab58eed0dac4e8dbb65d04b66d62a4efbd40da6f8ff"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-canvas.tsx": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-canvas.tsx",
+            "sha256": "b30d706501765a322b4864f32a44bbb4fbd6b709673e10a969ccd0a03832ab05"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-kit.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-kit.test.ts",
+            "sha256": "a1f2a7cd63136875d41625d1556e552809290d709fea479b39f94b1c9cf28cd6"
           }
         ]
       },
       "templates/shell/game-host/board-kit.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          },
+          {
+            "path": "packages/shell/src/game-host/board-kit.ts",
+            "sha256": "6baa323104a9341bdd1c7eb9d5a7240b53b79e6b77041622f43759f203fa2f7e"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-font.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-font.ts",
+            "sha256": "9408ccd8f22a0085f3eab0a849611917f6810811de7ab2d9be79fc30a4f8b98d"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-typeface.android.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.android.test.ts",
+            "sha256": "54ce573dea0cf128784e7176a7f53929bd9a51e9d1537d403919fabc5a8c8344"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-typeface.test.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.test.ts",
+            "sha256": "8bf8fa17f70d94f4d9ed0ce924d29f20033cc78a02e49bae9882f982302cf28e"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-typeface.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.ts",
+            "sha256": "461d3fa7571d095f387e730dab00a210011a98b0aca219ea3c50aac2094980be"
           }
         ]
       },
@@ -1938,11 +2014,20 @@
         ]
       },
       "templates/shell/game-host/board-types.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-25",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/board-types.ts",
+            "sha256": "eabd0b153ed39da20ed9cca14b2835d2992a2d66ed4e6a96b40bbf06d9da33fd"
+          }
+        ]
+      },
+      "templates/shell/game-host/coach-hand-layer.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/coach-hand-layer.tsx",
+            "sha256": "8b7216cb66bd0533ce8e4e088a54f61e687b9a538581284b5193343af0521937"
           }
         ]
       },
@@ -1982,12 +2067,39 @@
           }
         ]
       },
-      "templates/shell/game-host/game-board-host.tsx": {
-        "recorded": "2026-10-03",
+      "templates/shell/game-host/draw-coach-hand.test.ts": {
+        "recorded": "2026-10-24",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/draw-coach-hand.test.ts",
+            "sha256": "9c9c14123cf752ca9d92030b0d47a4e6cd4b5c86f64c1a94748f550407c58d71"
+          }
+        ]
+      },
+      "templates/shell/game-host/draw-coach-hand.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/draw-coach-hand.ts",
+            "sha256": "b1ff0603c0105ea4a61db1735d806f2742823e3243de83c3d1c8b415b9cda40a"
+          }
+        ]
+      },
+      "templates/shell/game-host/game-board-host.test.tsx": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/game-board-host.test.tsx",
+            "sha256": "cdb00b2cf2460192c747a01e6bc80a2bb76f74eed96db33132d28d4769d2eee1"
+          }
+        ]
+      },
+      "templates/shell/game-host/game-board-host.tsx": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/game-board-host.tsx",
+            "sha256": "975ef30945286d0670ebbb9b97d4d8698d4d11bcdf2bda5c081bdb0563890e50"
           }
         ]
       },
@@ -2018,12 +2130,21 @@
           }
         ]
       },
-      "templates/shell/game-host/record-board.ts": {
-        "recorded": "2026-10-03",
+      "templates/shell/game-host/record-board.test.ts": {
+        "recorded": "2026-10-24",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/record-board.test.ts",
+            "sha256": "558444d710649e9e80606fbab52d3cd8891a1f72a49fec9f93e9d58a9e1d6f1f"
+          }
+        ]
+      },
+      "templates/shell/game-host/record-board.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/record-board.ts",
+            "sha256": "15be0ed896b274e2f14bbfe77a8f19e5d3aa1c2899845164bed90ea03fa54cbb"
           }
         ]
       },
@@ -2033,6 +2154,15 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          }
+        ]
+      },
+      "templates/shell/game-host/testing/android-skia.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/testing/android-skia.ts",
+            "sha256": "3a0116ab0f39683c5400e8469e09c1a620fb51dffea2330076c48227f21182fc"
           }
         ]
       },
@@ -2051,6 +2181,24 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          }
+        ]
+      },
+      "templates/shell/native/android/BoardFontModule.kt": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/android/src/main/java/io/applander/e07shell/BoardFontModule.kt",
+            "sha256": "638f5820ee6929f7ff5b58b43ea77dca6e14b7d5f6af84ca663e8ed78633f083"
+          }
+        ]
+      },
+      "templates/shell/native/ios/BoardFontModule.swift": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/ios/BoardFontModule.swift",
+            "sha256": "34b6e10d0105822c17023e37a61bba91a78bd3dbca9887a66bdb12910bc9aa7c"
           }
         ]
       },
@@ -2106,86 +2254,86 @@
     },
     "code-drawn-art-and-icons": {
       "assets/reference/icons-design.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/line-siege-android-art.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/line-siege-app-art.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/logos-design.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "examples/flock-tilt-logo-art.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       },
       "examples/scrap-shove-logo-art.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       },
       "examples/swap-guard-logo-art.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       },
       "references/app-icon-and-splash.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -2202,11 +2350,11 @@
         ]
       },
       "references/icon-catalogue.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2215,15 +2363,15 @@
         ]
       },
       "references/icon-system.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2240,15 +2388,15 @@
         ]
       },
       "references/logos-and-pictures.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2278,15 +2426,15 @@
         ]
       },
       "templates/apps/line-siege/src/art/logo-art.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2295,15 +2443,15 @@
         ]
       },
       "templates/packages/shell/src/art/draw-logo.golden.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2312,15 +2460,15 @@
         ]
       },
       "templates/packages/shell/src/art/draw-logo.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2329,15 +2477,15 @@
         ]
       },
       "templates/packages/shell/src/art/logo-art.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2346,15 +2494,15 @@
         ]
       },
       "templates/packages/shell/src/art/logo-art.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2363,15 +2511,15 @@
         ]
       },
       "templates/packages/shell/src/art/picture-ops.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2380,15 +2528,15 @@
         ]
       },
       "templates/packages/shell/src/art/picture-ops.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2454,15 +2602,15 @@
         ]
       },
       "templates/packages/shell/src/ui/empty-stats-picture.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2471,15 +2619,15 @@
         ]
       },
       "templates/packages/shell/src/ui/empty-stats-picture.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2488,15 +2636,15 @@
         ]
       },
       "templates/packages/shell/src/ui/hazard-strip.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2505,15 +2653,15 @@
         ]
       },
       "templates/packages/shell/src/ui/hazard-strip.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2522,11 +2670,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icons/icon-paths.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2539,11 +2687,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icons/icon-raster.golden.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2556,11 +2704,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icons/icon-raster.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2573,11 +2721,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icons/icon.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2590,11 +2738,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icons/icon.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -2607,15 +2755,15 @@
         ]
       },
       "templates/packages/shell/src/ui/logo-tile.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2624,15 +2772,15 @@
         ]
       },
       "templates/packages/shell/src/ui/logo-tile.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2641,15 +2789,15 @@
         ]
       },
       "templates/packages/shell/src/ui/picture-path.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2675,15 +2823,15 @@
         ]
       },
       "templates/packages/tooling/src/art/icon-layers.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       },
@@ -2754,11 +2902,11 @@
         ]
       },
       "examples/stats-cards.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -2771,15 +2919,15 @@
         ]
       },
       "references/daily-challenge.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -2800,15 +2948,15 @@
         ]
       },
       "references/statistics.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4775,6 +4923,60 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/board-host-kit.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-host-kit.ts",
+            "sha256": "01e96c54d1b7c6f995e75a9f29a18f0c1eef91bd72b08f44289c315ae9abe068"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/board-host-props.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-host-props.ts",
+            "sha256": "35bbad3e82c2e6eb3b2979d4476629375d0ee615ecd757e92fa4dfde4dde85cb"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/coach-pointer.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/coach-pointer.test.ts",
+            "sha256": "b4741f0c847619f2969bc00c33f5b4c9795b11270e687fd29cbe398eccf26d6a"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/coach-pointer.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/coach-pointer.ts",
+            "sha256": "97cc7ea3ef058401949225e25e2832c4a8ea1af04000eddf71aac91261c16608"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/create-example-picture.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/create-example-picture.tsx",
+            "sha256": "2f37bbadb42511e78e03f65563de292f9b260ec919881c177aade4e0a6a6e500"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/create-game-board-host.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/create-game-board-host.tsx",
+            "sha256": "85a4fa3d335a4ed1a244d869ad9b5efafb2e276cb349e527bb14472c23741ffc"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/fullscreen-gate.test.ts": {
         "recorded": "2026-10-18",
         "sources": [
@@ -4836,19 +5038,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
-            "path": "docs/02-architecture-and-folders.md",
-            "sha256": "6e44746d8487d37b5ebd3c26c5d224c33f5a83c19449ce729fece0c0a9166754"
-          },
-          {
-            "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
-          },
-          {
-            "path": "spec.txt",
-            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+            "path": "packages/shell/src/game-host/game-host.ts",
+            "sha256": "6537b063990f9fb3d845b34020b86c08973f17ca7984651c794a314c3dcfa158"
           }
         ]
       },
@@ -5073,36 +5267,56 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-25",
         "sources": [
           {
-            "path": "docs/02-architecture-and-folders.md",
-            "sha256": "6e44746d8487d37b5ebd3c26c5d224c33f5a83c19449ce729fece0c0a9166754"
-          },
+            "path": "packages/shell/src/game-host/session-controller.ts",
+            "sha256": "672b621f89fdd917bfad729bc70d7e9210c2535c438dae4d608c0d48a6d656f3"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-hints.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
           {
-            "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
-          },
+            "path": "packages/shell/src/game-host/session-hints.ts",
+            "sha256": "4e2617abbc6e7e655e16597b32e99928ab5f91c2f313546b7720886ecec2f037"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-view-of.test.ts": {
+        "recorded": "2026-10-19",
+        "sources": [
           {
-            "path": "spec.txt",
-            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+            "path": "packages/shell/src/game-host/session-view-of.test.ts",
+            "sha256": "c833f0a663e52d02f9145e742875bc5807fdad311e351bc886a2f9238ecdd69c"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-view-of.ts": {
+        "recorded": "2026-10-19",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-view-of.ts",
+            "sha256": "a80d62fc579a1ba5e9660dcb73c9ef2307b8e17d5e917f8eb75aa365ec81847d"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-view.test.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-view.test.ts",
+            "sha256": "0a5345e11f4055d682bdafb8cdc4ff3410e545fdf45dfec7bf82f9a1c8aa3963"
           }
         ]
       },
       "templates/packages/shell/src/game-host/session-view.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-25",
         "sources": [
           {
-            "path": "docs/02-architecture-and-folders.md",
-            "sha256": "6e44746d8487d37b5ebd3c26c5d224c33f5a83c19449ce729fece0c0a9166754"
-          },
-          {
-            "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
-          },
-          {
-            "path": "spec.txt",
-            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+            "path": "packages/shell/src/game-host/session-view.ts",
+            "sha256": "234b34248a92ae51a3d7c19a84dec2483ee3f891215f306557453c442234d3b8"
           }
         ]
       },
@@ -5154,6 +5368,33 @@
           {
             "path": "spec.txt",
             "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/tutorial-refusals.test.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/tutorial-refusals.test.ts",
+            "sha256": "a5f946759dab033e8b94d5ad39a04e99564258ef2259b8a9c93b8dcdcd0ad939"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/tutorial-script.test.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/tutorial-script.test.ts",
+            "sha256": "23d3e3ab189acb578cfd1543a380f590adc485054699eca81f2748b48cd17744"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/tutorial-script.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/tutorial-script.ts",
+            "sha256": "481c61ce1faa1c0da0ae582de1cb4663428ffeea5822ce25f65af1f10a147bf8"
           }
         ]
       },
@@ -5222,6 +5463,60 @@
           {
             "path": "spec.txt",
             "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/tutorial-coach.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/tutorial-coach.test.ts",
+            "sha256": "eb277d75f7a4aecd696dfb531fa156257fce5476349af8865e11f44daf88b2d6"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/tutorial-coach.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/tutorial-coach.ts",
+            "sha256": "fd508eced4865dbbbc4b5b169a09bcaee2449ac79f9f465b1c6db26266b86f70"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/tutorial-view.test.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
+            "sha256": "727d040274b31e9283e92a71409c409b454641290ff75a1985a18a0fc170845c"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/tutorial-view.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/tutorial-view.tsx",
+            "sha256": "38f3b1e57d83e8355c60760c63da89109721848ffa939181d075a896db159e6c"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/use-tutorial-model.test.tsx": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/use-tutorial-model.test.tsx",
+            "sha256": "74f7d7efb1b1d01b60984d470086433ab1458a0fcd5f22c84200cf530ab4af7a"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/first-run/use-tutorial-model.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
+            "sha256": "a5ed12882164e70dac101673861a9c48763a5afd6dcc5da557ec3964d92c1536"
           }
         ]
       },
@@ -6614,11 +6909,11 @@
     },
     "i18n-strings-and-catalogs": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "design/shared/copy-deck.md",
-            "sha256": "296f111576af5c15017464a2529b30daf35eaa905820b0910bc12d345e7acfb1"
+            "sha256": "4f10919475e6afd83a41c119df85dae168950321b7ac1636f800a5d1dd713475"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6640,15 +6935,15 @@
         ]
       },
       "references/catalogs-keys-and-icu.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/shared/copy-deck.md",
-            "sha256": "296f111576af5c15017464a2529b30daf35eaa905820b0910bc12d345e7acfb1"
+            "sha256": "4f10919475e6afd83a41c119df85dae168950321b7ac1636f800a5d1dd713475"
           },
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6678,15 +6973,15 @@
         ]
       },
       "references/translation-workflow.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/shared/copy-deck.md",
-            "sha256": "296f111576af5c15017464a2529b30daf35eaa905820b0910bc12d345e7acfb1"
+            "sha256": "4f10919475e6afd83a41c119df85dae168950321b7ac1636f800a5d1dd713475"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6703,15 +6998,15 @@
         ]
       },
       "scripts/copy-deck.mjs": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/shared/copy-deck.md",
-            "sha256": "296f111576af5c15017464a2529b30daf35eaa905820b0910bc12d345e7acfb1"
+            "sha256": "4f10919475e6afd83a41c119df85dae168950321b7ac1636f800a5d1dd713475"
           }
         ]
       },
@@ -6725,11 +7020,11 @@
         ]
       },
       "templates/game-i18n/keys.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6756,11 +7051,11 @@
         ]
       },
       "templates/shell-i18n/create-t.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6787,11 +7082,11 @@
         ]
       },
       "templates/shell-i18n/format-date.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6827,11 +7122,11 @@
         ]
       },
       "templates/shell-i18n/intl-status.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6876,11 +7171,11 @@
         ]
       },
       "templates/shell-i18n/resolve-language.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6916,11 +7211,11 @@
         ]
       },
       "templates/shell-i18n/t.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -10258,11 +10553,11 @@
     },
     "premium-purchase": {
       "assets/premium-facts.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/12-in-app-purchase.md",
@@ -10310,11 +10605,11 @@
         ]
       },
       "references/premium-states.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/12-in-app-purchase.md",
@@ -12903,11 +13198,11 @@
     },
     "settings-and-preferences": {
       "references/rows-and-controls.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -14107,164 +14402,164 @@
         ]
       },
       "assets/reference/dark-buttons.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/dark-dialog.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/dark-level-tiles.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/dark-list-rows.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-banner-slot.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-buttons.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-card-flat.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-dialog.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-hero-key.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-level-tiles.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-list-rows.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-segmented-control.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-slider.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-star-rating.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-stickers.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-toast.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-toggle.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/light-top-bar.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
@@ -14308,11 +14603,11 @@
         ]
       },
       "references/component-catalogue.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14321,11 +14616,11 @@
         ]
       },
       "references/data-displays.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14334,11 +14629,11 @@
         ]
       },
       "references/decisions-and-open-issues.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14347,11 +14642,11 @@
         ]
       },
       "references/keys-and-inputs.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14360,15 +14655,15 @@
         ]
       },
       "references/levels-bars-overlays.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14377,15 +14672,15 @@
         ]
       },
       "references/lists-and-surfaces.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14407,11 +14702,11 @@
         ]
       },
       "templates/packages/shell/src/ui/art-tile.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14420,11 +14715,11 @@
         ]
       },
       "templates/packages/shell/src/ui/banner-band.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14433,11 +14728,11 @@
         ]
       },
       "templates/packages/shell/src/ui/bars.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14446,11 +14741,11 @@
         ]
       },
       "templates/packages/shell/src/ui/brand-lock.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14459,11 +14754,11 @@
         ]
       },
       "templates/packages/shell/src/ui/busy-blocks.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14472,11 +14767,11 @@
         ]
       },
       "templates/packages/shell/src/ui/button-paint.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14485,11 +14780,11 @@
         ]
       },
       "templates/packages/shell/src/ui/button.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14498,11 +14793,11 @@
         ]
       },
       "templates/packages/shell/src/ui/button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14511,11 +14806,11 @@
         ]
       },
       "templates/packages/shell/src/ui/calendar-tile.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14524,11 +14819,11 @@
         ]
       },
       "templates/packages/shell/src/ui/chip.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14537,20 +14832,20 @@
         ]
       },
       "templates/packages/shell/src/ui/component-specs.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           }
         ]
       },
       "templates/packages/shell/src/ui/component-specs.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14559,11 +14854,11 @@
         ]
       },
       "templates/packages/shell/src/ui/confetti.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14572,11 +14867,11 @@
         ]
       },
       "templates/packages/shell/src/ui/controls.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14585,11 +14880,11 @@
         ]
       },
       "templates/packages/shell/src/ui/data-displays.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14598,11 +14893,11 @@
         ]
       },
       "templates/packages/shell/src/ui/dialog-button-row.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14611,11 +14906,11 @@
         ]
       },
       "templates/packages/shell/src/ui/dialog-card.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14624,11 +14919,11 @@
         ]
       },
       "templates/packages/shell/src/ui/dialogs.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14637,11 +14932,11 @@
         ]
       },
       "templates/packages/shell/src/ui/empty-state.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14650,11 +14945,11 @@
         ]
       },
       "templates/packages/shell/src/ui/game-top-bar.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14663,11 +14958,11 @@
         ]
       },
       "templates/packages/shell/src/ui/group-tab.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14676,11 +14971,11 @@
         ]
       },
       "templates/packages/shell/src/ui/hold-button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -14693,11 +14988,11 @@
         ]
       },
       "templates/packages/shell/src/ui/how-to-stage.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14706,11 +15001,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icon-button.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -14723,11 +15018,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icon-button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -14740,11 +15035,11 @@
         ]
       },
       "templates/packages/shell/src/ui/icon-tile.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14753,11 +15048,11 @@
         ]
       },
       "templates/packages/shell/src/ui/key-button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14766,11 +15061,11 @@
         ]
       },
       "templates/packages/shell/src/ui/level-tile.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -14783,11 +15078,11 @@
         ]
       },
       "templates/packages/shell/src/ui/list-group.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14796,11 +15091,11 @@
         ]
       },
       "templates/packages/shell/src/ui/list-row.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14809,11 +15104,11 @@
         ]
       },
       "templates/packages/shell/src/ui/list.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14822,11 +15117,11 @@
         ]
       },
       "templates/packages/shell/src/ui/lists.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14835,11 +15130,11 @@
         ]
       },
       "templates/packages/shell/src/ui/note-panel.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14848,11 +15143,11 @@
         ]
       },
       "templates/packages/shell/src/ui/offer-box.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14861,11 +15156,11 @@
         ]
       },
       "templates/packages/shell/src/ui/option-card.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14874,11 +15169,11 @@
         ]
       },
       "templates/packages/shell/src/ui/pager-dots.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14887,11 +15182,11 @@
         ]
       },
       "templates/packages/shell/src/ui/panel-header.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14900,11 +15195,11 @@
         ]
       },
       "templates/packages/shell/src/ui/panel.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14913,11 +15208,11 @@
         ]
       },
       "templates/packages/shell/src/ui/premium-art.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14926,11 +15221,11 @@
         ]
       },
       "templates/packages/shell/src/ui/progress-bar.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14939,11 +15234,11 @@
         ]
       },
       "templates/packages/shell/src/ui/quiet-button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14952,11 +15247,11 @@
         ]
       },
       "templates/packages/shell/src/ui/radio-mark.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14965,11 +15260,11 @@
         ]
       },
       "templates/packages/shell/src/ui/rating-star.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14978,11 +15273,11 @@
         ]
       },
       "templates/packages/shell/src/ui/rating-stars.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -14991,11 +15286,11 @@
         ]
       },
       "templates/packages/shell/src/ui/result-stars.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15004,11 +15299,11 @@
         ]
       },
       "templates/packages/shell/src/ui/row-button.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15017,11 +15312,11 @@
         ]
       },
       "templates/packages/shell/src/ui/row-button.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15030,11 +15325,11 @@
         ]
       },
       "templates/packages/shell/src/ui/score-panel.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15043,11 +15338,11 @@
         ]
       },
       "templates/packages/shell/src/ui/scrim.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15056,11 +15351,11 @@
         ]
       },
       "templates/packages/shell/src/ui/segmented-control.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15069,11 +15364,11 @@
         ]
       },
       "templates/packages/shell/src/ui/slider.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15082,11 +15377,11 @@
         ]
       },
       "templates/packages/shell/src/ui/small-parts.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15095,11 +15390,11 @@
         ]
       },
       "templates/packages/shell/src/ui/stat-grid.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15108,11 +15403,11 @@
         ]
       },
       "templates/packages/shell/src/ui/stat-list.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15121,11 +15416,11 @@
         ]
       },
       "templates/packages/shell/src/ui/sticker.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15134,11 +15429,11 @@
         ]
       },
       "templates/packages/shell/src/ui/sub-row.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15147,11 +15442,11 @@
         ]
       },
       "templates/packages/shell/src/ui/tiles.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15160,11 +15455,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toast-stack.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15173,11 +15468,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toast.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15186,11 +15481,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toggle-key.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15199,11 +15494,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toggle.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15212,11 +15507,11 @@
         ]
       },
       "templates/packages/shell/src/ui/top-bar.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15225,11 +15520,11 @@
         ]
       },
       "templates/packages/shell/src/ui/use-hold-to-confirm.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15241,12 +15536,30 @@
           }
         ]
       },
+      "templates/packages/shell/src/ui/use-wrapped-text.test.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/ui/use-wrapped-text.test.ts",
+            "sha256": "4b70b2a7e905bc0f646a79c77f6478834beb8aecf60fd6741212b4109eb826ae"
+          }
+        ]
+      },
+      "templates/packages/shell/src/ui/use-wrapped-text.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/ui/use-wrapped-text.ts",
+            "sha256": "6b0650845a8525a2599344b2b82f25ca90efc127ed4de4ec5d464e9633643bc1"
+          }
+        ]
+      },
       "templates/packages/shell/src/ui/week-bars.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15255,11 +15568,11 @@
         ]
       },
       "templates/packages/shell/src/ui/week-legend.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15268,11 +15581,11 @@
         ]
       },
       "templates/packages/shell/src/ui/week-mark.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15281,11 +15594,11 @@
         ]
       },
       "templates/packages/shell/src/ui/week-strip.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15335,11 +15648,11 @@
         ]
       },
       "references/colour-tokens.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15366,11 +15679,11 @@
         ]
       },
       "references/layout-shape-tokens.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15379,11 +15692,11 @@
         ]
       },
       "references/motion.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15414,11 +15727,11 @@
         ]
       },
       "references/type-and-fonts.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -15431,11 +15744,11 @@
         ]
       },
       "templates/apps/line-siege/src/theme/palette.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15444,11 +15757,11 @@
         ]
       },
       "templates/packages/shell/src/i18n/fonts.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15457,11 +15770,11 @@
         ]
       },
       "templates/packages/shell/src/i18n/fonts.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15470,11 +15783,11 @@
         ]
       },
       "templates/packages/shell/src/i18n/use-localized-text-style.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15483,11 +15796,11 @@
         ]
       },
       "templates/packages/shell/src/testing/test-palette.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15496,11 +15809,11 @@
         ]
       },
       "templates/packages/shell/src/testing/toybox-palette-checks.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15509,11 +15822,11 @@
         ]
       },
       "templates/packages/shell/src/theme/contrast.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15526,11 +15839,11 @@
         ]
       },
       "templates/packages/shell/src/theme/make-styles.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15543,11 +15856,11 @@
         ]
       },
       "templates/packages/shell/src/theme/motion.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15560,11 +15873,11 @@
         ]
       },
       "templates/packages/shell/src/theme/shell-colors.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15577,11 +15890,11 @@
         ]
       },
       "templates/packages/shell/src/theme/theme-context.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15594,11 +15907,11 @@
         ]
       },
       "templates/packages/shell/src/theme/theme-provider.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15611,11 +15924,11 @@
         ]
       },
       "templates/packages/shell/src/theme/theme-set.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15628,11 +15941,11 @@
         ]
       },
       "templates/packages/shell/src/theme/theme-types.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15645,11 +15958,11 @@
         ]
       },
       "templates/packages/shell/src/theme/tokens.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15662,11 +15975,11 @@
         ]
       },
       "templates/packages/shell/src/theme/type-styles.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15679,11 +15992,11 @@
         ]
       },
       "templates/packages/shell/src/theme/type-styles.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15696,11 +16009,11 @@
         ]
       },
       "templates/packages/shell/src/theme/use-theme.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15713,11 +16026,11 @@
         ]
       },
       "templates/packages/shell/src/ui/app-text.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15730,11 +16043,11 @@
         ]
       },
       "templates/packages/shell/src/ui/app-text.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -15747,11 +16060,11 @@
         ]
       },
       "templates/packages/shell/src/ui/raised-surface.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15760,11 +16073,11 @@
         ]
       },
       "templates/packages/shell/src/ui/raised-surface.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15773,11 +16086,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toybox-styles.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15786,11 +16099,11 @@
         ]
       },
       "templates/packages/shell/src/ui/toybox-styles.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15799,11 +16112,11 @@
         ]
       },
       "templates/test/integration/toybox-palettes.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15814,317 +16127,317 @@
     },
     "toybox-screens": {
       "assets/reference/s1-splash.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s10-statistics-empty.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s10-statistics.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s11-settings.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s11a-language.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s11b-about-and-credits.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s11c-privacy-policy.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s11d-licences.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-already-owned.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-error.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-loading-price.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-pending-approval.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-premium.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-purchase-in-progress.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-restore-results-toasts.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-store-unavailable-offline.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s12-success.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s13-how-to-play.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s14-progress-restored.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s14-reset-all-progress.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s14-restart-to-apply.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s15-debug-menu.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s2-language-choice.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s3-consent-moment.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s3-google-s-form.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s4-home-dark-en.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s4-home-light-fa.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s4-home-premium.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s4-home.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s6-pause.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s7-result-lose.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s7-result-win.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s8-levels.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/reference/s9-daily-challenge.png": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "references/component-contract.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16141,15 +16454,15 @@
         ]
       },
       "references/s01-splash.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16162,15 +16475,15 @@
         ]
       },
       "references/s02-language-choice.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16183,15 +16496,15 @@
         ]
       },
       "references/s03-consent.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -16208,15 +16521,15 @@
         ]
       },
       "references/s04-home.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -16233,15 +16546,15 @@
         ]
       },
       "references/s05-game.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16262,15 +16575,15 @@
         ]
       },
       "references/s06-pause.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16287,15 +16600,15 @@
         ]
       },
       "references/s07-result.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16312,15 +16625,15 @@
         ]
       },
       "references/s08-levels.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -16337,15 +16650,15 @@
         ]
       },
       "references/s09-daily.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16358,15 +16671,15 @@
         ]
       },
       "references/s10-statistics.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -16383,15 +16696,15 @@
         ]
       },
       "references/s11-settings.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16408,15 +16721,15 @@
         ]
       },
       "references/s11a-language.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16433,15 +16746,15 @@
         ]
       },
       "references/s11b-about.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16458,15 +16771,15 @@
         ]
       },
       "references/s11c-privacy-policy.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16483,15 +16796,15 @@
         ]
       },
       "references/s11d-licences.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -16508,15 +16821,15 @@
         ]
       },
       "references/s12-premium.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/12-in-app-purchase.md",
@@ -16533,15 +16846,15 @@
         ]
       },
       "references/s13-how-to-play.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16554,15 +16867,15 @@
         ]
       },
       "references/s14-dialogs.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16579,15 +16892,15 @@
         ]
       },
       "references/s15-debug.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16604,19 +16917,19 @@
         ]
       },
       "references/screen-frame-and-rules.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -18767,24 +19080,24 @@
     },
     "toybox-visual-parity": {
       "assets/design/toybox.html": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           }
         ]
       },
       "assets/frames.json": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
-            "sha256": "bb5400aca980be5ed209e337bc5ca28be5302838808cd1c075e90f7e30816628"
+            "sha256": "2d80603e6a3625b6e9789110369748713878c1e11c28b336bbadcbfcef7c2ddb"
           },
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -18793,11 +19106,11 @@
         ]
       },
       "references/design-reference-set.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -18844,11 +19157,11 @@
         ]
       },
       "references/signoff-and-waivers.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -18882,11 +19195,11 @@
         ]
       },
       "references/what-exact-means.md": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
-            "sha256": "a8ea7f0447ecfece7a5b22a46f62e22741c54523fe09d75c07dc5bcab48536d3"
+            "sha256": "502537c21dbd240c060cf0366acbb6fcb4f567851104adea31ca29c3f7e38511"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -18895,11 +19208,11 @@
         ]
       },
       "templates/packages/shell/src/app/parity/parity-plans.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "design/toybox.html",
-            "sha256": "e89dafbf80f1b38692fe76e1473f842396333a715a3d5a84e3fbd5545541daf1"
+            "sha256": "69c0d188e560e471c73f2e15e48f678209f43c78b2f4e2b7728c3f4688e7b289"
           },
           {
             "path": "docs/18-design-system-toybox.md",

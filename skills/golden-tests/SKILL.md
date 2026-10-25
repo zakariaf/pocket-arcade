@@ -5,14 +5,14 @@ description: Creates and guards Pocket Arcade goldens - level and daily data gol
 
 # Golden tests
 
-Goldens are the frozen answers of Pocket Arcade: the level each seed makes, the daily level of each date, the pixels of each board. They change only on purpose, after a real look, in a commit that says why, and the daily ones never change at all. This skill writes them and its scripts prove the tree and the history keep that policy.
+Goldens are the frozen answers of Pocket Arcade: the level each seed makes, the daily level of each date, the pixels of each board. They change only on purpose, after a real look, in a commit that says why, and the daily ones never change once a player can have seen them. This skill writes them and its scripts prove the tree and the history keep that policy.
 
 ## Rules that must hold
 
 1. **A golden changes only by hand, one file at a time**: `npx jest <file> --selectProjects golden -u`, path first (after `--selectProjects` a path is read as a project name and every golden is rewritten). Every script, hook and CI run uses `jest --ci`, which refuses to write a missing snapshot. Never `-u` without a file, never `-u`, `--updateSnapshot`, `--ci=false` or a baseline `--update` in `package.json`, lefthook, CI or Claude Code hooks. Why: agents rubber-stamp whatever `-u` writes.
 2. **Look before accepting.** Read the `.snap.ios` diff line by line; open every new or changed PNG (and the diff PNG) with the Read tool; then `CI=1 npx jest --ci --selectProjects golden` passes. Why: an unread golden freezes a bug.
 3. **Every commit that adds, changes or deletes a golden path carries `Gate-Change: <which goldens, why, what you looked at>`.** Golden paths: `**/*.golden.test.ts.snap.ios`, `**/__snapshots__/*.golden.test.ts.snap`, `**/__image_snapshots__/**`, `apps/*/e2e/baselines/**`, `apps/*/e2e/baselines-android/**`, `test/goldens/boards/skia-golden.ts`, `**/fixtures/save-v*.json`. Why: the owner can find every gate change later with one `git log` query.
-4. **An existing daily-challenge golden never changes and is never deleted**, not even with a trailer; adding dates is fine. Pin at least three dates including a year boundary pair (`2026-12-31`, `2027-01-01`) with the game's real salt and daily difficulty. Why: spec 8.3, every phone and every app version must generate the same level for the same date.
+4. **An existing daily-challenge golden never changes and is never deleted once the game has a release tag** (`<game-id>/v*`), not even with a trailer; adding dates is fine. Before the game's first release tag no player has a daily, so a daily may change in a commit whose `Gate-Change:` trailer names the daily (a bug fix the daily board shows). Pin at least three dates including a year boundary pair (`2026-12-31`, `2027-01-01`) with the game's real salt and daily difficulty. Why: spec 8.3, every phone and every app version must generate the same level for the same date.
 5. **Data goldens are readable data**: `*.golden.test.ts` next to the unit, a string per case (a header line with seed, difficulty and headline numbers, then the board as ASCII rows via `renderCells`), stored as `<file>.golden.test.ts.snap.ios`. No component trees, no inline snapshots, no entry over 120 lines. Why: a golden is reviewed by reading its diff.
 6. **Pixel goldens render the device's own `draw()`** through `paintBoardPng` in `test/goldens/boards/<game-id>-board.golden.test.ts`, at 3 sizes (390×560, 1024×700, 320×400) × moments 0, 0.5, 1 of the busiest turn, with the app's font loaded explicitly, matched only by `toMatchPixelGolden` from `skia-golden.ts`. Why: goldens catch what assertions forget, but only if they draw what players see.
 7. **Tolerances are gates: 0.1% of pixels for boards, 0.2% for screens.** Never raise one to hide a diff; only the owner can agree, and the trailer says so. Why: a raised tolerance silently accepts every future regression below it.
@@ -26,13 +26,13 @@ Goldens are the frozen answers of Pocket Arcade: the level each seed makes, the 
 4. **Create the goldens deliberately**: `npx jest <file> --selectProjects golden -u`. Read the new `.snap.ios` or open all nine PNGs with the Read tool, compare with what the spec and design say players should see, then `CI=1 npx jest --ci --selectProjects golden`.
 5. **Check the tree**: `node ${CLAUDE_SKILL_DIR}/scripts/check-goldens.mjs .` and fix every `FAIL` line (file, rule, fix), rerun until `RESULT: PASS`.
 6. **Commit with the trailer** from [templates/gate-change-commit.txt](templates/gate-change-commit.txt). Before committing, write the message to a file and run `node ${CLAUDE_SKILL_DIR}/scripts/check-golden-changes.mjs . --staged --message <file>`; at the end of the session run it with `--range <base>..HEAD` (base = the commit before the session's first).
-7. **When a golden fails later**: follow "When a golden fails" in the policy reference. Bug: fix the code and keep the golden. Intended: step 4 for that one file, then step 6. A daily entry changed: always a bug; if the generator truly must change, stop and ask the owner (new salt from a future date, or a break on one release day).
+7. **When a golden fails later**: follow "When a golden fails" in the policy reference. Bug: fix the code and keep the golden. Intended: step 4 for that one file, then step 6. A daily entry changed: always a bug once the game is released; if the generator truly must change, stop and ask the owner (new salt from a future date, or a break on one release day). Before the first release tag, fix the generator and re-accept the daily with a `Gate-Change:` trailer naming it.
 
 ## Definition of done
 
 - [ ] Every data golden has its `.snap.ios`, every pixel golden its nine PNGs, and `CI=1 npx jest --ci --selectProjects golden` passes.
 - [ ] Every new or changed golden was read (snapshot) or opened (PNG), and the report lists them with the reason.
-- [ ] Each game with a daily challenge pins at least three dates with a year boundary, and no existing daily entry changed.
+- [ ] Each game with a daily challenge pins at least three dates with a year boundary, and no existing daily entry changed after the game's first release tag (before it, only with a Gate-Change trailer naming the daily).
 - [ ] Every golden change sits in a commit with a `Gate-Change:` trailer; no tolerance went up.
 - [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-golden-changes.mjs . --range <base>..HEAD` prints `RESULT: PASS`.
 - [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-goldens.mjs .` prints `RESULT: PASS`
@@ -41,7 +41,7 @@ Goldens are the frozen answers of Pocket Arcade: the level each seed makes, the 
 
 - **`npx jest -u` to make a red suite green.** It rewrites every golden that differs, bugs included. Read the failure, fix the code, and update only the one file you meant to change.
 - **Editing the `.snap.ios` by hand.** The next `-u` or a renamed test undoes it, and it hides what the code really produces. Change the code, then regenerate that file.
-- **Re-accepting a daily golden "because the generator improved".** Players on the old and new app get different levels on the same day. Keep the output identical or ask the owner.
+- **Re-accepting a released game's daily golden "because the generator improved".** Players on the old and new app get different levels on the same day. Keep the output identical or ask the owner.
 - **A 400-line JSON dump as a golden.** Nobody reviews it, so any change gets accepted. Render the board as ASCII and pin the fields that matter.
 - **`toMatchSnapshot()` on a rendered screen.** Component trees churn on every style tweak and train `-u` reflexes. Assert roles and text; screens are covered by simulator screenshots.
 - **`failureThreshold: 0.01` in a test "because CanvasKit is noisy".** CanvasKit is byte-identical run to run; noise means the draw path reads time or randomness.

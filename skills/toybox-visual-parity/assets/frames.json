@@ -64,6 +64,14 @@
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
       },
+      "snareSnake": {
+        "gameStats": ["214", "96", "23"],
+        "progressMid": "3 / 6",
+        "progressFull": "6 / 6",
+        "progressMidParams": { "caught": 3, "total": 6 },
+        "progressFullParams": { "caught": 6, "total": 6 },
+        "loseReasonId": "snare-snake.lose.tangled"
+      },
       "swapGuard": {
         "gameStats": ["1,146", "2,318", "87"],
         "progressMid": "2 / 5",
@@ -278,6 +286,11 @@
         "scrap-shoved": 1562,
         "biggest-crash": 4
       },
+      "snareSnake": {
+        "critters-caught": 214,
+        "loops-closed": 96,
+        "longest-snake": 23
+      },
       "swapGuard": {
         "enemies-defeated": 1146,
         "swaps-made": 2318,
@@ -336,6 +349,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "snareSnake": {
+          "progressMid": { "caught": 3, "total": 6 },
+          "progressFull": { "caught": 6, "total": 6 },
+          "loseReasonId": "snare-snake.lose.tangled"
         },
         "swapGuard": {
           "progressMid": { "defeated": 2, "total": 5 },
