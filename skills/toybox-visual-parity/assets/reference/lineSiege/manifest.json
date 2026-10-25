@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "83db62c99f8c11f5e8f5d28e251c81fb9ebf1fc9a9edcfc926882b174be24660",
+  "design": "73fb8c24accaaed11a1a15e411f7683772e9aa097260127956c3f3f9d1afdd36",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "cc63ee25f93d34f9ed3146cc03ada317d724b7531a185edc56c6234df4e33d12",
+  "frames": "80c40bec3147500ff8fde4f3a9a0b89ef1ee0a5695180daaa6aef7047e0670a4",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1842,6 +1842,14 @@
    "variants": [],
    "what": "Poker Drop added to the design as a design game: its light and dark paint and logo layers in the token file (color.games.pokerDrop, logos.games.pokerDrop), its texts in the copy deck (games.pokerDrop: name, tagline, goal, progress line, win title, lose reason, three counter labels, four how-to-play and four tutorial steps, three pack names, in en, de, fa and ckb), its game switcher entry, palette, logo, sample statistics and how-to-play picture in the mockup. No Line Siege frame draws it: no committed reference moved.",
    "why": "spec 13: each game gets its own design pass, approved by the owner, before it is built. Drafted by E27-T01 on 2026-10-19 with the proposed paint, logo and texts; the owner approves it in the lead's combined message (the fa and ckb texts stay drafts for the owner's own review, O6)."
+  },
+  {
+   "id": "G-poker-drop-with-merged-games",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E27 put Poker Drop into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game gets its own design pass; the passes were drafted on separate branches and are joined here (E27 helper, 2026-10-25)."
   }
  ]
 }
