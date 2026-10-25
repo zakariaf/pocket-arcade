@@ -3,7 +3,7 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard, Poker Drop
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard, Toggle Drop, Poker Drop
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
@@ -175,6 +175,24 @@ Added by its design pass (2026-10-19): `write-palette.mjs --game swap-guard` tak
 
 Its light `sunken` sits nearer the surface than halfway (`#EAE4FC`): the halfway `#E4DDFA` failed `palette-contrast` with `danger` on sunken at 4.38:1.
 
+### Toggle Drop
+
+Added by its design pass on 2026-10-19.
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#CEC6F5` Lilac wash | `#1C1636` Arcade night |
+| surface | surface | `#FBFAFF` Chalk | `#2C2454` Cabinet |
+| sunken | sunken | `#E8E3FB` | `#241D45` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#F5F2FF` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#BBB0EA` Dusk lilac |
+| outline | border | `#1D1B3A` | `#E6E0FF` |
+| shadow | shadow | `#1D1B3A` | `#08061A` |
+| accent | primary | `#FF7EB0` Bubblegum | `#FF91BD` Glow gum |
+| onAccent | onPrimary | `#1D1B3A` | `#1C1636` |
+| pop | pop | `#BDEB5C` Lime ball | `#C8F26E` Glow lime |
+| onPop | onPop | `#1D1B3A` | `#1C1636` |
+
 ### Poker Drop
 
 Added by its own design pass (2026-10-19): a lilac card-room felt with ruby hearts and a green table.
@@ -245,7 +263,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard, Poker Drop) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard, Toggle Drop, Poker Drop) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).

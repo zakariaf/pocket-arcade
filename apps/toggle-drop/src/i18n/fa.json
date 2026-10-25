@@ -1,0 +1,22 @@
+{
+  "toggle-drop.board.summary": "{cupsCount, plural, one {# سبد} other {# سبد}}، {cupsLeft, plural, one {# سبد هنوز پر نشده} other {# سبد هنوز پر نشده}}",
+  "toggle-drop.goal": "پیش از تمام شدن توپ‌ها، همهٔ سبدها را پر کنید.",
+  "toggle-drop.how-to-play.step-1": "روی یک ستون بزنید تا توپی بیفتد.",
+  "toggle-drop.how-to-play.step-2": "هر اهرم توپ را به سمت خودش می‌فرستد و بعد برمی‌گردد.",
+  "toggle-drop.how-to-play.step-3": "توپ بعدی به اهرم‌های برگشته می‌خورد.",
+  "toggle-drop.how-to-play.step-4": "همهٔ سبدها را با کمترین توپ ممکن پر کنید.",
+  "toggle-drop.lose.out-of-balls": "توپ‌هایتان تمام شد",
+  "toggle-drop.name": "Toggle Drop",
+  "toggle-drop.pack-name.1": "صفحهٔ گرم کردن",
+  "toggle-drop.pack-name.2": "حیاط اهرم‌ها",
+  "toggle-drop.pack-name.3": "آبشار بزرگ",
+  "toggle-drop.progress": "سبد {filled, number} / {total, number}",
+  "toggle-drop.stats.balls-dropped": "توپ‌های انداخته‌شده",
+  "toggle-drop.stats.cups-filled": "سبدهای پرشده",
+  "toggle-drop.stats.switches-flipped": "اهرم‌های برگشته",
+  "toggle-drop.tagline": "هر اهرم برمی‌گردد. توپ‌ها را با نقشه بیندازید.",
+  "toggle-drop.tutorial.step-1": "روی این ستون بزنید تا توپی بیفتد.",
+  "toggle-drop.tutorial.step-2": "اهرم برگشت. دوباره همین‌جا بیندازید!",
+  "toggle-drop.tutorial.step-3": "توپ به سمت دیگر رفت! حالا آخرین سبد را پر کنید.",
+  "toggle-drop.win-title": "همهٔ سبدها پر شد!"
+}

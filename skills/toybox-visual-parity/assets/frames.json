@@ -1,7 +1,10 @@
 {
   "version": 1,
   "about": "One entry per design frame key of screen-testids.json: the testID that proves the app reached the frame (root), and the exact app state the design draws (state). Optional per frame: variants (design-derived references for other game facts), board and boardMask (the game's own board, masked), modal (a front layer VoiceOver keeps to itself), designFixes (a sample the mockup fixes to one language, re-rendered in the render language) and designMasks (unlisted parts behind a dialog, masked as their own frame masks them). capture-app.mjs launches the app with -parity \"frame=<key>&theme=..&lang=..&game=..&date=2026-09-27&animations=off\"; the app's test-only parity harness turns that into this state. Numbers are Line Siege's; the other design games use the values in fixture.games. fixture describes the player as the design draws it; fixtureSave is the same player as save-document sections, which the harness writes (templates/packages/shell/src/app/parity/parity-fixture-save.json is a copy; check-harness.mjs compares them).",
-  "launchDefaults": { "date": "2026-09-27", "animations": "off" },
+  "launchDefaults": {
+    "date": "2026-09-27",
+    "animations": "off"
+  },
   "designFacts": {
     "about": "The game facts the mockup draws: Music (the S11 Music rows, the S6 Music key, the Music rows of Settings under the S14 reset dialog), a moves-rated win line ('7 moves – par 7') and a hint key in the S5 top bar. A frame whose design state depends on a game fact has reference variants (frames.<key>.variants) derived from the rendered mockup for the other values; variants compose (every variant the facts match applies, in this file's order: s6-pause--no-music--no-hints). Captures pick the reference from the app's facts in parity/game-facts.json (hasMusic: the sound bank has a sound in category music; winLine: 'moves' when levels are rated by moves against par, 'score' when the stars rule is score-based; hasHints: the rules' hint policy is a solver, the rule behind isHintSupported). A fact missing from the file stops every script (exit 2).",
     "hasMusic": true,
@@ -17,13 +20,46 @@
     "bestDailyStreak": 12,
     "movesCount": 7,
     "par": 7,
-    "priceText": { "en": "€1.99", "de": "1,99 €", "fa": "€۱٫۹۹", "ckb": "€ ۱٫۹۹" },
+    "priceText": {
+      "en": "€1.99",
+      "de": "1,99 €",
+      "fa": "€۱٫۹۹",
+      "ckb": "€ ۱٫۹۹"
+    },
     "versionText": "1.0.0 (8)",
     "emailText": "support@example.com",
-    "levelStars": [3, 3, 2, 3, 1, 3, 3, 2, 3, 2, 3],
+    "levelStars": [
+      3,
+      3,
+      2,
+      3,
+      1,
+      3,
+      3,
+      2,
+      3,
+      2,
+      3
+    ],
     "packStars": "28 / 90 (31 %)",
-    "weekMarks": ["missed", "done", "done", "done", "done", "done", "today"],
-    "weekGames": [0, 3, 5, 2, 6, 4, 1],
+    "weekMarks": [
+      "missed",
+      "done",
+      "done",
+      "done",
+      "done",
+      "done",
+      "today"
+    ],
+    "weekGames": [
+      0,
+      3,
+      5,
+      2,
+      6,
+      4,
+      1
+    ],
     "stats": {
       "gamesPlayed": 58,
       "wins": 36,
@@ -41,75 +77,183 @@
     },
     "games": {
       "lineSiege": {
-        "gameStats": ["1,284", "3,907", "×6"],
+        "gameStats": [
+          "1,284",
+          "3,907",
+          "×6"
+        ],
         "progressMid": "3 / 10",
         "progressFull": "10 / 10",
-        "progressMidParams": { "defeated": 3, "total": 10 },
-        "progressFullParams": { "defeated": 10, "total": 10 },
+        "progressMidParams": {
+          "defeated": 3,
+          "total": 10
+        },
+        "progressFullParams": {
+          "defeated": 10,
+          "total": 10
+        },
         "loseReasonId": "line-siege.lose.broke-through"
       },
       "flockTilt": {
-        "gameStats": ["612", "2,145", "38"],
+        "gameStats": [
+          "612",
+          "2,145",
+          "38"
+        ],
         "progressMid": "2 / 4",
         "progressFull": "4 / 4",
-        "progressMidParams": { "penned": 2, "total": 4 },
-        "progressFullParams": { "penned": 4, "total": 4 },
+        "progressMidParams": {
+          "penned": 2,
+          "total": 4
+        },
+        "progressFullParams": {
+          "penned": 4,
+          "total": 4
+        },
         "loseReasonId": "flock-tilt.lose.wolf-got-sheep"
       },
       "scrapShove": {
-        "gameStats": ["947", "1,562", "×4"],
+        "gameStats": [
+          "947",
+          "1,562",
+          "×4"
+        ],
         "progressMid": "4 / 6",
         "progressFull": "6 / 6",
-        "progressMidParams": { "wrecked": 4, "total": 6 },
-        "progressFullParams": { "wrecked": 6, "total": 6 },
+        "progressMidParams": {
+          "wrecked": 4,
+          "total": 6
+        },
+        "progressFullParams": {
+          "wrecked": 6,
+          "total": 6
+        },
         "loseReasonId": "scrap-shove.lose.caught"
       },
       "snareSnake": {
-        "gameStats": ["214", "96", "23"],
+        "gameStats": [
+          "214",
+          "96",
+          "23"
+        ],
         "progressMid": "3 / 6",
         "progressFull": "6 / 6",
-        "progressMidParams": { "caught": 3, "total": 6 },
-        "progressFullParams": { "caught": 6, "total": 6 },
+        "progressMidParams": {
+          "caught": 3,
+          "total": 6
+        },
+        "progressFullParams": {
+          "caught": 6,
+          "total": 6
+        },
         "loseReasonId": "snare-snake.lose.tangled"
       },
       "mergeSiege": {
-        "gameStats": ["1,532", "2,876", "512"],
+        "gameStats": [
+          "1,532",
+          "2,876",
+          "512"
+        ],
         "progressMid": "5 / 12",
         "progressFull": "12 / 12",
-        "progressMidParams": { "smashed": 5, "total": 12 },
-        "progressFullParams": { "smashed": 12, "total": 12 },
+        "progressMidParams": {
+          "smashed": 5,
+          "total": 12
+        },
+        "progressFullParams": {
+          "smashed": 12,
+          "total": 12
+        },
         "loseReasonId": "merge-siege.lose.overrun"
       },
       "jumpChain": {
-        "gameStats": ["1,462", "318", "×5"],
+        "gameStats": [
+          "1,462",
+          "318",
+          "×5"
+        ],
         "progressMid": "7 / 12",
         "progressFull": "12 / 12",
-        "progressMidParams": { "captured": 7, "total": 12 },
-        "progressFullParams": { "captured": 12, "total": 12 },
+        "progressMidParams": {
+          "captured": 7,
+          "total": 12
+        },
+        "progressFullParams": {
+          "captured": 12,
+          "total": 12
+        },
         "loseReasonId": "jump-chain.lose.overrun"
       },
       "stepstone": {
-        "gameStats": ["1,342", "46", "×4"],
+        "gameStats": [
+          "1,342",
+          "46",
+          "×4"
+        ],
         "progressMid": "3 / 7",
         "progressFull": "7 / 7",
-        "progressMidParams": { "moves": 3, "par": 7 },
-        "progressFullParams": { "moves": 7, "par": 7 },
+        "progressMidParams": {
+          "moves": 3,
+          "par": 7
+        },
+        "progressFullParams": {
+          "moves": 7,
+          "par": 7
+        },
         "loseReasonId": "stepstone.lose.stuck"
       },
       "swapGuard": {
-        "gameStats": ["1,146", "2,318", "87"],
+        "gameStats": [
+          "1,146",
+          "2,318",
+          "87"
+        ],
         "progressMid": "2 / 5",
         "progressFull": "5 / 5",
-        "progressMidParams": { "defeated": 2, "total": 5 },
-        "progressFullParams": { "defeated": 5, "total": 5 },
+        "progressMidParams": {
+          "defeated": 2,
+          "total": 5
+        },
+        "progressFullParams": {
+          "defeated": 5,
+          "total": 5
+        },
         "loseReasonId": "swap-guard.lose.hit"
       },
+      "toggleDrop": {
+        "gameStats": [
+          "412",
+          "1,938",
+          "286"
+        ],
+        "progressMid": "1 / 3",
+        "progressFull": "3 / 3",
+        "progressMidParams": {
+          "filled": 1,
+          "total": 3
+        },
+        "progressFullParams": {
+          "filled": 3,
+          "total": 3
+        },
+        "loseReasonId": "toggle-drop.lose.out-of-balls"
+      },
       "pokerDrop": {
-        "gameStats": ["836", "97", "×4"],
+        "gameStats": [
+          "836",
+          "97",
+          "×4"
+        ],
         "progressMid": "3 / 8",
         "progressFull": "8 / 8",
-        "progressMidParams": { "made": 3, "total": 8 },
-        "progressFullParams": { "made": 8, "total": 8 },
+        "progressMidParams": {
+          "made": 3,
+          "total": 8
+        },
+        "progressFullParams": {
+          "made": 8,
+          "total": 8
+        },
         "loseReasonId": "poker-drop.lose.well-full"
       }
     }
@@ -343,6 +487,11 @@
         "swaps-made": 2318,
         "double-hits": 87
       },
+      "toggleDrop": {
+        "balls-dropped": 412,
+        "switches-flipped": 1938,
+        "cups-filled": 286
+      },
       "pokerDrop": {
         "hands-made": 836,
         "big-hands": 97,
@@ -388,48 +537,113 @@
       "isContinueOffered": true,
       "games": {
         "lineSiege": {
-          "progressMid": { "defeated": 3, "total": 10 },
-          "progressFull": { "defeated": 10, "total": 10 },
+          "progressMid": {
+            "defeated": 3,
+            "total": 10
+          },
+          "progressFull": {
+            "defeated": 10,
+            "total": 10
+          },
           "loseReasonId": "line-siege.lose.broke-through"
         },
         "flockTilt": {
-          "progressMid": { "penned": 2, "total": 4 },
-          "progressFull": { "penned": 4, "total": 4 },
+          "progressMid": {
+            "penned": 2,
+            "total": 4
+          },
+          "progressFull": {
+            "penned": 4,
+            "total": 4
+          },
           "loseReasonId": "flock-tilt.lose.wolf-got-sheep"
         },
         "scrapShove": {
-          "progressMid": { "wrecked": 4, "total": 6 },
-          "progressFull": { "wrecked": 6, "total": 6 },
+          "progressMid": {
+            "wrecked": 4,
+            "total": 6
+          },
+          "progressFull": {
+            "wrecked": 6,
+            "total": 6
+          },
           "loseReasonId": "scrap-shove.lose.caught"
         },
         "snareSnake": {
-          "progressMid": { "caught": 3, "total": 6 },
-          "progressFull": { "caught": 6, "total": 6 },
+          "progressMid": {
+            "caught": 3,
+            "total": 6
+          },
+          "progressFull": {
+            "caught": 6,
+            "total": 6
+          },
           "loseReasonId": "snare-snake.lose.tangled"
         },
         "mergeSiege": {
-          "progressMid": { "smashed": 5, "total": 12 },
-          "progressFull": { "smashed": 12, "total": 12 },
+          "progressMid": {
+            "smashed": 5,
+            "total": 12
+          },
+          "progressFull": {
+            "smashed": 12,
+            "total": 12
+          },
           "loseReasonId": "merge-siege.lose.overrun"
         },
         "jumpChain": {
-          "progressMid": { "captured": 7, "total": 12 },
-          "progressFull": { "captured": 12, "total": 12 },
+          "progressMid": {
+            "captured": 7,
+            "total": 12
+          },
+          "progressFull": {
+            "captured": 12,
+            "total": 12
+          },
           "loseReasonId": "jump-chain.lose.overrun"
         },
         "stepstone": {
-          "progressMid": { "moves": 3, "par": 7 },
-          "progressFull": { "moves": 7, "par": 7 },
+          "progressMid": {
+            "moves": 3,
+            "par": 7
+          },
+          "progressFull": {
+            "moves": 7,
+            "par": 7
+          },
           "loseReasonId": "stepstone.lose.stuck"
         },
         "swapGuard": {
-          "progressMid": { "defeated": 2, "total": 5 },
-          "progressFull": { "defeated": 5, "total": 5 },
+          "progressMid": {
+            "defeated": 2,
+            "total": 5
+          },
+          "progressFull": {
+            "defeated": 5,
+            "total": 5
+          },
           "loseReasonId": "swap-guard.lose.hit"
         },
+        "toggleDrop": {
+          "progressMid": {
+            "filled": 1,
+            "total": 3
+          },
+          "progressFull": {
+            "filled": 3,
+            "total": 3
+          },
+          "loseReasonId": "toggle-drop.lose.out-of-balls"
+        },
         "pokerDrop": {
-          "progressMid": { "made": 3, "total": 8 },
-          "progressFull": { "made": 8, "total": 8 },
+          "progressMid": {
+            "made": 3,
+            "total": 8
+          },
+          "progressFull": {
+            "made": 8,
+            "total": 8
+          },
           "loseReasonId": "poker-drop.lose.well-full"
         }
       }
@@ -464,25 +678,53 @@
     "s6-pause": {
       "root": "game.screen",
       "state": "Game screen at level 12 with the design's numbers in the top bar (debugControls().applyFixtureHud: score 1,840, the progress line at the mid values, Line Siege 'Monsters 3 / 10'); the game's own board is masked (probe=board). Pause dialog open (the Game screen's session controls call pause() once), Sound on, Music off, Vibration on.",
-      "board": { "above": ["pause.dialog"] },
+      "board": {
+        "above": [
+          "pause.dialog"
+        ]
+      },
       "modal": {
         "reachedBy": "pause.dialog",
-        "hidden": ["game.top-bar", "game.pause-button", "game.mode-label", "game.progress-label", "game.score", "game.undo-button", "game.hint-button", "game.board"],
+        "hidden": [
+          "game.top-bar",
+          "game.pause-button",
+          "game.mode-label",
+          "game.progress-label",
+          "game.score",
+          "game.undo-button",
+          "game.hint-button",
+          "game.board"
+        ],
         "why": "The Pause layer is modal for VoiceOver: the Scrim is the modal root (accessibilityViewIsModal), so the accessibility tree Maestro reads holds only the scrim, the dialog and their parts (and the launch marker the Scrim draws); the paused Game screen under it is not listed. The frame is proven reached by pause.dialog, the screen root sits at its known full-screen position, and the hidden elements are compared inside the root's crop (crop-only, like parts hidden from VoiceOver). pause.scrim is listed and compared like any element."
       },
       "variants": {
         "no-music": {
-          "when": { "hasMusic": false },
+          "when": {
+            "hasMusic": false
+          },
           "derive": [
-            { "hide": ":scope > .ov > .dlg.pause > .keys3 > .tk:nth-child(2)" },
-            { "style": ":scope > .ov > .dlg.pause > .keys3", "css": { "grid-template-columns": "repeat(2,minmax(0,1fr))" } }
+            {
+              "hide": ":scope > .ov > .dlg.pause > .keys3 > .tk:nth-child(2)"
+            },
+            {
+              "style": ":scope > .ov > .dlg.pause > .keys3",
+              "css": {
+                "grid-template-columns": "repeat(2,minmax(0,1fr))"
+              }
+            }
           ],
           "reason": "L1",
           "state": "As the base frame, for a game without music (its sound bank has no sound in category music): the Music key is gone and the Sound and Vibration keys share the row in two equal columns with the 10 pt gap, as the app's usePairLayout lays them out."
         },
         "no-hints": {
-          "when": { "hasHints": false },
-          "derive": [{ "hide": ":scope > .gtb > .ibtn.sm:last-child" }],
+          "when": {
+            "hasHints": false
+          },
+          "derive": [
+            {
+              "hide": ":scope > .gtb > .ibtn.sm:last-child"
+            }
+          ],
           "reason": "L8",
           "state": "As the base frame, for a game without solver hints (Line Siege): the S5 top bar under the scrim has no hint key, so its row ends with the undo key, exactly as the app's flex row lays it out without the key (the Pause dialog draws no hint entry). Composed with no-music as s6-pause--no-music--no-hints."
         }
@@ -491,15 +733,24 @@
     "s7-result-win": {
       "root": "result.screen",
       "state": "Level 12 won with 3 stars, shown in the end state (no pop-in; frozen motion). Score 1,840 with the 'New best!' sticker; progress line at the full values (10 / 10); moves 7 with par 7 (a moves-rated game). Not Premium, so the crown nudge with the price shows. Opened with debugControls().showFixtureResult(parityGameFixture({ isScoreRated }), 'won'), which writes nothing to the save.",
-      "board": { "above": ["result.screen"] },
+      "board": {
+        "above": [
+          "result.screen"
+        ]
+      },
       "variants": {
         "score": {
-          "when": { "winLine": "score" },
+          "when": {
+            "winLine": "score"
+          },
           "derive": [
             {
               "text": ":scope > .body.res > .panel.score > .sc-lines > span:nth-child(2)",
               "key": "result.win.score-line",
-              "values": { "score": 1840, "bestScore": 1840 }
+              "values": {
+                "score": 1840,
+                "bestScore": 1840
+              }
             }
           ],
           "texts": {
@@ -518,7 +769,11 @@
     "s7-result-lose": {
       "root": "result.screen",
       "state": "Level 12 lost: tilted logo picture (+17 deg), the game's first lose reason, the Continue-with-ad offer (the parity ads port has a rewarded ad ready), Try again hero key, Levels button. Not Premium. Opened with debugControls().showFixtureResult(parityGameFixture({ isScoreRated }), 'lost').",
-      "board": { "above": ["result.screen"] }
+      "board": {
+        "above": [
+          "result.screen"
+        ]
+      }
     },
     "s8-levels": {
       "root": "levels.screen",
@@ -541,10 +796,16 @@
       "root": "settings.screen",
       "variants": {
         "no-music": {
-          "when": { "hasMusic": false },
+          "when": {
+            "hasMusic": false
+          },
           "derive": [
-            { "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)" },
-            { "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)" }
+            {
+              "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)"
+            },
+            {
+              "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)"
+            }
           ],
           "reason": "L1",
           "state": "As the base frame, for a game without music: the Music switch row and the Music volume row are gone (settings rule: hidden when the game has no music) and the rows below close up; everything under the Sound group moves up by their height. Tall."
@@ -560,7 +821,9 @@
         {
           "sample": ":scope > .body > .list > .row:nth-child(1) > .tx > .lb",
           "key": "settings.language.system",
-          "values": { "languageName": "@autonym" },
+          "values": {
+            "languageName": "@autonym"
+          },
           "reason": "R3S-G17e"
         }
       ]
@@ -625,11 +888,17 @@
       "state": "Settings at scroll 0 under the scrim, with the reset-all-progress dialog; the hold button frozen at 46 % filled.",
       "variants": {
         "no-music": {
-          "when": { "hasMusic": false },
+          "when": {
+            "hasMusic": false
+          },
           "scope": "background",
           "derive": [
-            { "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)" },
-            { "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)" }
+            {
+              "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)"
+            },
+            {
+              "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)"
+            }
           ],
           "reason": "R3S-G17",
           "state": "As the base frame, for a game without music: the dimmed Settings under the dialog has no Music switch row and no Music volume row, and the rows below close up, as in s11-settings--no-music."
@@ -643,7 +912,9 @@
         {
           "sample": ":scope > .bg-under > .body > .list > .row:nth-child(1) > .tx > .lb",
           "key": "settings.language.system",
-          "values": { "languageName": "@autonym" },
+          "values": {
+            "languageName": "@autonym"
+          },
           "reason": "R3S-G17e"
         }
       ]

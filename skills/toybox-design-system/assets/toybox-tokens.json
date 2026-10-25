@@ -1141,6 +1141,130 @@
             }
           }
         }
+      },
+      "toggleDrop": {
+        "names": {
+          "light": {
+            "ground": "Lilac wash",
+            "surface": "Chalk",
+            "ink": "Toy ink",
+            "inkSoft": "Pencil",
+            "accent": "Bubblegum",
+            "pop": "Lime ball"
+          },
+          "dark": {
+            "ground": "Arcade night",
+            "surface": "Cabinet",
+            "ink": "Moonlight",
+            "inkSoft": "Dusk lilac",
+            "accent": "Glow gum",
+            "pop": "Glow lime"
+          }
+        },
+        "light": {
+          "ground": "#CEC6F5",
+          "surface": "#FBFAFF",
+          "sunken": "#E8E3FB",
+          "ink": "#1D1B3A",
+          "inkSoft": "#43406A",
+          "outline": "#1D1B3A",
+          "shadow": "#1D1B3A",
+          "accent": "#FF7EB0",
+          "onAccent": "#1D1B3A",
+          "pop": "#BDEB5C",
+          "onPop": "#1D1B3A"
+        },
+        "dark": {
+          "ground": "#1C1636",
+          "surface": "#2C2454",
+          "sunken": "#241D45",
+          "ink": "#F5F2FF",
+          "inkSoft": "#BBB0EA",
+          "outline": "#E6E0FF",
+          "shadow": "#08061A",
+          "accent": "#FF91BD",
+          "onAccent": "#1C1636",
+          "pop": "#C8F26E",
+          "onPop": "#1C1636"
+        },
+        "colorTokens": {
+          "standard": {
+            "light": {
+              "background": "#CEC6F5",
+              "surface": "#FBFAFF",
+              "sunken": "#E8E3FB",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#FF7EB0",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#BDEB5C",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#1C1636",
+              "surface": "#2C2454",
+              "sunken": "#241D45",
+              "text": "#F5F2FF",
+              "textMuted": "#BBB0EA",
+              "primary": "#FF91BD",
+              "onPrimary": "#1C1636",
+              "border": "#E6E0FF",
+              "danger": "#FF8593",
+              "icon": "#F5F2FF",
+              "starOn": "#FFD23F",
+              "starOff": "#BBB0EA",
+              "pop": "#C8F26E",
+              "onPop": "#1C1636",
+              "shadow": "#08061A",
+              "focus": "#FF8AD8"
+            }
+          },
+          "colorBlind": {
+            "light": {
+              "background": "#CEC6F5",
+              "surface": "#FBFAFF",
+              "sunken": "#E8E3FB",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#FF7EB0",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#BDEB5C",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#1C1636",
+              "surface": "#2C2454",
+              "sunken": "#241D45",
+              "text": "#F5F2FF",
+              "textMuted": "#BBB0EA",
+              "primary": "#FF91BD",
+              "onPrimary": "#1C1636",
+              "border": "#E6E0FF",
+              "danger": "#FF8593",
+              "icon": "#F5F2FF",
+              "starOn": "#FFD23F",
+              "starOff": "#BBB0EA",
+              "pop": "#C8F26E",
+              "onPop": "#1C1636",
+              "shadow": "#08061A",
+              "focus": "#FF8AD8"
+            }
+          }
+        }
       }
     },
     "shell": {
@@ -3596,6 +3720,33 @@
         {
           "role": "kl",
           "d": "M15.5 19H31.5M27.5 15L31.5 19L27.5 23M32.5 29.5H16.5M20.5 25.5L16.5 29.5L20.5 33.5"
+        }
+      ],
+      "toggleDrop": [
+        {
+          "role": "kl",
+          "d": "M24 27V40M16.5 41.5h15"
+        },
+        {
+          "role": "w",
+          "d": "M9 22.5H39A3.5 3.5 0 0 1 39 29.5H9A3.5 3.5 0 0 1 9 22.5Z",
+          "transform": "rotate(16 24 26)"
+        },
+        {
+          "role": "k",
+          "d": "M21 26A3 3 0 1 0 27 26A3 3 0 1 0 21 26Z"
+        },
+        {
+          "role": "p",
+          "d": "M8 11A6.5 6.5 0 1 0 21 11A6.5 6.5 0 1 0 8 11Z"
+        },
+        {
+          "role": "w0",
+          "d": "M11 9A1.7 1.7 0 1 0 14.4 9A1.7 1.7 0 1 0 11 9Z"
+        },
+        {
+          "role": "kl",
+          "d": "M30.5 10.5Q38 10 40.5 16.5M36.3 15.9 40.5 16.5 41.7 12.5"
         }
       ]
     }
