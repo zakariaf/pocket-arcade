@@ -8,13 +8,18 @@ import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { distinctTurns, edgesOf } from './tiles.ts';
 import { TRAIL_CLEAR_PERSISTENCE, parseMove, parseState } from './trail-clear-persistence.ts';
+import { knobsFor } from './trail-clear-tuning.ts';
+import { fits } from './trails.ts';
 
-import type { TrailClearMove, TrailClearState } from './trail-clear-types.ts';
+import type { PlacedTile, TileKind, TrailClearMove, TrailClearState } from './trail-clear-types.ts';
 
 const RULES = { listMoves, applyMove };
 const START = create(1, 0);
 const TILE = { kind: 'road-end', turns: 1, placedAt: 3 };
+/** Seed 1's opening gap: column 3, row 2 (create.test.ts pins the board). */
+const OPENING_GAP = 2 * 5 + 3;
 
 /** A seeded line of play and its states. */
 function played(seed: number, difficulty: number, choices: readonly number[]) {
@@ -98,6 +103,71 @@ describe('parseState', () => {
     ['an RNG word above 32 bits', { ...START, rng: [1, 2, 3, 2 ** 33] }],
   ])('refuses %s', (_, json) => {
     expect(parseState(JSON.parse(JSON.stringify(json)))).toBeNull();
+  });
+});
+
+/** START with a `kind` tile on the opening's gap, placed by placement 1, turned to fit or not. */
+function withGapTile(kind: TileKind, isClosing: boolean): TrailClearState {
+  const gap = OPENING_GAP;
+  const turns = distinctTurns(kind).find(
+    (turn) => fits(START.cells, gap, edgesOf(kind, turn)) === isClosing,
+  );
+  const tile: PlacedTile = { kind, turns: turns ?? 0, placedAt: 1 };
+  return {
+    ...START,
+    placements: 1,
+    cells: START.cells.map((old, index) => (index === gap ? tile : old)),
+  };
+}
+
+/** A state of real play with several tiles of its own on the board. */
+const MID = played(1, 0, [3, 1, 4, 1, 5, 9, 2, 6]).states.at(-1) ?? START;
+const placedCells = MID.cells.flatMap((tile, index) =>
+  tile !== null && tile.placedAt > 0 ? [index] : [],
+);
+
+function retagged(cell: number, placedAt: number): TrailClearState {
+  return {
+    ...MID,
+    cells: MID.cells.map((tile, index) =>
+      index === cell && tile !== null ? { ...tile, placedAt } : tile,
+    ),
+  };
+}
+
+describe('parseState refuses a save that legal play cannot reach', () => {
+  it('starts from a played state with tiles of its own, which it accepts', () => {
+    expect(placedCells.length).toBeGreaterThanOrEqual(2);
+    expect(parseState(JSON.parse(JSON.stringify(MID)))).toStrictEqual(MID);
+  });
+
+  it.each([
+    [
+      'two tiles with the same placement number (a tile id used twice)',
+      () => retagged(placedCells[1] ?? 0, MID.cells[placedCells[0] ?? 0]?.placedAt ?? 0),
+    ],
+    [
+      'a tile placed after the last placement',
+      () => retagged(placedCells[0] ?? 0, MID.placements + 1),
+    ],
+    ['a third opening tile', () => retagged(placedCells[0] ?? 0, 0)],
+    ['a tile whose edges do not match its neighbour', () => withGapTile('road-straight', false)],
+    [
+      'a closed loop left on the board (a loop is wiped when it closes)',
+      () => withGapTile('ford', true),
+    ],
+    ['a score without a closed loop', () => ({ ...START, score: 40 })],
+    ['a closed loop without a score', () => ({ ...START, loopsClosed: 1 })],
+    [
+      'more than two loops for each placement',
+      () => ({ ...START, placements: 1, loopsClosed: 3, score: 480 }),
+    ],
+    [
+      'more placements than the level bag holds',
+      () => ({ ...START, placements: knobsFor(0).bag + 1 }),
+    ],
+  ])('refuses %s', (_, make) => {
+    expect(parseState(JSON.parse(JSON.stringify(make())))).toBeNull();
   });
 });
 

@@ -1,10 +1,12 @@
 // apps/trail-clear/src/rules/trail-clear-persistence.ts
 // Spec 8.6 / N10: a saved run is JSON from disk; rebuild a fresh typed state with explicit checks
 // and return null on anything unexpected (the Shell then drops only the run). Never cast.
+import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
-import { isTileKind } from './tiles.ts';
-import { TUNING } from './trail-clear-tuning.ts';
+import { edgesOf, isTileKind } from './tiles.ts';
+import { TUNING, knobsFor } from './trail-clear-tuning.ts';
+import { closedLoopsAt, fits } from './trails.ts';
 
 import type { PlacedTile, TrailClearMove, TrailClearState } from './trail-clear-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -86,6 +88,49 @@ function parseCounts(json: JsonRecord) {
   return isValid ? { difficulty, placements, score, loopsClosed, hasContinued } : null;
 }
 
+/** The opening deals two tiles before the first placement (placedAt 0). */
+const OPENING_TILES = 2;
+/** One placement closes at most a road and a river. */
+const MOST_LOOPS_PER_PLACEMENT = 2;
+
+/** Each tile's placement number: at most the opening's two at 0, the others once each, none ahead. */
+function areTileIdsReachable(state: TrailClearState): boolean {
+  const ids = state.cells.flatMap((tile) => (tile === null ? [] : [tile.placedAt]));
+  const placed = ids.filter((id) => id > 0);
+  return (
+    ids.length - placed.length <= OPENING_TILES &&
+    new Set(placed).size === placed.length &&
+    placed.every((id) => id <= state.placements)
+  );
+}
+
+/** Every tile fits its neighbours and the rim, and no closed loop is left (it is wiped as it closes). */
+function isBoardReachable(cells: readonly (PlacedTile | null)[]): boolean {
+  return cells.every((tile, cell) => {
+    if (tile === null) return true;
+    const without = cells.map((old, index) => (index === cell ? null : old));
+    return (
+      fits(without, cell, edgesOf(tile.kind, tile.turns)) && closedLoopsAt(cells, cell).length === 0
+    );
+  });
+}
+
+/** The counters agree: a score exactly when a loop closed, at most two loops a placement, the bag. */
+function areCountsReachable(state: TrailClearState): boolean {
+  const isWithinBag =
+    isEndlessDifficulty(state.difficulty) || state.placements <= knobsFor(state.difficulty).bag;
+  return (
+    (state.score === 0) === (state.loopsClosed === 0) &&
+    state.loopsClosed <= MOST_LOOPS_PER_PLACEMENT * state.placements &&
+    isWithinBag
+  );
+}
+
+/** True when legal play from some start can reach the state (N10: a damaged save is dropped). */
+function isReachable(state: TrailClearState): boolean {
+  return areCountsReachable(state) && areTileIdsReachable(state) && isBoardReachable(state.cells);
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): TrailClearState | null {
   if (!isRecord(json) || !hasExactly(json, STATE_KEYS)) return null;
@@ -97,7 +142,8 @@ export function parseState(json: unknown): TrailClearState | null {
   if (counts === null || cells === null || rng === null || !isOfferedValid) return null;
   const { difficulty, placements, score, loopsClosed, hasContinued } = counts;
   // The keys in the state's own order, so a saved run gives back the same bytes.
-  return { difficulty, cells, offered, placements, score, loopsClosed, hasContinued, rng };
+  const state = { difficulty, cells, offered, placements, score, loopsClosed, hasContinued, rng };
+  return isReachable(state) ? state : null;
 }
 
 /** One logged move -> a typed move, or null (the Shell then drops only the undo history). */
