@@ -3,7 +3,7 @@
 // winnable by the witness (jump-chain-solver.ts). Jump Chain is a score game: stars come from score
 // thresholds set by the witness's final score, and par (the witness line's length) is only a filter.
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/jump-chain/rules/create.ts';
+import { createLayout } from '@e07/jump-chain/rules/create.ts';
 
 import { JUMP_CHAIN_SOLVER, WITNESS_MAX_NODES } from './jump-chain-solver.ts';
 
@@ -44,7 +44,7 @@ export const JUMP_CHAIN_LEVEL_PLAN: LevelPlan<JumpChainState, JumpChainMove> = {
   ],
   levelsPerPack: LEVELS_PER_PACK,
   difficultyFor,
-  create,
+  create: createLayout,
   solver: JUMP_CHAIN_SOLVER,
   maxNodes: WITNESS_MAX_NODES,
   // Witness losses are retries: on the hardest row the witness wins about a third of the seeds.

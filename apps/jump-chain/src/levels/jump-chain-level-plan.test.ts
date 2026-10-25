@@ -2,7 +2,7 @@
 // Spec 8.1 and D9: 3 packs x 30 levels from a seed and a difficulty, each won by the witness;
 // "Score games: 3 / 2 / 1 stars at score thresholds".
 import { ENDLESS_DIFFICULTY, MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/jump-chain/rules/create.ts';
+import { create, createLayout } from '@e07/jump-chain/rules/create.ts';
 
 import {
   JUMP_CHAIN_LEVEL_PLAN,
@@ -66,6 +66,12 @@ describe('scoreThresholds', () => {
 });
 
 describe('JUMP_CHAIN_LEVEL_PLAN', () => {
+  // Spec 8.1: the generator keeps a seed only when the witness wins its own layout, so the shipped
+  // board of every level is that layout, the one create() hands out first for a proven seed.
+  it('draws its candidate boards from each seed’s own layout', () => {
+    expect(JUMP_CHAIN_LEVEL_PLAN.create).toBe(createLayout);
+  });
+
   it('has a witness that wins seed 1 at difficulty 0', () => {
     expect(seedOne().witness.kind).toBe('solved');
   });
