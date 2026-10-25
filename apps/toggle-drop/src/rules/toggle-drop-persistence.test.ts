@@ -120,6 +120,22 @@ describe('parseState with runs legal play cannot reach', () => {
     expect(parseState(throughJson(json))).toBeNull();
   });
 
+  /** A 5 x 4 board of the second tuning row (three cups), keeping only its first `count` cups. */
+  const MEDIUM = create(1, 25);
+  const keepCups = (count: number): ToggleDropState => {
+    const cups = MEDIUM.needs.flatMap((need, col) => (need > 0 ? [col] : [])).slice(0, count);
+    return { ...MEDIUM, needs: MEDIUM.needs.map((need, col) => (cups.includes(col) ? need : 0)) };
+  };
+
+  it('refuses a board with fewer cups than its row and more than the fallback layout', () => {
+    expect(MEDIUM.needs.filter((need) => need > 0)).toHaveLength(3);
+    expect(parseState(throughJson(keepCups(2)))).toBeNull();
+  });
+
+  it('reads back a board of the fallback layout, which keeps only the opening cup', () => {
+    expect(parseState(throughJson(keepCups(1)))).toStrictEqual(keepCups(1));
+  });
+
   it('reads a run back after its drops, with its counts adding up', () => {
     const played = applyMove(EASY, { kind: 'drop', col: 0 }).state;
     expect(parseState(throughJson(played))).toStrictEqual(played);

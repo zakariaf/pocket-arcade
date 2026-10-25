@@ -118,6 +118,9 @@ export function drawLayout(rng: RngState, knobs: DifficultyKnobs): LayoutDraw {
   return { layout: { pegs: drawn.pegs, needs }, rng: pick.rng };
 }
 
+/** The cups a layout keeps once `layoutAttempts` draws failed: the opening cup alone. */
+export const FALLBACK_CUPS = 1;
+
 /**
  * The seeded layout of a board: up to `layoutAttempts` draws until one places every cup; after
  * that a draw keeps only the opening cup, which always succeeds (never reached by the tuned rows,
@@ -126,7 +129,7 @@ export function drawLayout(rng: RngState, knobs: DifficultyKnobs): LayoutDraw {
 export function layoutFor(seed: number, knobs: DifficultyKnobs): Layout {
   let rng = seedRng(seed);
   for (let attempt = 0; ; attempt += 1) {
-    const cups = attempt < TUNING.layoutAttempts ? knobs.cups : 1;
+    const cups = attempt < TUNING.layoutAttempts ? knobs.cups : FALLBACK_CUPS;
     const drawn = drawLayout(rng, { ...knobs, cups });
     if (drawn.layout !== null) return drawn.layout;
     rng = drawn.rng;

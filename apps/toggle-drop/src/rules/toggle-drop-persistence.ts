@@ -1,6 +1,7 @@
 // apps/toggle-drop/src/rules/toggle-drop-persistence.ts
 import { TOGGLE_DROP_TEACHING } from '@e07/toggle-drop/tutorial/toggle-drop-teaching.ts';
 
+import { FALLBACK_CUPS } from './create.ts';
 import { TUNING } from './toggle-drop-tuning.ts';
 
 import type { PegCell, ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
@@ -87,12 +88,12 @@ function flipsByRow(state: ToggleDropState): number[] {
 
 const cupsOf = (needs: readonly number[]): number => needs.filter((need) => need > 0).length;
 
-/** The boards create() makes: one shape per tuning row. */
+/** The boards create() makes: one shape per tuning row, with its cups or the fallback's. */
 const LEVEL_SHAPES: readonly RunShape[] = TUNING.levelRows.map((knobs) => ({
   cols: knobs.cols,
   rows: knobs.rows,
   rowSwitches: Array.from({ length: knobs.rows }, () => knobs.switchesPerRow),
-  cupCounts: Array.from({ length: knobs.cups }, (_, index) => index + 1),
+  cupCounts: [knobs.cups, FALLBACK_CUPS],
   lineDrops: knobs.witnessDrops,
   balls: knobs.witnessDrops + knobs.spareBalls,
 }));
