@@ -64,22 +64,21 @@ export function applyMutation(dir, ops, label) {
 
 /**
  * Returns a temporary fixtures folder: good/ plus one bad-<case>/ or pass-<case>/ per folder in
- * `mutations` (with its EXPECT.txt when it has one). `build(dir)` writes the good repo.
+ * `mutations` (each with its EXPECT.txt; a pass- case is a change the checker must still pass).
+ * `build(dir)` writes the good repo.
  */
 export function assembleFixtures(mutations, build) {
   const out = makeTempDir('rules-engine-fixtures-');
   const good = join(out, 'good');
   mkdirSync(good);
   build(good);
-  // bad-* cases plant a bug that must be reported; pass-* cases change the good repo in a way that
-  // must still pass (each EXPECT.txt, when present, names lines the output must hold).
   const cases = readdirSync(mutations).filter((entry) => entry.startsWith('bad-') || entry.startsWith('pass-'));
   for (const name of cases.sort()) {
     const target = join(out, name);
     cpSync(good, target, { recursive: true });
     const ops = JSON.parse(readFileSync(join(mutations, name, 'mutation.json'), 'utf8'));
     applyMutation(target, ops, name);
-    if (existsSync(join(mutations, name, 'EXPECT.txt'))) cpSync(join(mutations, name, 'EXPECT.txt'), join(target, 'EXPECT.txt'));
+    cpSync(join(mutations, name, 'EXPECT.txt'), join(target, 'EXPECT.txt'));
   }
   return out;
 }

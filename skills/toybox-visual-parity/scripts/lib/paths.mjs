@@ -1,7 +1,7 @@
 // Where this skill keeps its data. Every script resolves defaults from here, so the skill works
 // from any install location (${CLAUDE_SKILL_DIR}, a symlink, or a copy).
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { fail } from '../check-lib.mjs';
@@ -16,16 +16,9 @@ export const DEFAULTS = Object.freeze({
   frames: join(ASSETS_DIR, 'frames.json'),
   device: join(ASSETS_DIR, 'device', 'iphone16pro.json'),
   reference: join(ASSETS_DIR, 'reference'),
+  /** The shared Toybox token file: its color.games are the design games. */
   tokens: join(ASSETS_DIR, 'toybox-tokens.json'),
 });
-
-/**
- * The Toybox token file whose games are the design games: the skill's synced copy, or the file
- * PARITY_TOKENS_FILE names (the self-test's planted token files).
- */
-export function tokensFileOf(env = process.env) {
-  return env.PARITY_TOKENS_FILE ? resolve(env.PARITY_TOKENS_FILE) : DEFAULTS.tokens;
-}
 
 /** Read and parse a JSON file, or stop with exit 2 naming the file. */
 export function readJson(path, what = 'JSON file') {

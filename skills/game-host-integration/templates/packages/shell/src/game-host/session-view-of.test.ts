@@ -20,7 +20,12 @@ function freshRun() {
 
 describe('sessionViewOf', () => {
   it('shows the played run as plain data', () => {
-    const view = sessionViewOf(DEPS, freshRun(), { summary: null, hint: null, fixture: null });
+    const view = sessionViewOf(DEPS, freshRun(), {
+      summary: null,
+      hint: null,
+      fixture: null,
+      refused: null,
+    });
     expect(view).toMatchObject({
       status: 'playing',
       ref: LEVEL_1,
@@ -39,7 +44,12 @@ describe('sessionViewOf', () => {
       goal: { kind: 'moves-par', moves: 7, par: 7 },
       score: 1840,
     } as const;
-    const extras = { summary: null, hint: null, fixture: { hud, status: 'paused' } } as const;
+    const extras = {
+      summary: null,
+      hint: null,
+      fixture: { hud, status: 'paused' },
+      refused: null,
+    } as const;
     expect(sessionViewOf(DEPS, freshRun(), extras)).toMatchObject({
       status: 'paused',
       ref: LEVEL_1,

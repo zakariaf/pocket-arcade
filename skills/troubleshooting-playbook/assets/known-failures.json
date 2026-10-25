@@ -1947,6 +1947,20 @@
       "skill": "golden-tests"
     },
     {
+      "id": "engine-android-skia-app-fonts",
+      "area": "engine",
+      "topic": "Skia",
+      "symptom": "Numbers or text drawn on a Skia board are blank on Android but show on iOS (monster health pills empty)",
+      "cause": "The face came from Skia.FontMgr.System().matchFamilyStyle; Android's Skia font manager reads only /system/fonts and answers an app font with an empty face",
+      "fix": "Make the face from the bundled TTF's bytes on both platforms: boardNumberTypeface() through the BoardFont native module (board-rendering-skia, rule font-system-manager)",
+      "match": [
+        "matchFamilyStyle"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "board-rendering-skia"
+    },
+    {
       "id": "engine-zustand-new-object",
       "area": "engine",
       "topic": "State",
