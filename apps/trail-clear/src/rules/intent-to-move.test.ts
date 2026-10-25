@@ -50,6 +50,15 @@ describe('intentToMove', () => {
     ]);
   });
 
+  it('cancels a drag released back where it started: no move, the tile stays offered', () => {
+    const back = distinctTurns('ford').map((_, index) =>
+      intentToMove(STATE, { kind: 'drag-end', from: slot(index), to: slot(index) }),
+    );
+    expect(back).toStrictEqual(distinctTurns('ford').map(() => null));
+    const onBoard = intentToMove(STATE, { kind: 'drag-end', from: cell(3, 2), to: cell(3, 2) });
+    expect(onBoard).toBeNull();
+  });
+
   it('places the selected turn where the next tap lands (tap-then-tap)', () => {
     const tap: InputIntent = { kind: 'tap', target: cell(3, 2), selected: slot(1) };
     expect(intentToMove(STATE, tap)).toStrictEqual(DOUBLE);
