@@ -151,6 +151,15 @@ describe('create proves every level board it hands out (spec 8.1: no level is im
     },
   );
 
+  it('asks the witness once for a seed and difficulty that start, resume and the run end all create', () => {
+    const first = create(LOST_FIRST_SEED, 30);
+    const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
+    expect(create(LOST_FIRST_SEED, 30)).toStrictEqual(first);
+    expect(create(LOST_FIRST_SEED, 30.4)).toStrictEqual(first);
+    expect(solve).not.toHaveBeenCalled();
+    solve.mockRestore();
+  });
+
   it("keeps the endless run's first board: it is never won, so never proven", () => {
     expect(create(LOST_FIRST_SEED, 100)).toStrictEqual(drawStart(LOST_FIRST_SEED, 100));
   });

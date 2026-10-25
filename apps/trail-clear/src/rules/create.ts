@@ -104,6 +104,28 @@ export function drawStart(seed: number, difficulty: number): TrailClearState {
   return drawBoard(seedRng(seed), clampDifficulty(difficulty));
 }
 
+/** How many recent (seed, difficulty) boards create() keeps (a run asks for its own a few times). */
+const RECENT_BOARDS = 8;
+
+type RecentBoard = { readonly key: string; readonly state: TrailClearState };
+
+/**
+ * The boards create() handed out last, newest first. Only a memo: a board depends on its seed and
+ * difficulty alone and states are never changed in place, so a hit is the board create() would
+ * make again, and the result stays the same everywhere.
+ */
+let recentBoards: readonly RecentBoard[] = [];
+
+/**
+ * Start state from (seed, difficulty). A run asks for its board when it starts, when a saved run is
+ * replayed and when its counters are measured at the run end; the witness proves it only the first
+ * time (at most createAttempts witness games).
+ */
 export function create(seed: number, difficulty: number): TrailClearState {
-  return createWithin(seed, difficulty, CREATE_BUDGET);
+  const key = `${String(seed)}:${String(clampDifficulty(difficulty))}`;
+  const recent = recentBoards.find((board) => board.key === key);
+  if (recent !== undefined) return recent.state;
+  const state = createWithin(seed, difficulty, CREATE_BUDGET);
+  recentBoards = [{ key, state }, ...recentBoards].slice(0, RECENT_BOARDS);
+  return state;
 }
