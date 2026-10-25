@@ -1,0 +1,25 @@
+{
+  "edge": "edge",
+  "text": [
+    ["rank", "card"],
+    ["onBurst", "burst"],
+    ["onWarn", "warn"]
+  ],
+  "graphics": [
+    ["spade", "card"],
+    ["heart", "card"],
+    ["diamond", "card"],
+    ["club", "card"],
+    ["edge", "background"],
+    ["edge", "well"],
+    ["hint", "well"]
+  ],
+  "shapes": [
+    ["well", "background"],
+    ["card", "well"],
+    ["card", "background"],
+    ["burst", "well"],
+    ["warn", "background"]
+  ],
+  "distinct": [["spade", "heart", "diamond", "club"]]
+}

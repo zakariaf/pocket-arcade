@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "ab6b5e48162425e4cba46bf591731fce1889903c4a6d17fc34ca63c583341ca1",
+  "design": "c1c169abb2ca6188211bdb1ba558b5fd45c98099d162b80bc70a5380e617ded1",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "cc60ccc4f420f75bf0785608764081daeed81b1dcdda7f035efb42d07561d743",
+  "frames": "8c1723831959890f73519ea0c0606c3f8f4b777312e016a09288b28da605d2c4",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1684,6 +1684,38 @@
    "variants": [],
    "what": "Merging main into E24 put Stepstone into the design next to Jump Chain (both palettes, logos, texts and sample counters). No frame or variant of Line Siege changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
    "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
+  },
+  {
+   "id": "G-poker-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Poker Drop added to the design as a design game: its light and dark paint and logo layers in the token file (color.games.pokerDrop, logos.games.pokerDrop), its texts in the copy deck (games.pokerDrop: name, tagline, goal, progress line, win title, lose reason, three counter labels, four how-to-play and four tutorial steps, three pack names, in en, de, fa and ckb), its game switcher entry, palette, logo, sample statistics and how-to-play picture in the mockup. No Line Siege frame draws it: no committed reference moved.",
+   "why": "spec 13: each game gets its own design pass, approved by the owner, before it is built. Drafted by E27-T01 on 2026-10-19 with the proposed paint, logo and texts; the owner approves it in the lead's combined message (the fa and ckb texts stay drafts for the owner's own review, O6)."
+  },
+  {
+   "id": "G-poker-drop-with-merged-games",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E27 put Poker Drop into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game gets its own design pass; the passes were drafted on separate branches and are joined here (E27 helper, 2026-10-25)."
+  },
+  {
+   "id": "G-poker-drop-with-jump-chain-and-stepstone",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E27 put Poker Drop into the design next to Jump Chain and Stepstone (all palettes, logos, texts, sample counters and how-to-play pictures). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game gets its own design pass; the passes were drafted on separate branches and are joined here (E27 helper, 2026-10-25)."
+  },
+  {
+   "id": "G-poker-drop-with-swap-guard",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E27 put Poker Drop into the design next to Swap Guard (both palettes, logos, texts, sample counters and how-to-play pictures kept). No frame or variant changed: the design and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en on the Android profile, a byte-identical render).",
+   "why": "spec 13: each game gets its own design pass; the passes were drafted on separate branches and are joined here (E27 helper, 2026-10-25)."
   }
  ]
 }

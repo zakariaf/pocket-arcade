@@ -25962,6 +25962,189 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "cbf734acb50fac41dd4d59ff585fbcb961f95c4ce9a46a07211541d3d1bf89e2",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5ce83a3dbf3852ec376593c8b52aa9fbf7fdb41d2f4fe9a82daf3098cb23d47e",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ba458942ac08762e3a73878b884562992c7c967f1a3b5fb7fe00c0205fb3d3ae",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "2ca0c3a12b514801d1645e52e2274aa7910768799ac8cc964c6e6fccb8484624",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The ad slot's inside is empty in this ads-off test build where the design draws the 320 x 50 placeholder; the slot itself, its band and its dashed edges match.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "0983367104156c7a4d4cb03f94728f00f78dc7037c1be9d1897f8047c7407bc2",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f76519ba25b0b2fc6006b49ed443e9482d4e1551537500d1d8f9b60c70dd8190",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "60a60060d2671574ed9ecb3659fa19d14d2d00fb4503ee970bfb3f83ae7f0520",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The continue offer's dashed edge: React Native's iOS dashes have their own length and corner phase (pre-listed platform waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "pokerDrop",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "62fd632009a87d01cd289fc26a007f3a6e586c7c13bbb0cc9ec345a8ba5906df",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The how-to picture is the game's own example board (the 5 x 7 well with the next cards and the hand-count chip) where the design draws a 5 x 5 spade illustration with arrows; the picture is masked for every game, and the stage keeps the design's frame, so no exampleAspect is needed.",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }
