@@ -1,0 +1,5 @@
+{
+  "testIDs": {
+    "result.stars-2": "the stars action=win-level earns on level 1 (testing.examples.win(), score 220 against thresholds 200 and 240, printed by print-level-line.ts)"
+  }
+}
