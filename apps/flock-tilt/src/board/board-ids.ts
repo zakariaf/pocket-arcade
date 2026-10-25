@@ -1,6 +1,8 @@
 // apps/flock-tilt/src/board/board-ids.ts
 'worklet';
 
+import { TILT_KEY_IDS } from '@e07/flock-tilt/rules/intent-to-move.ts';
+
 import type { Direction } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
 
 /** Entity of the one-per-tilt tracks (the cleared glow, the run-out fade, the continue). */
@@ -14,14 +16,9 @@ export const FIELD_REGION = 'field';
 
 /**
  * The four tilt keys beside the field (a tap tilts that way: VoiceOver and one-handed play).
- * The same ids as rules/intent-to-move.ts, which a board test pins.
+ * The rules' own ids (rules/intent-to-move.ts), so a tapped key always tilts its own way.
  */
-export const TILT_KEY_REGIONS: Readonly<Record<Direction, string>> = {
-  up: 'tilt-up',
-  right: 'tilt-right',
-  down: 'tilt-down',
-  left: 'tilt-left',
-};
+export const TILT_KEY_REGIONS: Readonly<Record<Direction, string>> = TILT_KEY_IDS;
 
 /**
  * Entity ids shared by buildTimeline (JS thread) and draw (UI thread): sheep from 100, wolves
