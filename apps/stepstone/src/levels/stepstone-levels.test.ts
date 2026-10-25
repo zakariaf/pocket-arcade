@@ -1,6 +1,7 @@
 // apps/stepstone/src/levels/stepstone-levels.test.ts
 // Spec 8.1: every shipped level is generated from a seed and a difficulty, checked by the solver
 // at its par, and stars follow par. Spec 8.3: one daily level per date, from the game's own salt.
+import { addDays } from '@e07/game-kit/dates/date-key.ts';
 import { dailyStart } from '@e07/game-kit/levels/daily-start.ts';
 import { levelsContractProblems } from '@e07/game-kit/levels/levels-contract.ts';
 import { applyMove } from '@e07/stepstone/rules/apply-move.ts';
@@ -16,6 +17,7 @@ import {
   STEPSTONE_DAILY_SALT,
   STEPSTONE_LEVELS,
 } from './stepstone-levels.ts';
+import { STEPSTONE_SOLVER } from './stepstone-solver.ts';
 
 /** game.config.ts `levels` for this app; the packs must match it exactly. */
 const CONFIG = { packCount: 3, levelsPerPack: 30 };
@@ -60,5 +62,22 @@ describe('STEPSTONE_LEVELS', () => {
     expect(STEPSTONE_DAILY_SALT).toBe(0x0eb2);
     expect(dailyStart(STEPSTONE_LEVELS, '2026-09-28')?.difficulty).toBe(STEPSTONE_DAILY_DIFFICULTY);
     expect(STEPSTONE_LEVELS.endless).toStrictEqual({ kind: 'none' });
+  });
+
+  it('makes a proven daily pond for every date of two years (spec 8.1 and 8.3: the date is the seed)', () => {
+    const minPar = knobsFor(STEPSTONE_DAILY_DIFFICULTY).minPar;
+    const problems: string[] = [];
+    for (let day = 0; day < 731; day += 1) {
+      const date = addDays('2026-10-01', day);
+      const start = dailyStart(STEPSTONE_LEVELS, date);
+      if (start === null) throw new Error('Stepstone has a daily mode');
+      const state = create(start.seed, start.difficulty);
+      const solved = STEPSTONE_SOLVER.solve(state, 2_000);
+      const par = solved.kind === 'solved' ? solved.line.length : null;
+      if (par === null || par !== state.par || par < minPar) {
+        problems.push(`${date}: par ${String(state.par)}, solver ${String(par)}`);
+      }
+    }
+    expect(problems).toStrictEqual([]);
   });
 });
