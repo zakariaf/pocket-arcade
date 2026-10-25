@@ -18,14 +18,22 @@ export type FxEntry = {
 export type FxSample = {
   readonly elapsedMs: number;
   readonly entries: Readonly<Partial<Record<string, FxEntry>>>;
+  /** Linear (uneased) progress 0…1 of each key's active track: 0 before it starts, 1 once it ended. */
+  readonly linear: Readonly<Partial<Record<string, number>>>;
 };
 
 /** No animation: draw() shows the view's final state. */
-export const EMPTY_FX: FxSample = { elapsedMs: 0, entries: {} };
+export const EMPTY_FX: FxSample = { elapsedMs: 0, entries: {}, linear: {} };
 
 /** Stable key for a (channel, entity) pair, e.g. 'beam:3'. */
 export function trackKey(channel: string, entityId: number): string {
   return `${channel}:${String(entityId)}`;
+}
+
+/** The uneased share of a track's time that has passed, clamped to 0…1 (1 for a zero-length track). */
+function linearAt(track: Track, elapsedMs: number): number {
+  if (track.durationMs <= 0) return 1;
+  return Math.min(Math.max(elapsedMs - track.startMs, 0), track.durationMs) / track.durationMs;
 }
 
 /** Interpolates one track at an elapsed time (clamped to its start and end). */
@@ -61,18 +69,30 @@ function isBetterTrack(
  */
 export function sampleTimeline(tracks: readonly Track[], elapsedMs: number): FxSample {
   const entries: Partial<Record<string, FxEntry>> = {};
+  const linear: Partial<Record<string, number>> = {};
   const activeStart: Partial<Record<string, number>> = {};
   for (const track of tracks) {
     const key = trackKey(track.channel, track.entityId);
     if (isBetterTrack(track.startMs, activeStart[key], elapsedMs)) {
       activeStart[key] = track.startMs;
       entries[key] = sampleTrack(track, elapsedMs);
+      linear[key] = linearAt(track, elapsedMs);
     }
   }
-  return { elapsedMs, entries };
+  return { elapsedMs, entries, linear };
 }
 
 /** Reads one sampled entry; `undefined` means "no track: draw the view's final state". */
 export function fxEntry(fx: FxSample, channel: string, entityId: number): FxEntry | undefined {
   return fx.entries[trackKey(channel, entityId)];
+}
+
+/**
+ * The entry of a key only while its track plays: started and not yet ended by its linear time.
+ * Effect layers (flash, glow, burst, shake) draw only then; the eased progress cannot tell, because
+ * an out-back track passes 1 early and overshoots before it ends.
+ */
+export function playingEntry(fx: FxSample, channel: string, entityId: number): FxEntry | undefined {
+  const t = fx.linear[trackKey(channel, entityId)];
+  return t !== undefined && t > 0 && t < 1 ? fxEntry(fx, channel, entityId) : undefined;
 }
