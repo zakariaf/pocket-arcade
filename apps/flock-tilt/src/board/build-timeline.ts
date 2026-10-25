@@ -61,12 +61,15 @@ function slid(slides: readonly Slide[], timing: Timing): Track[] {
   }));
 }
 
-/** Each animal that hit something squashes against it; the first bump carries its thud. */
+/**
+ * Each animal that hit something squashes against it; the first bump carries its thud. A sheep
+ * stopped by the pen dropped in (no bump); a wolf stopped by the pen hit it like a rock.
+ */
 function bumped(slides: readonly Slide[], direction: Direction, timing: Timing): Track[] {
   if (!timing.isFull) return [];
   const [dx, dy] = STEP[direction];
   return slides
-    .filter((slide) => slide.stoppedBy !== 'pen')
+    .filter((slide) => !(slide.animal === 'sheep' && slide.stoppedBy === 'pen'))
     .map((slide, order) => ({
       channel: 'bump',
       entityId: entityOf(slide),

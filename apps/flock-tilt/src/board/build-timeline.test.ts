@@ -97,6 +97,24 @@ describe('buildTimeline', () => {
     expect(back.map((track) => [track.channel, track.cue])).toStrictEqual([['rewind', undefined]]);
   });
 
+  it('squashes a wolf the pen stopped, with the thud, but never a sheep that dropped in', () => {
+    const wolfAtPen = buildTimeline(
+      [
+        {
+          kind: 'animals-slid',
+          direction: 'right',
+          slides: [{ animal: 'wolf', id: 0, from: 7, to: 12, stoppedBy: 'pen' }],
+        },
+      ],
+      'full',
+    ).filter((track) => track.channel === 'bump');
+    expect(wolfAtPen.map((track) => [track.entityId, track.cue])).toStrictEqual([
+      [wolfEntity(0), { sound: 'bump' }],
+    ]);
+    const bumped = buildTimeline(BUSIEST, 'full').filter((track) => track.channel === 'bump');
+    expect(bumped.map((track) => track.entityId)).toStrictEqual([sheepEntity(1), wolfEntity(0)]);
+  });
+
   it('returns the same tracks for the same events', () => {
     expect(buildTimeline(BUSIEST, 'full')).toStrictEqual(buildTimeline(BUSIEST, 'full'));
   });
