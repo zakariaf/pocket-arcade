@@ -6,6 +6,7 @@ import de from '@e07/flock-tilt/i18n/de.json';
 import en from '@e07/flock-tilt/i18n/en.json';
 import fa from '@e07/flock-tilt/i18n/fa.json';
 import { applyMove } from '@e07/flock-tilt/rules/apply-move.ts';
+import { solveField } from '@e07/flock-tilt/rules/field-search.ts';
 import { TILT_KEY_IDS } from '@e07/flock-tilt/rules/intent-to-move.ts';
 import { listMoves } from '@e07/flock-tilt/rules/list-moves.ts';
 import { outcome } from '@e07/flock-tilt/rules/outcome.ts';
@@ -111,6 +112,17 @@ describe('FLOCK_TILT_TEACHING (spec S13)', () => {
     const last = howToPlay.at(-1);
     expect(last?.bodyId).toBe('flock-tilt.how-to-play.step-4');
     expect(last?.example.wolves.length).toBeGreaterThan(0);
+  });
+
+  it("records each teaching field's par as the fewest tilts that pen its flock (spec 8.1)", () => {
+    // Fields at their first tilt; a later example carries the par of the field it came from.
+    const starts = [tutorial.start, ...howToPlay.map((page) => page.example)].filter(
+      (state) => state.tilts === 0,
+    );
+    expect(starts.length).toBeGreaterThanOrEqual(2);
+    for (const start of starts) {
+      expect(start.par).toBe(solveField(start, start.tiltLimit, 20_000)?.par);
+    }
   });
 
   it('finds every tutorial and how-to-play text in all four catalogs', () => {

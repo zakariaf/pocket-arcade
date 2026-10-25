@@ -27,11 +27,11 @@ const keyOf = (direction: Direction): TutorialPointer => ({
 /**
  * The tutorial field: two sheep, no wolf, the pen in the top-right corner. Down slides both
  * sheep at once; right stops the second against the first; up drops one into the pen; right
- * sends the other after it.
+ * sends the other after it. Par is 2 (up, then right pens both): the four steps teach the moves.
  */
 const TUTORIAL_START = fieldOf(
   ['.s....o', '..s....', '.......', '...#...', '....#..', '.......', '.......'],
-  4,
+  2,
 );
 const AFTER_DOWN = applyMove(TUTORIAL_START, tilt('down')).state;
 const AFTER_RIGHT = applyMove(AFTER_DOWN, tilt('right')).state;
