@@ -105,8 +105,9 @@ export function createWithin(
   for (let attempt = 0; attempt < drawAttempts; attempt += 1) {
     const drawn = drawField(rng, knobs);
     rng = drawn.rng;
-    const par = drawn.field === null ? null : keptPar(drawn.field, knobs);
-    if (drawn.field !== null && par !== null) return startState(drawn.field, par);
+    if (drawn.field === null) continue;
+    const par = keptPar(drawn.field, knobs);
+    if (par !== null) return startState(drawn.field, par);
   }
   return startState(fallbackField(knobs), 1);
 }
