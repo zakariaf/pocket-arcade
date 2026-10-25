@@ -20,6 +20,7 @@ const choicesArb = fc.array(fc.nat(), { maxLength: 40 });
 
 const roundTrip = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 const START: MergeSiegeState = create(1, 0);
+const EMPTY_CELL = START.cells.indexOf(null);
 const withCell = (index: number, cell: unknown): unknown => ({
   ...START,
   cells: START.cells.map((existing, at) => (at === index ? cell : existing)),
@@ -48,6 +49,9 @@ describe('parseState', () => {
     ['a piece number below 2', withCell(0, { id: 99, kind: 'tile', value: 1 })],
     ['a random stream of the wrong length', { ...START, rng: [1, 2, 3] }],
     ['a random stream with a negative word', { ...START, rng: [1, 2, 3, -4] }],
+    ['two pieces with the same id', withCell(EMPTY_CELL, { id: 1, kind: 'tile', value: 2 })],
+    ['a next id already used on the board', { ...START, nextId: 5 }],
+    ['a next id below a piece id', withCell(EMPTY_CELL, { id: 6, kind: 'tile', value: 2 })],
   ])('rejects %s', (_name, json) => {
     expect(parseState(roundTrip(json) ?? json)).toBeNull();
   });

@@ -112,6 +112,12 @@ function parseCounts(
   return isValid ? { swipes, entered, smashed, score, nextId } : null;
 }
 
+/** Every piece id is unique and below nextId (the next piece gets nextId, so it must be new). */
+function hasFreshIds(cells: readonly Cell[], nextId: number): boolean {
+  const ids = cells.flatMap((cell) => (cell === null ? [] : [cell.id]));
+  return new Set(ids).size === ids.length && ids.every((id) => id < nextId);
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): MergeSiegeState | null {
   const record = recordWith(json, STATE_KEYS);
@@ -123,6 +129,7 @@ export function parseState(json: unknown): MergeSiegeState | null {
   const counts = parseCounts(record);
   if (!isWhole(difficulty, 0, 100) || typeof hasContinued !== 'boolean') return null;
   if (cells === null || next === undefined || rng === null || counts === null) return null;
+  if (!hasFreshIds(cells, counts.nextId)) return null;
   return { difficulty, cells, next, ...counts, hasContinued, rng };
 }
 
