@@ -78,7 +78,7 @@ Why: Hermes computes `sin`/`cos`/`exp`/`pow` with the platform libm while Jest r
 
 - Gesture worklets write an integer command into the loop's `command` shared value (the input skill's stick: 0 idle, 1…16 directions). The sim never sees a float from a gesture.
 - Command k (1…16) = `(cos((k-1)·22.5°), sin((k-1)·22.5°))` with y pointing down; the table is committed as literals and must match the stick gesture's table in value and order (`check-realtime-loop.mjs` checks the sim's `STICK` table against the formula).
-- The sim records every change as `EVENT_INPUT (tick, command)`; `commandLog(events, EVENT_INPUT)` turns drained events into the log, and `replayCommands({ sim, step, ticks }, log)` replays it.
+- The sim records every change as `EVENT_INPUT (tick, command)`; `commandLog(events, EVENT_INPUT)` turns drained events into the log, and `replayCommands({ sim, step, ticks }, log)` replays it (every change due by a tick applies before it, the last of one tick winning; a log whose ticks go backwards throws a RangeError).
 
 ## Tests: replay and frame grouping
 
