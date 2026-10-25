@@ -195,7 +195,7 @@ describe('create (simulate-then-replay rules: a tap drops a card, the cascade is
     });
 
     it('keeps the create budget to a few witness games per start', () => {
-      expect(TUNING.createAttempts).toBeLessThanOrEqual(4);
+      expect(TUNING.createAttempts).toBeLessThanOrEqual(10);
     });
 
     it('hands out the fallback seed’s own first board, proven at every level difficulty', () => {
@@ -237,6 +237,17 @@ describe('create (simulate-then-replay rules: a tap drops a card, the cascade is
           expect(create(seed, difficulty)).toStrictEqual(create(seed, difficulty));
         }),
       );
+    });
+
+    it('gives two hard seeds whose first four boards both lose their own proven deals', () => {
+      // fast-check's counterexample: with four draws both seeds fell back to the same board.
+      const one = create(4_227_791_265, 75);
+      const two = create(3_757_440_892, 75);
+      expect([one.hand, one.next, ...one.pile]).not.toStrictEqual([
+        two.hand,
+        two.next,
+        ...two.pile,
+      ]);
     });
 
     it('gives different seeds different deals', () => {
