@@ -3,7 +3,8 @@
 // always makes the same level, and "no level is impossible". Difficulty 0..99 is a level row, 100
 // the endless run. Every level board create() hands out (packs, the daily, any other seed) is
 // proven winnable by the witness, or is the proven fallback board.
-import { clampDifficulty, isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
+import { clampDifficulty, isEndlessDifficulty, rowFor } from '@e07/game-kit/contract/difficulty.ts';
+import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { drawOpening, openingCells } from './opening.ts';
@@ -62,8 +63,8 @@ function searchBoards(rng: RngState, level: number, budget: CreateBudget): Searc
  * create() with an explicit budget: the first proven board of the seed, or, when none is proven
  * within the budget, the fallback seed's proven board of the difficulty. The endless run is never
  * won, so it is never proven: it keeps the seed's first board, as does a shipped pack level, whose
- * first board the generator proved. Bounded: at most 2 x attempts
- * witness runs.
+ * first board the generator proved. Bounded: at most `attempts` witness runs (the fallback is
+ * drawn without one).
  */
 export function createWithin(
   seed: number,
@@ -74,9 +75,24 @@ export function createWithin(
   // The endless run is never proven; a shipped level was proven when its pack was made.
   if (isEndlessDifficulty(level) || isShippedLevel(seed, level)) return drawStart(seed, level);
   const found = searchBoards(seedRng(seed), level, budget);
-  return found.isProven
-    ? found.state
-    : searchBoards(seedRng(FALLBACK_SEED), level, CREATE_BUDGET).state;
+  return found.isProven ? found.state : fallbackBoard(level);
+}
+
+/**
+ * The fallback seed's first proven board of each level row, as its try number (1 = its first
+ * board): the witness proves a board for a whole row, and a test proves each entry, so the
+ * fallback costs no witness run. Changing an entry changes the fallback boards (a Gate-Change).
+ */
+const FALLBACK_TRY_BY_ROW = [1, 1, 2, 3] as const;
+
+/** The fallback seed's proven board of the level's row, drawn without a witness run. */
+function fallbackBoard(level: number): TrailClearState {
+  const tries = pickAt(FALLBACK_TRY_BY_ROW, rowFor(level, TUNING.levelRows.length));
+  const first = drawBoard(seedRng(FALLBACK_SEED), level);
+  return Array.from({ length: tries - 1 }).reduce<TrailClearState>(
+    (board) => drawBoard(board.rng, level),
+    first,
+  );
 }
 
 /**

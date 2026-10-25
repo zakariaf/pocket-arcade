@@ -101,6 +101,8 @@ const isProven = (state: TrailClearState): boolean =>
 
 /** The daily seed of 2026-10-03 (Trail Clear's salt): its first board is one the witness loses. */
 const LOST_FIRST_SEED = 3_123_137_942;
+/** A create budget whose one try the witness can never win (one node), so create falls back. */
+const UNPROVABLE = { attempts: 1, maxNodes: 1 };
 
 describe('create proves every level board it hands out (spec 8.1: no level is impossible)', () => {
   it("keeps the seed's first board when the witness wins it", () => {
@@ -130,6 +132,24 @@ describe('create proves every level board it hands out (spec 8.1: no level is im
     );
     expect(unproven).toStrictEqual([]);
   });
+
+  it('spends no witness run on the fallback board: it is the known first proven try of its row', () => {
+    const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
+    // A budget of one node proves nothing, so the one try is lost and the fallback is handed out.
+    createWithin(LOST_FIRST_SEED, 75, UNPROVABLE);
+    expect(solve).toHaveBeenCalledTimes(1);
+    solve.mockRestore();
+  });
+
+  it.each([0, 24, 25, 49, 50, 74, 75, 99])(
+    "hands out the fallback seed's own first proven board at difficulty %i",
+    (difficulty) => {
+      const budget = { attempts: TUNING.createAttempts, maxNodes: WITNESS_MAX_NODES };
+      expect(createWithin(LOST_FIRST_SEED, difficulty, UNPROVABLE)).toStrictEqual(
+        createWithin(FALLBACK_SEED, difficulty, budget),
+      );
+    },
+  );
 
   it("keeps the endless run's first board: it is never won, so never proven", () => {
     expect(create(LOST_FIRST_SEED, 100)).toStrictEqual(drawStart(LOST_FIRST_SEED, 100));
