@@ -99,6 +99,27 @@ describe('parseState with runs legal play cannot reach', () => {
     expect(parseState(throughJson(json))).toBeNull();
   });
 
+  /** EASY after one drop, its flips replaced: one ball meets each peg row once. */
+  const AFTER_ONE = applyMove(EASY, { kind: 'drop', col: 0 }).state;
+  const switchesOfRow = (row: number): number[] =>
+    AFTER_ONE.pegs.flatMap((peg, index) =>
+      peg !== -1 && index >= row * EASY.cols && index < (row + 1) * EASY.cols ? [index] : [],
+    );
+  const withFlips = (indexes: readonly number[], count: number): ToggleDropState => ({
+    ...AFTER_ONE,
+    flips: AFTER_ONE.flips.map((_, index) => (indexes.includes(index) ? count : 0)),
+  });
+
+  it.each([
+    [
+      'a switch flipped more often than balls were dropped',
+      withFlips(switchesOfRow(0).slice(0, 1), 2),
+    ],
+    ['a peg row flipped more often than balls were dropped', withFlips(switchesOfRow(0), 1)],
+  ])('refuses %s', (_name, json) => {
+    expect(parseState(throughJson(json))).toBeNull();
+  });
+
   it('reads a run back after its drops, with its counts adding up', () => {
     const played = applyMove(EASY, { kind: 'drop', col: 0 }).state;
     expect(parseState(throughJson(played))).toStrictEqual(played);

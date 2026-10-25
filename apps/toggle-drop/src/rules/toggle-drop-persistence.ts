@@ -79,6 +79,12 @@ function switchesByRow(board: Pick<ToggleDropState, 'cols' | 'rows' | 'pegs'>): 
   );
 }
 
+/** The flips of each peg row of a board (one ball flips at most one switch a row). */
+function flipsByRow(state: ToggleDropState): number[] {
+  const { cols, rows, flips } = state;
+  return Array.from({ length: rows }, (_, row) => sum(flips.slice(row * cols, (row + 1) * cols)));
+}
+
 const cupsOf = (needs: readonly number[]): number => needs.filter((need) => need > 0).length;
 
 /** The boards create() makes: one shape per tuning row. */
@@ -112,8 +118,8 @@ const SHAPES: readonly RunShape[] = [
  * Whether legal play can reach this run: it starts from a board create() makes or from the
  * tutorial's (its size, each peg row's switches, its cup count, cups needing no more balls than
  * that board's winning line, balls left and dropped adding up to that board's balls), and its
- * cups and switches hold no more than its drops brought (one ball fills at most one cup and flips
- * at most one switch a row).
+ * cups hold no more balls than it dropped and no peg row was flipped more often than it dropped
+ * (one ball fills at most one cup and flips at most one switch a row).
  */
 function isReachable(state: ToggleDropState): boolean {
   const { cols, rows, needs, drops } = state;
@@ -126,7 +132,7 @@ function isReachable(state: ToggleDropState): boolean {
     sum(needs) <= shape.lineDrops &&
     state.ballsLeft + drops === shape.balls &&
     sum(state.filled) <= drops &&
-    sum(state.flips) <= drops * rows
+    flipsByRow(state).every((count) => count <= drops)
   );
 }
 
