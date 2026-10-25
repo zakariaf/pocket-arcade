@@ -7,11 +7,18 @@ import { parseField } from '@e07/flock-tilt/rules/field-text.ts';
 import { TUNING, knobsFor } from '@e07/flock-tilt/rules/flock-tilt-tuning.ts';
 import { listMoves } from '@e07/flock-tilt/rules/list-moves.ts';
 import { outcome } from '@e07/flock-tilt/rules/outcome.ts';
+import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
 import { verifyLine } from '@e07/game-kit/solver/verify-line.ts';
 
-import { FLOCK_TILT_SOLVER, suggestTilt } from './flock-tilt-solver.ts';
+import {
+  FLOCK_TILT_DAILY_DIFFICULTY,
+  FLOCK_TILT_DAILY_SALT,
+  FLOCK_TILT_LEVELS,
+} from './flock-tilt-levels.ts';
+import { FLOCK_TILT_SOLVER, HINT_MAX_NODES, suggestTilt } from './flock-tilt-solver.ts';
 
-import type { FlockTiltState } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
+import type { FlockTiltMove, FlockTiltState } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
+import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 
 const ENGINE = { listMoves, applyMove, outcome };
 
@@ -104,5 +111,38 @@ describe('suggestTilt (spec 8.5: "The game\'s solver suggests the next good move
     const lost = stateOf(['s...o', 'w....'], { sheep: [{ id: 0, cell: 0, status: 'lost' }] });
     const stuck = stateOf(['s#...', '#...o', '....w']);
     expect([won, lost, stuck].map(suggestTilt)).toStrictEqual([null, null, null]);
+  });
+});
+
+/** The hint the engine solver gives: the first tilt of its shortest line inside the hint budget. */
+function engineHint(state: FlockTiltState): FlockTiltMove | null {
+  if (outcome(state).kind !== 'playing') return null;
+  const result = FLOCK_TILT_SOLVER.solve(state, HINT_MAX_NODES);
+  return result.kind === 'solved' ? (result.line[0] ?? null) : null;
+}
+
+/** A start, every playing state one tilt away, and the start with only par or par - 1 tilts left. */
+function hintStates(start: FlockTiltState): FlockTiltState[] {
+  const next = listMoves(start).map((move) => applyMove(start, move).state);
+  const spare = [start.par, start.par - 1].map((left) => ({
+    ...start,
+    tilts: start.tiltLimit - left,
+  }));
+  return [start, ...next, ...spare].filter((state) => outcome(state).kind === 'playing');
+}
+
+describe('suggestTilt on the shipped fields', () => {
+  const levels = FLOCK_TILT_LEVELS.table.map((entry) => create(entry.seed, entry.difficulty));
+  const days = Array.from({ length: 31 }, (_, day): DateKey => {
+    return `2026-10-${String(day + 1).padStart(2, '0')}`;
+  });
+  const dailies = days.map((date) =>
+    create(dailySeed(date, FLOCK_TILT_DAILY_SALT), FLOCK_TILT_DAILY_DIFFICULTY),
+  );
+
+  it("gives the engine solver's first tilt on every level and daily field and one tilt on", () => {
+    const states = [...levels, ...dailies].flatMap(hintStates);
+    expect(states.length).toBeGreaterThan(levels.length * 3);
+    for (const state of states) expect(suggestTilt(state)).toStrictEqual(engineHint(state));
   });
 });
