@@ -79,6 +79,7 @@ const BUSIEST: readonly FlockTiltEvent[] = [
   {
     kind: 'animals-slid',
     direction: 'left',
+    cols: 7,
     slides: [
       { animal: 'sheep', id: 2, from: 30, to: 29, stoppedBy: 'pen' },
       { animal: 'sheep', id: 0, from: 34, to: 29, stoppedBy: 'pen' },

@@ -52,7 +52,7 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
 - **Turn-based: apply the move, then animate its events** (game-rules-engine, engine-contract.md:
   "Turn-based | 22 of 26 (Line Siege, Flock Tilt, ...) | Nothing: apply the move, then animate its
   events"). One tilt is one move; `applyMove` returns the next state and the events
-  (`animals-slid` with every path and what stopped each animal, `sheep-penned`, `sheep-lost`,
+  (`animals-slid` with the field width, every path and what stopped each animal, `sheep-penned`, `sheep-lost`,
   `field-cleared`, `tilts-ran-out`, `tilt-undone`), and the board animates them.
 - Reason: the whole future is fixed by the field; nothing is real-time.
 - If the owner answers differently: nothing else fits the pitch.

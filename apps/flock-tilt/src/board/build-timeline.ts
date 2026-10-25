@@ -8,12 +8,11 @@
 //   glow   (turn)       [1] -> [0]: the field glows when every sheep is home
 //   tired  (turn)       [1] -> [0]: the field dims when the tilts ran out
 //   rewind (turn)       [1] -> [0]: the continue took the last tilt back
-import { TUNING } from '@e07/flock-tilt/rules/flock-tilt-tuning.ts';
 import { colRow as fieldColRow, STEP } from '@e07/flock-tilt/rules/tilt-field.ts';
 
 import { sheepEntity, TURN_ENTITY, wolfEntity } from './board-ids.ts';
 
-import type { Direction, FlockTiltEvent, Slide } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
+import type { FlockTiltEvent, Slide } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
 import type { Motion, Track } from '@e07/game-kit/timeline/track.ts';
 
 /** Longest a tilt may animate; build-timeline.test.ts enforces it. */
@@ -31,32 +30,30 @@ const FLASH_MS = 500;
 /** Reduced motion: half durations, no particles, no bumps, no overshoot. */
 type Timing = { readonly scale: number; readonly isFull: boolean };
 
-/** A cell of the field (spec 13: one 7 x 7 field) as its (column, row). */
-function colRow(cell: number): [number, number] {
-  return fieldColRow(cell, TUNING.side);
-}
+/** One tilt's slides on the field they happened on (`cols` wide: cells become (col, row)). */
+type Slid = Extract<FlockTiltEvent, { kind: typeof SLID }>;
 
 function entityOf(slide: Slide): number {
   return slide.animal === 'sheep' ? sheepEntity(slide.id) : wolfEntity(slide.id);
 }
 
-function slideMs(slide: Slide, timing: Timing): number {
-  const [fromCol, fromRow] = colRow(slide.from);
-  const [toCol, toRow] = colRow(slide.to);
+function slideMs(slide: Slide, cols: number, timing: Timing): number {
+  const [fromCol, fromRow] = fieldColRow(slide.from, cols);
+  const [toCol, toRow] = fieldColRow(slide.to, cols);
   const cells = Math.abs(toCol - fromCol) + Math.abs(toRow - fromRow);
   return (SLIDE_BASE_MS + SLIDE_PER_CELL_MS * cells) * timing.scale;
 }
 
 /** Every animal slides at once; the first carries the tilt's sound and haptic. */
-function slid(slides: readonly Slide[], timing: Timing): Track[] {
+function slid({ slides, cols }: Slid, timing: Timing): Track[] {
   return slides.map((slide, order) => ({
     channel: 'pos',
     entityId: entityOf(slide),
     startMs: 0,
-    durationMs: slideMs(slide, timing),
+    durationMs: slideMs(slide, cols, timing),
     easing: timing.isFull ? 'in-quad' : 'linear',
-    from: colRow(slide.from),
-    to: colRow(slide.to),
+    from: fieldColRow(slide.from, cols),
+    to: fieldColRow(slide.to, cols),
     ...(order === 0 ? { cue: { sound: 'tilt', haptic: 'light' as const } } : {}),
   }));
 }
@@ -65,7 +62,7 @@ function slid(slides: readonly Slide[], timing: Timing): Track[] {
  * Each animal that hit something squashes against it; the first bump carries its thud. A sheep
  * stopped by the pen dropped in (no bump); a wolf stopped by the pen hit it like a rock.
  */
-function bumped(slides: readonly Slide[], direction: Direction, timing: Timing): Track[] {
+function bumped({ slides, cols, direction }: Slid, timing: Timing): Track[] {
   if (!timing.isFull) return [];
   const [dx, dy] = STEP[direction];
   return slides
@@ -73,7 +70,7 @@ function bumped(slides: readonly Slide[], direction: Direction, timing: Timing):
     .map((slide, order) => ({
       channel: 'bump',
       entityId: entityOf(slide),
-      startMs: slideMs(slide, timing),
+      startMs: slideMs(slide, cols, timing),
       durationMs: BUMP_MS,
       easing: 'out-quad',
       from: [1, dx, dy],
@@ -141,16 +138,15 @@ function settledTracks(event: FlockTiltEvent, settledMs: number, timing: Timing)
 /** The events of one tilt, in order: the slide first, then what it caused when it settled. */
 export function buildTimeline(events: readonly FlockTiltEvent[], motion: Motion): readonly Track[] {
   const timing = { scale: motion === 'full' ? 1 : 0.5, isFull: motion === 'full' };
-  const slides = events.flatMap((event) => (event.kind === SLID ? event.slides : []));
-  const settledMs = slides.reduce((end, slide) => Math.max(end, slideMs(slide, timing)), 0);
+  const tilts = events.filter((event): event is Slid => event.kind === SLID);
+  const ends = tilts.flatMap((tilt) => tilt.slides.map((slide) => ({ slide, cols: tilt.cols })));
+  const settledMs = ends.reduce((end, at) => Math.max(end, slideMs(at.slide, at.cols, timing)), 0);
   const arrival = (id: number): number => {
-    const slide = slides.find((one) => one.animal === 'sheep' && one.id === id);
-    return slide === undefined ? 0 : slideMs(slide, timing);
+    const at = ends.find((one) => one.slide.animal === 'sheep' && one.slide.id === id);
+    return at === undefined ? 0 : slideMs(at.slide, at.cols, timing);
   };
   return events.flatMap((event): Track[] => {
-    if (event.kind === SLID) {
-      return [...slid(event.slides, timing), ...bumped(event.slides, event.direction, timing)];
-    }
+    if (event.kind === SLID) return [...slid(event, timing), ...bumped(event, timing)];
     if (event.kind === 'sheep-penned') return penned(event.id, arrival(event.id), timing);
     return settledTracks(event, settledMs, timing);
   });

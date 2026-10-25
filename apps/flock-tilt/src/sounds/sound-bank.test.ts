@@ -16,6 +16,7 @@ const EVERY_EVENT: readonly FlockTiltEvent[] = [
   {
     kind: 'animals-slid',
     direction: 'left',
+    cols: 7,
     slides: [
       { animal: 'sheep', id: 0, from: 31, to: 29, stoppedBy: 'pen' },
       { animal: 'wolf', id: 0, from: 46, to: 42, stoppedBy: 'fence' },

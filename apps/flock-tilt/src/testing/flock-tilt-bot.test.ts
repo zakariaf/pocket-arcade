@@ -92,6 +92,7 @@ describe('tagFlockTiltEvent', () => {
     const slid = (stoppedBy: 'sheep' | 'wolf' | 'rock', animal: 'sheep' | 'wolf' = 'sheep') => ({
       kind: 'animals-slid' as const,
       direction: 'right' as const,
+      cols: 7,
       slides: [{ animal, id: 0, from: 0, to: 2, stoppedBy }],
     });
     expect(tagFlockTiltEvent(slid('sheep'))).toStrictEqual(['twist']);

@@ -69,6 +69,8 @@ export type FlockTiltEvent =
   | {
       readonly kind: 'animals-slid';
       readonly direction: Direction;
+      /** The field's width: the board turns each slide's cells into (col, row) with it. */
+      readonly cols: number;
       readonly slides: readonly Slide[];
     }
   | { readonly kind: 'sheep-penned'; readonly id: number; readonly cell: number }

@@ -11,6 +11,7 @@ const BUSIEST: readonly FlockTiltEvent[] = [
   {
     kind: 'animals-slid',
     direction: 'left',
+    cols: 7,
     slides: [
       { animal: 'sheep', id: 2, from: 30, to: 29, stoppedBy: 'pen' },
       { animal: 'sheep', id: 0, from: 34, to: 29, stoppedBy: 'pen' },
@@ -27,6 +28,7 @@ const LOST: readonly FlockTiltEvent[] = [
   {
     kind: 'animals-slid',
     direction: 'right',
+    cols: 7,
     slides: [{ animal: 'sheep', id: 0, from: 0, to: 3, stoppedBy: 'wolf' }],
   },
   { kind: 'sheep-lost', id: 0, cell: 3, wolfId: 0, wolfCell: 4 },
@@ -48,6 +50,20 @@ describe('buildTimeline', () => {
     expect(moves[1]?.from).toStrictEqual([6, 4]);
     expect(moves[1]?.to).toStrictEqual([1, 4]);
     expect(moves[0]?.durationMs).toBeLessThan(moves[1]?.durationMs ?? 0);
+  });
+
+  it("places each slide on the field's own width, never an assumed 7 columns", () => {
+    const wide: FlockTiltEvent = {
+      kind: 'animals-slid',
+      direction: 'right',
+      cols: 8,
+      slides: [{ animal: 'sheep', id: 0, from: 8, to: 15, stoppedBy: 'fence' }],
+    };
+    const [move] = buildTimeline([wide], 'full').filter((track) => track.channel === 'pos');
+    expect([move?.from, move?.to]).toStrictEqual([
+      [0, 1],
+      [7, 1],
+    ]);
   });
 
   it('drops each penned sheep into the pen when it arrives, with a burst in full motion', () => {
@@ -103,6 +119,7 @@ describe('buildTimeline', () => {
         {
           kind: 'animals-slid',
           direction: 'right',
+          cols: 7,
           slides: [{ animal: 'wolf', id: 0, from: 7, to: 12, stoppedBy: 'pen' }],
         },
       ],

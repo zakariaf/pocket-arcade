@@ -10,7 +10,7 @@ exports[`flock-tilt rules golden keeps the event stream of a line the wolf ends 
 ..##.#.
 ....w..
 tilt up
-  {"kind":"animals-slid","direction":"up","slides":[{"animal":"sheep","id":1,"from":17,"to":10,"stoppedBy":"rock"},{"animal":"sheep","id":0,"from":24,"to":17,"stoppedBy":"sheep"},{"animal":"wolf","id":0,"from":46,"to":4,"stoppedBy":"fence"}]}
+  {"kind":"animals-slid","direction":"up","cols":7,"slides":[{"animal":"sheep","id":1,"from":17,"to":10,"stoppedBy":"rock"},{"animal":"sheep","id":0,"from":24,"to":17,"stoppedBy":"sheep"},{"animal":"wolf","id":0,"from":46,"to":4,"stoppedBy":"fence"}]}
 #..#w..
 ...s..#
 ...s...
@@ -19,7 +19,7 @@ tilt up
 ..##.#.
 .......
 tilt right
-  {"kind":"animals-slid","direction":"right","slides":[{"animal":"wolf","id":0,"from":4,"to":6,"stoppedBy":"fence"},{"animal":"sheep","id":0,"from":17,"to":20,"stoppedBy":"fence"},{"animal":"sheep","id":1,"from":10,"to":12,"stoppedBy":"rock"},{"animal":"sheep","id":2,"from":30,"to":34,"stoppedBy":"fence"}]}
+  {"kind":"animals-slid","direction":"right","cols":7,"slides":[{"animal":"wolf","id":0,"from":4,"to":6,"stoppedBy":"fence"},{"animal":"sheep","id":0,"from":17,"to":20,"stoppedBy":"fence"},{"animal":"sheep","id":1,"from":10,"to":12,"stoppedBy":"rock"},{"animal":"sheep","id":2,"from":30,"to":34,"stoppedBy":"fence"}]}
 #..#..w
 .....s#
 ......s
@@ -28,7 +28,7 @@ tilt right
 ..##.#.
 .......
 tilt up
-  {"kind":"animals-slid","direction":"up","slides":[{"animal":"sheep","id":1,"from":12,"to":5,"stoppedBy":"fence"},{"animal":"sheep","id":2,"from":34,"to":27,"stoppedBy":"sheep"}]}
+  {"kind":"animals-slid","direction":"up","cols":7,"slides":[{"animal":"sheep","id":1,"from":12,"to":5,"stoppedBy":"fence"},{"animal":"sheep","id":2,"from":34,"to":27,"stoppedBy":"sheep"}]}
 #..#.sw
 ......#
 ......s
@@ -37,7 +37,7 @@ tilt up
 ..##.#.
 .......
 tilt left
-  {"kind":"animals-slid","direction":"left","slides":[{"animal":"sheep","id":1,"from":5,"to":4,"stoppedBy":"rock"},{"animal":"sheep","id":0,"from":20,"to":14,"stoppedBy":"fence"},{"animal":"sheep","id":2,"from":27,"to":24,"stoppedBy":"rock"},{"animal":"wolf","id":0,"from":6,"to":5,"stoppedBy":"sheep"}]}
+  {"kind":"animals-slid","direction":"left","cols":7,"slides":[{"animal":"sheep","id":1,"from":5,"to":4,"stoppedBy":"rock"},{"animal":"sheep","id":0,"from":20,"to":14,"stoppedBy":"fence"},{"animal":"sheep","id":2,"from":27,"to":24,"stoppedBy":"rock"},{"animal":"wolf","id":0,"from":6,"to":5,"stoppedBy":"sheep"}]}
   {"kind":"sheep-lost","id":1,"cell":4,"wolfId":0,"wolfCell":5}
 #..#xw.
 ......#
@@ -59,7 +59,7 @@ exports[`flock-tilt rules golden keeps the event stream of a won line (down, lef
 ..##.#.
 ....w..
 tilt down
-  {"kind":"animals-slid","direction":"down","slides":[{"animal":"sheep","id":0,"from":24,"to":31,"stoppedBy":"rock"},{"animal":"sheep","id":1,"from":17,"to":24,"stoppedBy":"sheep"}]}
+  {"kind":"animals-slid","direction":"down","cols":7,"slides":[{"animal":"sheep","id":0,"from":24,"to":31,"stoppedBy":"rock"},{"animal":"sheep","id":1,"from":17,"to":24,"stoppedBy":"sheep"}]}
 #..#...
 ......#
 .......
@@ -68,7 +68,7 @@ tilt down
 ..##.#.
 ....w..
 tilt left
-  {"kind":"animals-slid","direction":"left","slides":[{"animal":"sheep","id":2,"from":30,"to":29,"stoppedBy":"pen"},{"animal":"sheep","id":0,"from":31,"to":29,"stoppedBy":"pen"},{"animal":"wolf","id":0,"from":46,"to":42,"stoppedBy":"fence"}]}
+  {"kind":"animals-slid","direction":"left","cols":7,"slides":[{"animal":"sheep","id":2,"from":30,"to":29,"stoppedBy":"pen"},{"animal":"sheep","id":0,"from":31,"to":29,"stoppedBy":"pen"},{"animal":"wolf","id":0,"from":46,"to":42,"stoppedBy":"fence"}]}
   {"kind":"sheep-penned","id":2,"cell":29}
   {"kind":"sheep-penned","id":0,"cell":29}
 #..#...
@@ -79,7 +79,7 @@ tilt left
 ..##.#.
 w......
 tilt down
-  {"kind":"animals-slid","direction":"down","slides":[{"animal":"sheep","id":1,"from":24,"to":31,"stoppedBy":"rock"}]}
+  {"kind":"animals-slid","direction":"down","cols":7,"slides":[{"animal":"sheep","id":1,"from":24,"to":31,"stoppedBy":"rock"}]}
 #..#...
 ......#
 .......
@@ -88,7 +88,7 @@ tilt down
 ..##.#.
 w......
 tilt left
-  {"kind":"animals-slid","direction":"left","slides":[{"animal":"sheep","id":1,"from":31,"to":29,"stoppedBy":"pen"}]}
+  {"kind":"animals-slid","direction":"left","cols":7,"slides":[{"animal":"sheep","id":1,"from":31,"to":29,"stoppedBy":"pen"}]}
   {"kind":"sheep-penned","id":1,"cell":29}
   {"kind":"field-cleared","tilts":4,"par":4}
 #..#...

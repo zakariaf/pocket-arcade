@@ -67,6 +67,7 @@ describe('applyMove (spec 10 RULES: "Apply a move: returns the new state plus a 
       {
         kind: 'animals-slid',
         direction: 'right',
+        cols: 5,
         slides: [
           { animal: 'sheep', id: 0, from: 0, to: 4, stoppedBy: 'fence' },
           { animal: 'wolf', id: 0, from: 10, to: 13, stoppedBy: 'pen' },
@@ -80,6 +81,7 @@ describe('applyMove (spec 10 RULES: "Apply a move: returns the new state plus a 
     expect(events[0]).toStrictEqual({
       kind: 'animals-slid',
       direction: 'right',
+      cols: 5,
       slides: [
         { animal: 'sheep', id: 1, from: 1, to: 2, stoppedBy: 'rock' },
         { animal: 'sheep', id: 0, from: 0, to: 1, stoppedBy: 'sheep' },

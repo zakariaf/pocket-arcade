@@ -30,7 +30,10 @@ function legalTilt(state: FlockTiltState, move: FlockTiltMove): Tilted | null {
 /** The events of one tilt in the order they happened: the slide, the pen, the wolf, the end. */
 function eventsOf(applied: AppliedTilt): FlockTiltEvent[] {
   const { next, direction, tilted, status } = applied;
-  const events: FlockTiltEvent[] = [{ kind: 'animals-slid', direction, slides: tilted.slides }];
+  const { cols } = next;
+  const events: FlockTiltEvent[] = [
+    { kind: 'animals-slid', direction, cols, slides: tilted.slides },
+  ];
   for (const id of tilted.penned) events.push({ kind: 'sheep-penned', id, cell: next.pen });
   for (const loss of tilted.losses) {
     const { sheepId, cell, wolfId, wolfCell } = loss;
