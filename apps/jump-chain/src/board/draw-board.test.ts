@@ -241,3 +241,119 @@ describe('drawBoard', () => {
     expect(count(preview, 'drawPath')).toBe(2);
   });
 });
+
+/** A paint that acts like Skia's: setColor takes the colour's own alpha, setAlphaf replaces it. */
+function tokenPaint(token: SkColor): {
+  paint: SkPaint;
+  alpha: () => number;
+  isToken: () => boolean;
+} {
+  let alpha = 1;
+  let isToken = false;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') {
+          isToken = value === token;
+          alpha = (value as SkColor)[3] ?? 1;
+        }
+        if (name === 'setAlphaf' && typeof value === 'number') alpha = value;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha, isToken: () => isToken };
+}
+
+type TokenAt = DrawAt & {
+  readonly token: BoardToken;
+  readonly paint: 'fill' | 'stroke';
+  readonly call: string;
+};
+
+/** The alpha of every `call` drawn with `token` on one frame where the token has `tokenAlpha`. */
+function tokenAlphas(at: TokenAt, tokenAlpha: number): number[] {
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const probe = tokenPaint(color);
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (name === at.call && args.at(-1) === probe.paint && probe.isToken()) {
+            seen.push(probe.alpha());
+          }
+        },
+    },
+  ) as SkCanvas;
+  const colors = {
+    ...COLORS,
+    color: new Proxy({}, { get: (_target, name) => (name === at.token ? color : COLOR) }),
+  } as unknown as BoardColors<BoardToken>;
+  const fx = { ...sampleTimeline(at.tracks, at.atMs), pointer: at.pointer ?? IDLE_POINTER };
+  const kit = { ...(at.kit ?? KIT), [at.paint]: probe.paint };
+  const view = at.view ?? VIEW;
+  drawBoard(canvas, { view, fx, highlight: EMPTY_HIGHLIGHT, colors, layout: LAYOUT, kit });
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  const startOf = (tracks: readonly Track[], channel: string): number =>
+    tracks.find((track) => track.channel === channel)?.startMs ?? 0;
+  const ghost = {
+    tracks: [],
+    atMs: 0,
+    view: toView(BEFORE, PERSIAN),
+    pointer: dragging({ col: 2, row: 6 }, { col: 2, row: 6 }),
+  };
+  const near: JumpChainState = {
+    ...position({ col: 3, row: 3 }, [
+      [1, 7, 0],
+      [5, 1, 1],
+    ]),
+    marchIn: 1,
+  };
+  const [step] = listMoves(near);
+  if (step === undefined) throw new Error('no move');
+  const lost = applyMove(near, step);
+  const lostTracks = buildTimeline(lost.events, 'full');
+  const cases: readonly (TokenAt & { readonly name: string })[] = [
+    { name: 'the ghost piece', token: 'piece', paint: 'fill', call: 'drawCircle', ...ghost },
+    { name: 'its ink edge', token: 'edge', paint: 'stroke', call: 'drawCircle', ...ghost },
+    { name: 'its crown', token: 'crown', paint: 'fill', call: 'drawCircle', ...ghost },
+    {
+      name: 'the capture burst',
+      token: 'capture',
+      paint: 'fill',
+      call: 'drawCircle',
+      tracks: TRACKS,
+      atMs: startOf(TRACKS, 'burst') + 100,
+    },
+    {
+      name: 'the rank-clear glow',
+      token: 'glow',
+      paint: 'fill',
+      call: 'drawRect',
+      tracks: TRACKS,
+      atMs: startOf(TRACKS, 'clear') + 60,
+    },
+    {
+      name: 'the breach flash',
+      token: 'breach',
+      paint: 'fill',
+      call: 'drawCircle',
+      tracks: lostTracks,
+      atMs: startOf(lostTracks, 'breach') + 100,
+      view: toView(lost.state, PERSIAN),
+    },
+  ];
+
+  // Spec 8.12: the board draws from its palette tokens, so a token's own alpha must survive a fade.
+  it.each(cases)('keeps the token alpha under the fade of $name', (at) => {
+    const opaque = tokenAlphas(at, 1);
+    expect(opaque.filter((alpha) => alpha > 0 && alpha < 1).length).toBeGreaterThan(0);
+    expect(tokenAlphas(at, 0.5)).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
+  });
+});

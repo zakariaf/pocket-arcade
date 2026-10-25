@@ -1,6 +1,8 @@
 // apps/jump-chain/src/board/draw-parts.ts
 'worklet';
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
+
 import { PEEK_CELLS } from './layout-board.ts';
 
 import type { BoardToken } from './board-palettes.ts';
@@ -57,16 +59,12 @@ export function peekTop(region: GridRegion): number {
 export function drawDisc(canvas: SkCanvas, frame: Frame, disc: Disc): void {
   const { kit, colors } = frame;
   const alpha = disc.alpha ?? 1;
-  kit.fill.setColor(colors.color[disc.fill]);
-  kit.fill.setAlphaf(alpha);
+  setPaintColor(kit.fill, colors.color[disc.fill], alpha);
   canvas.drawCircle(disc.at.x, disc.at.y, disc.radius, kit.fill);
-  kit.fill.setAlphaf(1);
   if (disc.ring === undefined) return;
-  kit.stroke.setColor(colors.color[disc.ring]);
-  kit.stroke.setAlphaf(alpha);
+  setPaintColor(kit.stroke, colors.color[disc.ring], alpha);
   kit.stroke.setStrokeWidth(Math.max(1, disc.radius * RING_SHARE));
   canvas.drawCircle(disc.at.x, disc.at.y, disc.radius, kit.stroke);
-  kit.stroke.setAlphaf(1);
 }
 
 /** An enemy: a dark disc in a red ring (the ring tells it apart from your crowned piece). */
@@ -94,13 +92,10 @@ export function drawPiece(
   const cell = boardRegion(frame)?.cell ?? 0;
   const { point, alpha } = at;
   drawDisc(canvas, frame, { at: point, radius: cell * PIECE_RADIUS, fill: 'piece', alpha });
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setAlphaf(alpha);
+  setPaintColor(kit.stroke, colors.color.edge, alpha);
   kit.stroke.setStrokeWidth(Math.max(1, cell * PIECE_EDGE));
   canvas.drawCircle(point.x, point.y, cell * PIECE_RADIUS, kit.stroke);
-  kit.stroke.setAlphaf(1);
-  kit.fill.setColor(colors.color.crown);
-  kit.fill.setAlphaf(alpha);
+  setPaintColor(kit.fill, colors.color.crown, alpha);
   const crown = kit.paths['crown'];
   if (crown === undefined) {
     canvas.drawCircle(point.x, point.y, cell * CROWN_FALLBACK, kit.fill);
@@ -112,5 +107,4 @@ export function drawPiece(
     canvas.drawPath(crown, kit.fill);
     canvas.restore();
   }
-  kit.fill.setAlphaf(1);
 }

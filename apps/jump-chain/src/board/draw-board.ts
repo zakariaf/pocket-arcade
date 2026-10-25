@@ -3,6 +3,7 @@
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { enemyEntity, TURN_ENTITY } from './board-ids.ts';
@@ -165,7 +166,6 @@ function drawPops(canvas: SkCanvas, frame: Frame): void {
 /** Particles where an enemy was captured (full motion only: reduced motion has no burst). */
 function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
   const { kit, colors, fx } = frame;
-  kit.fill.setColor(colors.color.capture);
   for (const key of Object.keys(fx.entries)) {
     const burst = fx.entries[key];
     if (!key.startsWith('burst:') || !isPlaying(burst)) continue;
@@ -184,11 +184,10 @@ function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
     };
     for (let i = 0; i < spec.count; i += 1) {
       const particle = sampleParticle(spec, i, burst.ageMs);
-      kit.fill.setAlphaf(particle.alpha);
+      setPaintColor(kit.fill, colors.color.capture, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, region.cell * ENEMY_RADIUS * 0.22, kit.fill);
     }
   }
-  kit.fill.setAlphaf(1);
 }
 
 /** A rank was cleared: the whole board glows and fades. */
@@ -196,10 +195,8 @@ function drawGlow(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
   const glow = fxEntry(frame.fx, 'clear', TURN_ENTITY);
   if (!isPlaying(glow)) return;
   const { kit, colors } = frame;
-  kit.fill.setColor(colors.color.glow);
-  kit.fill.setAlphaf((glow.values[0] ?? 0) * GLOW_ALPHA);
+  setPaintColor(kit.fill, colors.color.glow, (glow.values[0] ?? 0) * GLOW_ALPHA);
   canvas.drawRect(boardRect(frame, region), kit.fill);
-  kit.fill.setAlphaf(1);
 }
 
 /** The host's hinted move: a ring round each hinted square (EMPTY_HIGHLIGHT draws nothing). */
