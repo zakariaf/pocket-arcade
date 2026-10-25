@@ -44,9 +44,14 @@ function position(spots: readonly Spot[], offered: TileKind, left: number): Trai
   };
 }
 
-/** An opening tile (placed before the first move). */
+/** An opening tile (placed before the first move): only the real opening's ends may be one. */
 function opening(kind: TileKind, turns: number): PlacedTile {
   return { kind, turns, placedAt: 0 };
+}
+
+/** A tile placed earlier in the run, by placement `placedAt`. */
+function earlier(kind: TileKind, turns: number, placedAt: number): PlacedTile {
+  return { kind, turns, placedAt };
 }
 
 function place(turns: number, col: number, row: number): TrailClearMove {
@@ -65,8 +70,8 @@ function drag(offered: TileKind, move: TrailClearMove): TutorialPointer {
 /** A house facing east at (1, 2) and a bend from the west up to (3, 1) at (3, 2). */
 const TUTORIAL_START = position(
   [
-    { col: 1, row: 2, tile: opening('road-end', 1) },
-    { col: 3, row: 2, tile: opening('road-bend', 3) },
+    { col: 1, row: 2, tile: earlier('road-end', 1, 1) },
+    { col: 3, row: 2, tile: earlier('road-bend', 3, 2) },
   ],
   STRAIGHT,
   4,

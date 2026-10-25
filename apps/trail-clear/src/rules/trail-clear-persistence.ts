@@ -4,6 +4,7 @@
 import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
+import { EVERY_OPENING, openingCells } from './opening.ts';
 import { edgesOf, isTileKind } from './tiles.ts';
 import { TUNING, knobsFor, loopPoints } from './trail-clear-tuning.ts';
 import { closedLoopsAt, fits } from './trails.ts';
@@ -93,12 +94,35 @@ const OPENING_TILES = 2;
 /** One placement closes at most a road and a river. */
 const MOST_LOOPS_PER_PLACEMENT = 2;
 
-/** Each tile's placement number: at most the opening's two at 0, the others once each, none ahead. */
+const isSameTile = (a: PlacedTile | null, b: PlacedTile | null): boolean =>
+  a?.kind === b?.kind && a?.turns === b?.turns && a?.placedAt === b?.placedAt;
+
+/**
+ * The tiles at placement 0 are what is left of one opening create() can deal (its road end and its
+ * river end, facing their inner gap from opposite sides), and before the first placement they are
+ * that whole opening, with its first tile offered.
+ */
+function isOpeningReachable(state: TrailClearState): boolean {
+  const kept = state.cells.map((tile) => (tile?.placedAt === 0 ? tile : null));
+  return EVERY_OPENING.some((opening) => {
+    const cells = openingCells(opening);
+    if (state.placements === 0) {
+      return (
+        state.offered === opening.firstTile &&
+        state.cells.every((tile, cell) => isSameTile(tile, cells[cell] ?? null))
+      );
+    }
+    return kept.every((tile, cell) => tile === null || isSameTile(tile, cells[cell] ?? null));
+  });
+}
+
+/** Each tile's placement number: the opening's at 0, the others once each, none ahead. */
 function areTileIdsReachable(state: TrailClearState): boolean {
-  const ids = state.cells.flatMap((tile) => (tile === null ? [] : [tile.placedAt]));
-  const placed = ids.filter((id) => id > 0);
+  const placed = state.cells.flatMap((tile) =>
+    tile === null || tile.placedAt === 0 ? [] : [tile.placedAt],
+  );
   return (
-    ids.length - placed.length <= OPENING_TILES &&
+    isOpeningReachable(state) &&
     new Set(placed).size === placed.length &&
     placed.every((id) => id <= state.placements)
   );

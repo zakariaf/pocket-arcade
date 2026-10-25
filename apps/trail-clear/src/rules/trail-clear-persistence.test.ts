@@ -157,7 +157,19 @@ function retagged(cell: number, placedAt: number): TrailClearState {
   };
 }
 
+/** The middle example (the opening double wiped both opening tiles) with `tile` on cell 1. */
+function withOnCellOne(tile: PlacedTile): TrailClearState {
+  const middle = TRAIL_CLEAR_TESTING.examples.middle();
+  return { ...middle, cells: middle.cells.map((old, index) => (index === 1 ? tile : old)) };
+}
+
 describe('parseState refuses a save that legal play cannot reach', () => {
+  it("keeps the opening's road end where the opening put it, after its river end was wiped", () => {
+    // Cell 1 is north of the inner cell 6: an opening with its gap there has its road end here.
+    const kept = withOnCellOne({ kind: 'road-end', turns: 2, placedAt: 0 });
+    expect(parseState(JSON.parse(JSON.stringify(kept)))).toStrictEqual(kept);
+  });
+
   it('starts from a played state with tiles of its own, which it accepts', () => {
     expect(placedCells.length).toBeGreaterThanOrEqual(2);
     expect(MID.loopsClosed).toBeGreaterThanOrEqual(1);
@@ -174,6 +186,15 @@ describe('parseState refuses a save that legal play cannot reach', () => {
       () => retagged(placedCells[0] ?? 0, MID.placements + 1),
     ],
     ['a third opening tile', () => retagged(placedCells[0] ?? 0, 0)],
+    [
+      'an opening tile the opening never deals (a straight placed before the first move)',
+      () => withOnCellOne({ kind: 'road-straight', turns: 1, placedAt: 0 }),
+    ],
+    [
+      'an opening road end that faces no inner cell (the opening puts it beside the gap)',
+      () => withOnCellOne({ kind: 'road-end', turns: 1, placedAt: 0 }),
+    ],
+    ['a start that offers another tile than the ford', () => ({ ...START, offered: 'road-end' })],
     ['a tile whose edges do not match its neighbour', () => withGapTile('road-straight', false)],
     [
       'a closed loop left on the board (a loop is wiped when it closes)',

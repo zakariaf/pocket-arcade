@@ -21,13 +21,28 @@ export type Opening = {
   readonly firstTile: TileKind;
 };
 
+/** The first tile every opening deals: the ford, which closes both ends at once. */
+export const OPENING_FIRST_TILE: TileKind = 'ford';
+const SIDE_COUNT = 4;
+
+/** The opening of inner spot `spot` (0..INNER x INNER - 1, row by row) with its road end on `side`. */
+function openingAt(spot: number, side: number): Opening {
+  const gap = (1 + Math.floor(spot / INNER)) * SIZE + 1 + (spot % INNER);
+  return { gap, roadSide: side, firstTile: OPENING_FIRST_TILE };
+}
+
 /** Draws the opening's gap (an inner cell) and the side of its road end. */
 export function drawOpening(rng: RngState): { readonly opening: Opening; readonly rng: RngState } {
   const spot = nextInt(rng, INNER * INNER);
-  const side = nextInt(spot.state, 4);
-  const gap = (1 + Math.floor(spot.value / INNER)) * SIZE + 1 + (spot.value % INNER);
-  return { opening: { gap, roadSide: side.value, firstTile: 'ford' }, rng: side.state };
+  const side = nextInt(spot.state, SIDE_COUNT);
+  return { opening: openingAt(spot.value, side.value), rng: side.state };
 }
+
+/** Every opening drawOpening can draw (each inner gap, each side of its road end). */
+export const EVERY_OPENING: readonly Opening[] = Array.from(
+  { length: INNER * INNER * SIDE_COUNT },
+  (_, index) => openingAt(Math.floor(index / SIDE_COUNT), index % SIDE_COUNT),
+);
 
 /** The opening board: the road end and the river end facing the gap, every other cell empty. */
 export function openingCells(opening: Opening): (PlacedTile | null)[] {
