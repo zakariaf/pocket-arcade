@@ -1,5 +1,6 @@
 {
   "swap-guard.board.summary": "Gegner besiegt: {defeated, number} / {total, number}, {swapsLeft, plural, one {# Tauschzug} other {# Tauschzüge}} übrig",
+  "swap-guard.continue.swap-back": "Noch ein Versuch: Dein letzter Tausch wird zurückgenommen",
   "swap-guard.goal": "Sorg dafür, dass jeder Gegner getroffen wird, ohne selbst getroffen zu werden.",
   "swap-guard.how-to-play.step-1": "Markierte Felder zeigen, wo jeder Gegner zuschlägt.",
   "swap-guard.how-to-play.step-2": "Tipp auf ein Feld neben dir, um mit dem, was dort steht, die Plätze zu tauschen.",
