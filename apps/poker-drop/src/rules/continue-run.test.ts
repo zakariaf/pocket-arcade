@@ -1,10 +1,12 @@
 // apps/poker-drop/src/rules/continue-run.test.ts
 import fc from 'fast-check';
 
+import { applyMove } from './apply-move.ts';
 import { continueAfterLoss, topCells } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
+import { parseState } from './poker-drop-persistence.ts';
 import { COLS } from './well.ts';
 
 import type { PokerDropState } from './poker-drop-types.ts';
@@ -80,6 +82,30 @@ describe('continueAfterLoss', () => {
           expect(emptyCount(state)).toBe(COLS);
         },
       ),
+    );
+  });
+
+  it('leaves every run lost by real play in play, as a run that saves and loads back', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 0, max: 4_294_967_295 }),
+        fc.integer({ min: 0, max: 100 }),
+        fc.array(fc.nat(), { minLength: 200, maxLength: 200 }),
+        (seed, difficulty, choices) => {
+          let state = create(seed, difficulty);
+          for (const choice of choices) {
+            const moves = listMoves(state);
+            const move = moves[choice % Math.max(moves.length, 1)];
+            if (move === undefined) break;
+            state = applyMove(state, move).state;
+          }
+          if (outcome(state).kind !== 'lost') return;
+          const rescued = continueAfterLoss(state).state;
+          expect(outcome(rescued).kind).toBe('playing');
+          expect(parseState(JSON.parse(JSON.stringify(rescued)))).toStrictEqual(rescued);
+        },
+      ),
+      { numRuns: 40 },
     );
   });
 });
