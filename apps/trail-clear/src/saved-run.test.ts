@@ -39,7 +39,7 @@ describe('a saved Trail Clear run with a move log the rules refuse', () => {
       { kind: 'place-tile', turns: 3, col: 9, row: 0 },
     ],
     [
-      'a cell the offered tile does not fit (applyMove refuses it)',
+      'a cell the offered tile does not match, so applyMove refuses it',
       { kind: 'place-tile', turns: 0, col: 0, row: 0 },
     ],
   ])('keeps the position and drops only the undo history (%s)', (_, move) => {
