@@ -9,6 +9,12 @@ export const TURN_ENTITY = 0;
 /** The fence around the field, as a share of a cell (layout keeps room for it, draw paints it). */
 export const FENCE_SHARE = 0.22;
 
+/**
+ * Smallest tilt key, in points (accessibility: a 44 x 44 touch target). On a short screen, where
+ * the field's cells are smaller, the keys keep this size and the field shrinks to make room.
+ */
+export const KEY_TARGET_PT = 44;
+
 /** The field's grid region: taps here do nothing (swipes tilt it). */
 export const FIELD_REGION = 'field';
 

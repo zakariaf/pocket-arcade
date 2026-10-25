@@ -1,4 +1,7 @@
 // apps/flock-tilt/src/board/hit-targets.test.ts
+import { cellRect, hitTest } from '@e07/game-kit/geom/board-layout.ts';
+
+import { TILT_KEY_REGIONS } from './board-ids.ts';
 import { layoutBoard } from './layout-board.ts';
 
 import type { FlockTiltView } from './to-view.ts';
@@ -25,5 +28,31 @@ describe('board hit targets', () => {
     const layout = layoutBoard({ ...PHONE_BOARD, view: LARGEST_VIEW, isMirrored: false });
     const smallest = Math.min(...layout.regions.map((region) => region.cell));
     expect(smallest).toBeGreaterThanOrEqual(MIN_TOUCH_PT);
+  });
+
+  it('keeps every tilt key a 44 pt target on a short screen, where the field cells are smaller', () => {
+    // A 420 pt tall board (a small phone with a tall top bar): the field's cells drop below 44 pt.
+    const layout = layoutBoard({ width: 374, height: 420, view: LARGEST_VIEW, isMirrored: false });
+    const targets = Object.values(TILT_KEY_REGIONS).map((regionId) => {
+      const rect = cellRect(layout, { regionId, col: 0, row: 0 }) ?? {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      };
+      const centre = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+      return {
+        regionId,
+        isLarge: Math.min(rect.width, rect.height) >= MIN_TOUCH_PT,
+        hit: hitTest(layout, centre)?.regionId,
+      };
+    });
+    expect(targets).toStrictEqual(
+      Object.values(TILT_KEY_REGIONS).map((regionId) => ({
+        regionId,
+        isLarge: true,
+        hit: regionId,
+      })),
+    );
   });
 });
