@@ -244,11 +244,11 @@
   },
   {
     "level": 28,
-    "seed": 1690777569,
+    "seed": 1673999950,
     "difficulty": 30,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 240, 288]
+      "thresholds": [0, 260, 312]
     }
   },
   {

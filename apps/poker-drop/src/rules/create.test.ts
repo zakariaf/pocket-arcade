@@ -6,9 +6,10 @@ import fc from 'fast-check';
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 
 import { rankOf } from './cards.ts';
-import { create } from './create.ts';
+import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
 import { outcome } from './outcome.ts';
 import { TUNING, knobsFor } from './poker-drop-tuning.ts';
+import { POKER_DROP_WITNESS, WITNESS_MAX_NODES } from './poker-drop-witness.ts';
 import { COLS, ROWS, cellIndex } from './well.ts';
 
 import type { Card, Cell, PokerDropState } from './poker-drop-types.ts';
@@ -85,6 +86,62 @@ describe('create (simulate-then-replay rules: a tap drops a card, the cascade is
   it('clamps difficulties outside 0..100', () => {
     expect(create(5, -3)).toStrictEqual(create(5, 0));
     expect(create(5, 250)).toStrictEqual(create(5, 100));
+  });
+
+  // spec 8.1: "each level is checked by a solver before it ships, so no level is impossible";
+  // spec 8.3: the daily is a level made from the date's seed, so create() proves it too.
+  describe('every board it hands out is proven winnable', () => {
+    const CREATE_BUDGET = { attempts: TUNING.createAttempts, maxNodes: WITNESS_MAX_NODES };
+    const isProven = (state: PokerDropState): boolean =>
+      POKER_DROP_WITNESS.solve(state, WITNESS_MAX_NODES).kind === 'solved';
+
+    it('draws again from the seed when the witness loses its first board', () => {
+      // Seed 0 at 99: the witness loses its first board, so one attempt ends in the fallback...
+      expect(isProven(drawStart(0, 99))).toBe(false);
+      const fallback = createWithin(FALLBACK_SEED, 99, CREATE_BUDGET);
+      expect(createWithin(0, 99, { attempts: 1, maxNodes: WITNESS_MAX_NODES })).toStrictEqual(
+        fallback,
+      );
+      // ...while the full budget finds a proven board of seed 0's own stream.
+      expect(create(0, 99)).not.toStrictEqual(fallback);
+      expect(isProven(create(0, 99))).toBe(true);
+    });
+
+    it('proves the daily difficulty board of a seed whose first board the witness loses', () => {
+      expect(isProven(drawStart(34, 45))).toBe(false);
+      expect(isProven(create(34, 45))).toBe(true);
+    });
+
+    it('falls back to the proven fallback board when no draw can be proven within the budget', () => {
+      const forced = createWithin(12_345, 45, { attempts: 3, maxNodes: 1 });
+      expect(forced).toStrictEqual(createWithin(FALLBACK_SEED, 45, CREATE_BUDGET));
+      expect(isProven(forced)).toBe(true);
+    });
+
+    it('proves the fallback board of every level difficulty 0..99 within the create budget', () => {
+      for (let difficulty = 0; difficulty <= 99; difficulty += 1) {
+        expect(isProven(createWithin(FALLBACK_SEED, difficulty, CREATE_BUDGET))).toBe(true);
+      }
+    });
+
+    it("keeps the seed's first board when the witness wins it", () => {
+      expect(create(1, 0)).toStrictEqual(drawStart(1, 0));
+    });
+
+    it('keeps the endless run (never won, so never proven) on its first board', () => {
+      expect(createWithin(9, ENDLESS_DIFFICULTY, { attempts: 1, maxNodes: 1 })).toStrictEqual(
+        drawStart(9, ENDLESS_DIFFICULTY),
+      );
+    });
+
+    it('proves the board of any level seed and difficulty', () => {
+      fc.assert(
+        fc.property(seedArb, fc.integer({ min: 0, max: 99 }), (seed, difficulty) => {
+          expect(isProven(create(seed, difficulty))).toBe(true);
+        }),
+        { numRuns: 60 },
+      );
+    });
   });
 
   describe('properties', () => {
