@@ -1,7 +1,7 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-10-24",
+ "rendered": "2026-10-25",
  "renderer": {
   "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "00ac0c1224c4e81599aff197a2031fca3a750dc2afb31172df8127a67585bd34",
-  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "f78a5380d0734c1e3b14a116a475c1903f3aa3948263f89c642c42eb860c114c",
+  "design": "a7d48f70bd0f8ce5cfa8f6f35dc92238b5bef3c49efc557943777ddc01958093",
+  "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
+  "frames": "1383dbf825f307105b0e02e4e91c638a0b772709fbb0b5bd0e90527125228ee5",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1824,7 +1824,7 @@
    "date": "2026-10-19",
    "frames": [],
    "variants": [],
-   "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves",
+   "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves. After the merge with Snare Snake's design pass (2026-10-25) the manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en with Chrome 155.0.8059.85, which came out byte-identical; no committed PNG or layout moved",
    "why": "spec 13: its design pass (E25-T01), drafted on 2026-10-19 with the proposed defaults; the owner approves it with the lead’s combined message"
   }
  ]
