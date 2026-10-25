@@ -1,4 +1,5 @@
 {
+  "swap-guard.board.summary": "Enemies down: {defeated, number} / {total, number}, {swapsLeft, plural, one {# swap} other {# swaps}} left",
   "swap-guard.goal": "Make every enemy get hit, without being hit yourself.",
   "swap-guard.how-to-play.step-1": "Shaded squares show where each enemy will strike.",
   "swap-guard.how-to-play.step-2": "Tap a square next to you to swap places with what stands there.",

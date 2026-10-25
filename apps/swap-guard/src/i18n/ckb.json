@@ -1,4 +1,5 @@
 {
+  "swap-guard.board.summary": "دوژمنی بەزیو: {defeated, number} / {total, number}، {swapsLeft, plural, one {# جێگۆڕین} other {# جێگۆڕین}} ماوە",
   "swap-guard.goal": "وا بکە هەموو دوژمنەکان زەبر بخۆن، بێ ئەوەی خۆت زەبر بخۆیت.",
   "swap-guard.how-to-play.step-1": "خانە سێبەرکراوەکان نیشان دەدەن هەر دوژمنێک لە کوێ زەبر دەدات.",
   "swap-guard.how-to-play.step-2": "دەست لە خانەیەکی تەنیشتت بدە بۆ ئەوەی شوێن لەگەڵ ئەوەی لەوێیە بگۆڕیتەوە.",

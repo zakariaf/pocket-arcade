@@ -1,4 +1,5 @@
 {
+  "swap-guard.board.summary": "دشمنان شکست‌خورده: {defeated, number} / {total, number}، {swapsLeft, plural, one {# جابه‌جایی} other {# جابه‌جایی}} باقی مانده",
   "swap-guard.goal": "کاری کنید همهٔ دشمن‌ها ضربه بخورند، بی‌آنکه خودتان ضربه بخورید.",
   "swap-guard.how-to-play.step-1": "خانه‌های سایه‌دار نشان می‌دهند هر دشمن کجا ضربه می‌زند.",
   "swap-guard.how-to-play.step-2": "روی خانه‌ای کنارتان بزنید تا با هر چه آنجاست جا عوض کنید.",
