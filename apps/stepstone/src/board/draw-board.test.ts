@@ -294,3 +294,57 @@ describe('frogCenter', () => {
     expect([xAt('reduced', 190), xAt('reduced', 250)]).toStrictEqual([rest, rest]);
   });
 });
+
+/** A paint that remembers its alpha the way Skia does: setColor takes the colour's, setAlphaf replaces it. */
+function alphaPaint(): { paint: SkPaint; alpha: () => number } {
+  let alpha = 1;
+  const paint = new Proxy(
+    {
+      setColor: (color: SkColor) => {
+        alpha = color[3] ?? 1;
+      },
+      setAlphaf: (value: number) => {
+        alpha = value;
+      },
+    },
+    { get: (target, name) => Reflect.get(target, name) ?? (() => undefined) },
+  ) as unknown as SkPaint;
+  return { paint, alpha: () => alpha };
+}
+
+/** The alpha of every fill and stroke draw over the whole win turn, with every token at `tokenAlpha`. */
+function drawnAlphas(tokenAlpha: number): number[] {
+  const fill = alphaPaint();
+  const stroke = alphaPaint();
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        () =>
+        (...args: unknown[]) => {
+          if (args.includes(fill.paint)) seen.push(fill.alpha());
+          if (args.includes(stroke.paint)) seen.push(stroke.alpha());
+        },
+    },
+  ) as SkCanvas;
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const colors = {
+    ...COLORS,
+    color: Object.fromEntries(TOKENS.map((token) => [token, color])) as Record<BoardToken, SkColor>,
+  };
+  const kit = { ...KIT, fill: fill.paint, stroke: stroke.paint };
+  for (let atMs = 0; atMs <= END; atMs += 20) {
+    drawBoard(canvas, { ...frameAt({ turn: WIN_TURN, atMs, kit }), colors });
+  }
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  it("fades the goal glow and the burst from the token's own alpha (board-rendering-skia)", () => {
+    const opaque = drawnAlphas(1);
+    const half = drawnAlphas(0.5);
+    expect(opaque.some((alpha) => alpha > 0 && alpha < 1)).toBe(true);
+    expect(half).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
+  });
+});

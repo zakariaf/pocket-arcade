@@ -5,6 +5,7 @@ import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
@@ -70,13 +71,11 @@ function drawBurst(canvas: SkCanvas, frame: Frame, flag: Rect): void {
     gravity: 420,
     lifeMs: 700,
   };
-  frame.kit.fill.setColor(frame.colors.color.glow);
   for (let i = 0; i < spec.count; i += 1) {
     const particle = sampleParticle(spec, i, burst.ageMs);
-    frame.kit.fill.setAlphaf(particle.alpha);
+    setPaintColor(frame.kit.fill, frame.colors.color.glow, particle.alpha);
     canvas.drawCircle(particle.x, particle.y, flag.width * 0.05, frame.kit.fill);
   }
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** The frog reached the flag: a fading glow, the hop count above the flag, then particles. */
@@ -86,10 +85,8 @@ function drawGoal(canvas: SkCanvas, frame: Frame): void {
   if (!isPlaying(goal) || flag === null) return;
   const scale = pickAt(goal.values, 0);
   const { fill } = frame.kit;
-  fill.setColor(frame.colors.color.glow);
-  fill.setAlphaf(0.5 * (1 - goal.progress));
+  setPaintColor(fill, frame.colors.color.glow, 0.5 * (1 - goal.progress));
   canvas.drawCircle(flag.x + flag.width / 2, flag.y + flag.height / 2, flag.width * scale, fill);
-  fill.setAlphaf(1);
   const font = frame.kit.numberFont;
   if (font !== null) {
     // The hop count in a chip above the flag, popping with the glow: it reads over any stone.
