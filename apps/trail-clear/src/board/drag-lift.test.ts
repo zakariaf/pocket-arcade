@@ -9,7 +9,7 @@ import { create } from '@e07/trail-clear/rules/create.ts';
 import { intentToMove } from '@e07/trail-clear/rules/intent-to-move.ts';
 
 import { drawBoard } from './draw-board.ts';
-import { DRAG_LIFT_PT, layoutBoard } from './layout-board.ts';
+import { DRAG_LIFT_PT, layoutBoard, traySlotRect } from './layout-board.ts';
 import { toView } from './to-view.ts';
 import { trailClearBoard } from './trail-clear-board.ts';
 
@@ -111,4 +111,53 @@ describe('the drag lift', () => {
     const [ghost] = ghostRects(pointerAt(finger));
     expect(ghost !== undefined && ghost.y < cell.y).toBe(true);
   });
+});
+
+/**
+ * S5 board canvases: a tall phone, the shortest phone (375 × 667 pt), and a short canvas whose
+ * tray is one slot high, so a lift from the slot's top part reaches the board's last row.
+ */
+const CANVASES = [
+  { phone: 'a 402 × 874 pt phone', width: 374, height: 660 },
+  { phone: 'a 375 × 667 pt phone', width: 375 - 28, height: 667 - 20 - 60 - 44 },
+  { phone: 'a short 347 × 420 pt canvas', width: 347, height: 420 },
+];
+
+describe('a drag put back on the tray', () => {
+  it.each(CANVASES)(
+    'cancels a release anywhere on the slot it started from, its top part too, on $phone',
+    (canvas) => {
+      const layout = layoutBoard({ ...canvas, view: VIEW, isMirrored: false });
+      const placed = [0, 1, 2, 3].flatMap((slot) => {
+        const rect = traySlotRect(layout, slot);
+        if (rect === null) return [`slot ${String(slot)}: no rect`];
+        const from = hitTest(layout, { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+        const pointer: PointerSample = { ...IDLE_POINTER, isDown: true, dragFrom: from };
+        // The slot's top edge, its top part (within one lift of it), its middle and its bottom.
+        const heights = [1, DRAG_LIFT_PT / 2, rect.height / 2, rect.height - 1];
+        return heights.flatMap((dy) => {
+          const finger = { x: rect.x + rect.width / 2, y: rect.y + dy };
+          const release = {
+            ...finger,
+            translationX: 0,
+            translationY: 0,
+            velocityX: 0,
+            velocityY: 0,
+          };
+          const intent = panIntent({
+            mode: 'drag',
+            pointer,
+            release,
+            layout,
+            dragLiftPt: DRAG_LIFT_PT,
+          });
+          const move = intent === null ? null : intentToMove(STATE, intent);
+          return move === null
+            ? []
+            : [`slot ${String(slot)} at +${String(dy)} pt placed ${JSON.stringify(move)}`];
+        });
+      });
+      expect(placed).toStrictEqual([]);
+    },
+  );
 });
