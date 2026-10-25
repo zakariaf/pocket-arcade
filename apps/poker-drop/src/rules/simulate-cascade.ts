@@ -3,8 +3,9 @@
 // real-time loop's fixed step (1/120 s) and returns ordinary timed events (atMs). A card falls from
 // above the well under gravity; every full line making two pair or better bursts the cards of its
 // hand; after the burst the cards above fall, and a fall that makes new hands bursts again
-// (cascade step 2, 3, ...) until a step makes no hand or the move reaches maxTicks. The game stays
-// turn-based for saves, bots and goldens; buildTimeline replays the events on screen.
+// (cascade step 2, 3, ...) until a step makes no hand. maxTicks bounds the time only: past it every
+// further step happens at the cap, so no hand is ever skipped. The game stays turn-based for saves,
+// bots and goldens; buildTimeline replays the events on screen.
 import { STEP_MS } from '@e07/game-kit/timeline/fixed-step.ts';
 
 import { handOf, isBurstingHand, scoringPositions } from './hand-rank.ts';
@@ -22,7 +23,7 @@ export type CascadeConfig = {
   readonly burstTicks: number;
   /** Ticks the well takes to rise one row. */
   readonly riseTicks: number;
-  /** Hard cap: the simulation of one move stops here, so a cascade always ends. */
+  /** Hard cap on one move's time: every event is at or before it (scoring is never cut short). */
   readonly maxTicks: number;
 };
 
@@ -116,11 +117,16 @@ function burstStep(run: Cascade, bursts: readonly LineBurst[], step: number): Ca
   };
 }
 
+/** The tick `ticks` after `tick`, never past the cap. */
+function later(tick: number, ticks: number, config: CascadeConfig): number {
+  return Math.min(tick + ticks, config.maxTicks);
+}
+
 function fallStep(run: Cascade, step: number, config: CascadeConfig): Cascade {
   const settled = settle(run.cells);
   let end = run.tick;
   const falls: CardFall[] = settled.moves.map((move) => {
-    const land = run.tick + fallTicks(move.fromRow - move.toRow, config);
+    const land = later(run.tick, fallTicks(move.fromRow - move.toRow, config), config);
     end = Math.max(end, land);
     const card = cardIn(settled.cells, cellIndex(move.col, move.toRow));
     return { card, col: move.col, fromRow: move.fromRow, toRow: move.toRow, landMs: msOf(land) };
@@ -132,16 +138,18 @@ function fallStep(run: Cascade, step: number, config: CascadeConfig): Cascade {
   return { ...run, cells: settled.cells, events, tick: end };
 }
 
-/** Bursts every hand of the well, step after step, until a step makes none or maxTicks is reached. */
+/**
+ * Bursts every hand of the well, step after step, until a step makes none. It always ends: every
+ * step empties cells. Time stops at maxTicks; the steps after it all happen at the cap.
+ */
 export function runCascade(start: Cascade, config: CascadeConfig): Cascade {
   let run = start;
-  for (let step = 1; run.tick < config.maxTicks; step += 1) {
+  for (let step = 1; ; step += 1) {
     const bursts = burstingLines(run.cells);
-    if (bursts.length === 0) break;
+    if (bursts.length === 0) return run;
     run = burstStep(run, bursts, step);
-    run = fallStep({ ...run, tick: run.tick + config.burstTicks }, step, config);
+    run = fallStep({ ...run, tick: later(run.tick, config.burstTicks, config) }, step, config);
   }
-  return run;
 }
 
 /** Drops `card` into column `col` (which must have room) and runs the cascade. Pure. */
@@ -182,7 +190,7 @@ export function simulateRise(
   config: CascadeConfig = CASCADE,
 ): Cascade {
   const risen: Cell[] = [...cards, ...run.cells.slice(0, (ROWS - 1) * COLS)];
-  const land = run.tick + config.riseTicks;
+  const land = later(run.tick, config.riseTicks, config);
   const event: PokerDropEvent = {
     kind: 'row-rose',
     cards,

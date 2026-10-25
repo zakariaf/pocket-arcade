@@ -154,14 +154,23 @@ describe('simulateDrop', () => {
     expect(tick).toBe(secondBurst + CASCADE.burstTicks);
   });
 
-  it('stops the cascade at maxTicks', () => {
+  it('bounds the time of the cascade by maxTicks but still bursts and scores every hand', () => {
     const capped = simulateDrop(
       CASCADE_WELL,
       { col: 2, card: card('5d') },
       { ...CASCADE, maxTicks: 60 },
     );
-    expect(kinds(capped.events)).toStrictEqual(['card-dropped', 'hand-burst', 'cards-fell']);
-    expect(capped.hands).toBe(1);
+    expect(kinds(capped.events)).toStrictEqual([
+      'card-dropped',
+      'hand-burst',
+      'cards-fell',
+      'hand-burst',
+    ]);
+    expect(capped.hands).toBe(2);
+    expect(capped.points).toBe(60);
+    expect(burstingLines(capped.cells)).toStrictEqual([]);
+    expect(capped.tick).toBe(60);
+    expect(capped.events.every((event) => event.atMs <= msOf(60))).toBe(true);
   });
 
   describe('properties', () => {
@@ -241,6 +250,16 @@ describe('simulateRise', () => {
     expect(kinds(risen.events)).toStrictEqual(['row-rose', 'hand-burst']);
     expect(risen.cells.filter((cell) => cell !== null)).toStrictEqual([card('3c')]);
     expect(risen.hands).toBe(1);
+  });
+
+  it('bursts the hands of the rising row even when the rise starts at the tick cap', () => {
+    const start = { cells: emptyWell(), events: [], hands: 0, points: 0, tick: CASCADE.maxTicks };
+    const pairs = [card('8s'), card('8d'), card('3c'), card('Qh'), card('Qs')];
+    const risen = simulateRise(start, pairs);
+    expect(kinds(risen.events)).toStrictEqual(['row-rose', 'hand-burst']);
+    expect(risen.hands).toBe(1);
+    expect(burstingLines(risen.cells)).toStrictEqual([]);
+    expect(risen.tick).toBe(CASCADE.maxTicks);
   });
 });
 
