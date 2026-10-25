@@ -77,11 +77,13 @@ describe('TutorialView', () => {
   it('gives the nudge its own testID, tutorial.nudge', async () => {
     await renderWithShell(<TutorialView model={modelWith({ nudgeText: 'Follow the hand.' })} />);
     expect(screen.getByTestId('tutorial.nudge')).toHaveTextContent('Follow the hand.');
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
   it('shows no tutorial.nudge while there is no nudge', async () => {
     await renderWithShell(<TutorialView model={modelWith()} />);
     expect(screen.queryByTestId('tutorial.nudge')).not.toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
   it('sends Skip and the continue key to the model', async () => {

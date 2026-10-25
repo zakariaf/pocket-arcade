@@ -2014,11 +2014,11 @@
         ]
       },
       "templates/shell/game-host/board-types.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-types.ts",
-            "sha256": "3b8a23cb9316133804b27b639c60d39fbb49cdfd1098bad4ae8f8abd0cb4482b"
+            "sha256": "eabd0b153ed39da20ed9cca14b2835d2992a2d66ed4e6a96b40bbf06d9da33fd"
           }
         ]
       },
@@ -5254,11 +5254,20 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-controller.ts",
-            "sha256": "1d342aefa4340440d7821985e40c409baedc920da6d9d609ac928548f2498f3b"
+            "sha256": "672b621f89fdd917bfad729bc70d7e9210c2535c438dae4d608c0d48a6d656f3"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-hints.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-hints.ts",
+            "sha256": "4e2617abbc6e7e655e16597b32e99928ab5f91c2f313546b7720886ecec2f037"
           }
         ]
       },
@@ -5280,12 +5289,21 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/session-view.test.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-view.test.ts",
+            "sha256": "0a5345e11f4055d682bdafb8cdc4ff3410e545fdf45dfec7bf82f9a1c8aa3963"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/session-view.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-view.ts",
-            "sha256": "94bac77f340e6f2a9dc4aaa2164abb3526e8521ff02afd6e980f9ef8b818c3e0"
+            "sha256": "234b34248a92ae51a3d7c19a84dec2483ee3f891215f306557453c442234d3b8"
           }
         ]
       },
@@ -5458,7 +5476,7 @@
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
-            "sha256": "61547f8d2f997cf830fd4d445065294ea08c3e39ea4261247e0ecfa29e19ab44"
+            "sha256": "727d040274b31e9283e92a71409c409b454641290ff75a1985a18a0fc170845c"
           }
         ]
       },
@@ -5481,11 +5499,11 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
-            "sha256": "3c47918889f81cf3444782128541a7c4f40b37c0b339c90126822e2e30761e00"
+            "sha256": "a5ed12882164e70dac101673861a9c48763a5afd6dcc5da557ec3964d92c1536"
           }
         ]
       },
@@ -15502,6 +15520,24 @@
           {
             "path": "docs/18-design-system-toybox.md",
             "sha256": "e65b9276f05341107e9bea224d896d155fb0f8656f9af2a92a4f25e48b3366f8"
+          }
+        ]
+      },
+      "templates/packages/shell/src/ui/use-wrapped-text.test.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/ui/use-wrapped-text.test.ts",
+            "sha256": "4b70b2a7e905bc0f646a79c77f6478834beb8aecf60fd6741212b4109eb826ae"
+          }
+        ]
+      },
+      "templates/packages/shell/src/ui/use-wrapped-text.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/ui/use-wrapped-text.ts",
+            "sha256": "6b0650845a8525a2599344b2b82f25ca90efc127ed4de4ec5d464e9633643bc1"
           }
         ]
       },

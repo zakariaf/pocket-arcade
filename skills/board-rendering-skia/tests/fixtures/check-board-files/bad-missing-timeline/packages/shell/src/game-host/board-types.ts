@@ -128,4 +128,9 @@ export type GameBoard<TState, TView, TToken extends string, TMove = unknown> = {
    * tutorial's pointing hand starts and ends where this says.
    */
   readonly targetRect?: (layout: BoardLayout, target: BoardTarget) => Rect | null;
+  /**
+   * Optional: width / height of the S13 how-to picture, for a game whose Toybox illustration is
+   * not the mockup's 320 x 206; default 320 / 206.
+   */
+  readonly exampleAspect?: number;
 };

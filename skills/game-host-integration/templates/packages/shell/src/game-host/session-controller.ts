@@ -5,6 +5,7 @@ import { createGameSessionStore } from '@e07/shell/game-host/game-session-store.
 import { createPlayClock } from '@e07/shell/game-host/play-clock.ts';
 import { runEndOf, summarizeRun } from '@e07/shell/game-host/run-summary.ts';
 import { createRunWriter, writeRun, writeRunForHome } from '@e07/shell/game-host/run-writer.ts';
+import { hintSearchOf, hintToGive, showHint } from '@e07/shell/game-host/session-hints.ts';
 import { sessionViewOf } from '@e07/shell/game-host/session-view-of.ts';
 import { continueStateOf } from '@e07/shell/game-host/session-view.ts';
 import { playUiFeedback } from '@e07/shell/services/audio/ui-feedback.ts';
@@ -18,6 +19,7 @@ import type { GameSessionStore } from '@e07/shell/game-host/game-session-store.t
 import type { GameSession, SessionAction } from '@e07/shell/game-host/game-session-types.ts';
 import type { PlayClock } from '@e07/shell/game-host/play-clock.ts';
 import type { RunEndContext, RunSummary } from '@e07/shell/game-host/run-summary.ts';
+import type { HintSearch } from '@e07/shell/game-host/session-hints.ts';
 import type { ViewExtras, ViewFixture } from '@e07/shell/game-host/session-view-of.ts';
 import type {
   SessionCommand,
@@ -78,6 +80,8 @@ type Parts<TState, TMove, TEvent> = {
   readonly store: GameSessionStore<TState, TMove, TEvent>;
   readonly extras: StoreApi<ViewExtras<TMove>>;
   readonly playClock: PlayClock;
+  /** The game's hint search, once per position (session-hints.ts). */
+  readonly search: HintSearch<TState, TMove>;
 };
 
 type Session<TState, TMove, TEvent> = GameSession<TState, TMove, TEvent>;
@@ -153,28 +157,6 @@ function endedAt<TState, TMove, TEvent>(
   if (outcome.kind === 'playing') return null;
   const eventSeq = session.eventSeq + 1;
   return { ...session, state, outcome, status: outcome.kind, past: [], lastEvents: [], eventSeq };
-}
-
-/**
- * The move a hint would show now, or null: no solver hints, the run is not playing, a hint for
- * this position shows already, or the solver has no move. The Game screen asks it (canHint)
- * before anyone pays, so a paid hint is never one the run cannot give (spec 8.5).
- */
-function hintToGive<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): TMove | null {
-  const { session } = parts.store.getState();
-  const hints = parts.deps.gameRules.hints;
-  if (hints.kind !== 'solver' || session.status !== 'playing') return null;
-  const shown = parts.extras.getState().hint;
-  if (shown !== null && shown.atSeq === session.eventSeq) return null;
-  return hints.suggest(session.state);
-}
-
-function showHint<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
-  const move = hintToGive(parts);
-  if (move === null) return;
-  const { session, dispatch } = parts.store.getState();
-  parts.extras.setState({ hint: { move, atSeq: session.eventSeq } });
-  dispatch({ type: 'use-hint' });
 }
 
 /**
@@ -312,7 +294,13 @@ export function createSessionController<TState, TMove, TEvent>(
     initial,
     persist,
   });
-  const parts = { deps, store, extras, playClock: createPlayClock(deps.nowMs) };
+  const parts: Parts<TState, TMove, TEvent> = {
+    deps,
+    store,
+    extras,
+    playClock: createPlayClock(deps.nowMs),
+    search: hintSearchOf(deps.gameRules.hints),
+  };
   const hintedMove = (): TMove | null => {
     const hint = extras.getState().hint;
     return hint !== null && hint.atSeq === store.getState().session.eventSeq ? hint.move : null;
