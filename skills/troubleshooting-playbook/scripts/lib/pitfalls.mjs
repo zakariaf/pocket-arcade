@@ -107,7 +107,7 @@ export const PITFALLS = [
   { id: 'engine-zustand-new-object', detect: (ctx) => grep(ctx, CODE, /\buse\w*Store\(\s*\(?\s*\w*\s*\)?\s*=>\s*(?:\(\s*\{|\[)/, 'a store selector returns a new object or array on every call (Maximum update depth exceeded); wrap it in useShallow', { tests: false }) },
   { id: 'engine-shared-value-access', detect: (ctx) => sharedValueAccess(ctx) },
   { id: 'engine-runonjs-deprecated', detect: (ctx) => grep(ctx, CODE, /(?<!\.)\brunOnJS\b/, 'uses runOnJS (deprecated in Worklets 0.10); use scheduleOnRN', { tests: false }) },
-  { id: 'parity-capture-unstable-loop', detect: (ctx) => filesMatching(ctx, CODE, { tests: false }).filter((rel) => { const body = text(ctx, rel); return /\bwithRepeat\s*\(/.test(body) && !/reduced?Motion|:\s*Motion\b|['"]reduced['"]/i.test(body); }).map((rel) => ({ file: rel, line: lineOf(text(ctx, rel), text(ctx, rel).search(/\bwithRepeat\s*\(/)), message: 'a repeating animation (withRepeat) that never reads reduce motion: parity captures stay unstable; rest when useReduceMotion() is true (true while the parity launch freezes motion)' })) },
+  { id: 'parity-capture-unstable-loop', detect: (ctx) => filesMatching(ctx, CODE, { tests: false }).filter((rel) => { const body = text(ctx, rel); return /\bwithRepeat\s*\(/.test(body) && !isLoopGated(body); }).map((rel) => ({ file: rel, line: lineOf(text(ctx, rel), text(ctx, rel).search(/\bwithRepeat\s*\(/)), message: 'a repeating animation (withRepeat) that never reads reduce motion: parity captures stay unstable; rest when useReduceMotion() is true (true while the parity launch freezes motion)' })) },
   { id: 'services-interstitial-only-once', detect: (ctx) => filesMatching(ctx, ['packages/shell/src/app/create-shell-parts.ts']).filter((rel) => { const body = text(ctx, rel); return /\bcreateGameHost\s*\(/.test(body) && !/\bextendRunEnd\b/.test(body); }).map((rel) => ({ file: rel, line: lineOf(text(ctx, rel), text(ctx, rel).search(/\bcreateGameHost\s*\(/)), message: 'createGameHost gets no extendRunEnd, so finished levels never reach the ad history and only one interstitial ever shows; pass extendRunEnd: recordAdLevelEnd' })) },
   { id: 'engine-skia-mutable-path', detect: (ctx) => grep(ctx, CODE, /\bSkia\.Path\.Make\(\s*\)/, 'builds a mutable SkPath (deprecated since Skia 2.6); use Skia.PathBuilder.Make()...build()', { tests: false }) },
   // ---- lint and tests
@@ -146,6 +146,31 @@ function skillsNotIgnored(ctx, rel, pattern, message) {
 }
 
 /** `const x = useSharedValue(...)` followed by `x.value`: use x.get() / x.set() under the React Compiler. */
+/** Code with the contents of string and template literals blanked, so a word in a string reads nothing. */
+function maskStrings(code) {
+  return code.replace(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\])*`/g, (literal) => `${literal[0]}${literal.slice(1, -1).replace(/[^\n]/g, ' ')}${literal[0]}`);
+}
+
+/**
+ * True when a file with a withRepeat loop really decides by reduce motion: a name that carries it
+ * (an isReducedMotion-style flag, a Motion-typed value, a useReduceMotion() result) is tested in a
+ * branch (if, ternary, negation, &&, ||, === or !==) or handed to a call that decides (the coach
+ * hand's isCoachHandGliding(hand, motion)). A word in a string or a comment, a props type or a
+ * dependency list alone is not a gate.
+ */
+function isLoopGated(body) {
+  const code = maskStrings(body);
+  const names = new Set([...code.matchAll(/\b\w*[Rr]educed?Motion\w*\b/g)].map((match) => match[0]));
+  for (const match of code.matchAll(/\b(\w+)\s*\??:\s*Motion\b/g)) names.add(match[1]);
+  for (const match of code.matchAll(/\b(?:const|let)\s+(\w+)\s*=\s*useReduceMotion\s*\(/g)) names.add(match[1]);
+  names.delete('useReduceMotion');
+  return [...names].some((name) => {
+    const n = `\\b${name}\\b`;
+    const gate = new RegExp(`\\bif\\s*\\([^)]*${n}|!\\s*${n}|${n}\\s*(?:\\?(?!\\.)|&&|\\|\\||[!=]==)|(?:&&|\\|\\|)\\s*!?\\s*${n}|\\w\\s*\\([^()]*${n}\\s*\\)`);
+    return gate.test(code);
+  });
+}
+
 function sharedValueAccess(ctx) {
   const findings = [];
   for (const rel of filesMatching(ctx, CODE, { tests: false })) {
