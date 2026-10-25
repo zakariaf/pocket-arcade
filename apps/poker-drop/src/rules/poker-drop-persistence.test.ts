@@ -2,6 +2,7 @@
 import fc from 'fast-check';
 
 import { applyMove } from './apply-move.ts';
+import { cardOf } from './cards.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { POKER_DROP_PERSISTENCE, parseMove, parseState } from './poker-drop-persistence.ts';
@@ -85,6 +86,52 @@ describe('parseState', () => {
     ['a goal that is not whole', { ...START, goal: 2.5 }],
     ['a continue flag that is not a boolean', { ...START, hasContinued: 'no' }],
     ['an overflow flag that is missing', { ...START, hasOverflowed: undefined }],
+  ])('rejects %s', (_name, json) => {
+    expect(parseState(roundTrip(json))).toBeNull();
+  });
+});
+
+/** A played state with hands made: seed 1's line of leftmost drops, after its first burst. */
+const PLAYED = (() => {
+  const { states } = playLine(
+    1,
+    0,
+    Array.from({ length: 30 }, () => 0),
+  );
+  return states.find((state) => state.handsMade > 0) ?? START;
+})();
+const LOW_CARD = cardOf(2, 0);
+
+describe('parseState with counts or cards no play can reach', () => {
+  it('starts from a played state that parses (the cases below change one thing each)', () => {
+    expect(PLAYED.handsMade).toBeGreaterThan(0);
+    expect(parseState(roundTrip(PLAYED))).toStrictEqual(PLAYED);
+  });
+
+  // spec 8.6 and N10: a damaged save is dropped alone (8.14), never played as an impossible run.
+  it.each([
+    ['a goal that disagrees with the difficulty', { ...START, goal: START.goal + 1 }],
+    ['a hand below the lowest rank of its row', { ...START, hand: LOW_CARD }],
+    [
+      'a well card below the lowest rank of its row',
+      { ...START, cells: START.cells.map((c) => (c === null ? c : LOW_CARD)) },
+    ],
+    [
+      'a pile card below the lowest rank of its row',
+      { ...START, pile: [LOW_CARD, ...START.pile.slice(1)] },
+    ],
+    [
+      'the same card twice in the pile',
+      { ...START, pile: [START.pile[0], ...START.pile.slice(0, -1)] },
+    ],
+    ['hands made with no score', { ...PLAYED, score: 0 }],
+    ['a score with no hand made', { ...START, score: 20 }],
+    [
+      'a score below the weakest hand for each hand made',
+      { ...PLAYED, score: 10 * PLAYED.handsMade },
+    ],
+    ['a score no sum of hands makes', { ...PLAYED, score: PLAYED.score + 5 }],
+    ['hands made before any drop', { ...START, handsMade: 1, score: 20 }],
   ])('rejects %s', (_name, json) => {
     expect(parseState(roundTrip(json))).toBeNull();
   });

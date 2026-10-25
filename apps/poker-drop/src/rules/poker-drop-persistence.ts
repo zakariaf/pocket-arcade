@@ -1,8 +1,9 @@
 // apps/poker-drop/src/rules/poker-drop-persistence.ts
 // Spec 8.6 / N10: a saved run is JSON from disk; rebuild a fresh typed state with explicit checks
-// and return null on anything unexpected, a missing or an extra field included (the Shell then
-// drops only the run, 8.14). Never cast.
-import { TUNING } from './poker-drop-tuning.ts';
+// and return null on anything unexpected, a missing or an extra field included, or counts and
+// cards no play can reach (the Shell then drops only the run, 8.14). Never cast.
+import { rankOf } from './cards.ts';
+import { TUNING, knobsFor } from './poker-drop-tuning.ts';
 
 import type { Card, Cell, PokerDropMove, PokerDropState } from './poker-drop-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -83,6 +84,32 @@ function parseFlags(json: JsonRecord) {
   return isValid ? { hasOverflowed, hasContinued } : null;
 }
 
+const HAND_POINTS: readonly number[] = Object.values(TUNING.handPoints);
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+/** Every hand scores a multiple of this (its points times its cascade step). */
+const POINT_STEP = HAND_POINTS.reduce(gcd);
+/** The weakest bursting hand's points: each hand made adds at least this much. */
+const MIN_HAND_POINTS = Math.min(...HAND_POINTS);
+
+/**
+ * The checks only play can guarantee: the goal and the ranks of the difficulty's row, one deck in
+ * the pile, and a score that the hands made can add up to (none before a drop).
+ */
+function isReachable(state: PokerDropState): boolean {
+  const knobs = knobsFor(state.difficulty);
+  const cards = [state.hand, state.next, ...state.pile, ...state.cells.filter((c) => c !== null)];
+  const { handsMade, score } = state;
+  return (
+    state.goal === knobs.goal &&
+    cards.every((card) => rankOf(card) >= knobs.minRank) &&
+    new Set(state.pile).size === state.pile.length &&
+    (handsMade === 0) === (score === 0) &&
+    score % POINT_STEP === 0 &&
+    score >= handsMade * MIN_HAND_POINTS &&
+    (handsMade === 0 || state.drops > 0)
+  );
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): PokerDropState | null {
   if (!isRecord(json) || !hasExactKeys(json)) return null;
@@ -95,7 +122,20 @@ export function parseState(json: unknown): PokerDropState | null {
   if (pile === null || rng === null) return null;
   const { difficulty, goal, handsMade, score, drops, hand, next } = counts;
   // The field order of create(): a parsed save serialises to the same JSON again.
-  return { difficulty, cells, hand, next, pile, goal, handsMade, score, drops, ...flags, rng };
+  const state = {
+    difficulty,
+    cells,
+    hand,
+    next,
+    pile,
+    goal,
+    handsMade,
+    score,
+    drops,
+    ...flags,
+    rng,
+  };
+  return isReachable(state) ? state : null;
 }
 
 /** One logged move -> a typed move, or null (the Shell then drops only the move log). */
