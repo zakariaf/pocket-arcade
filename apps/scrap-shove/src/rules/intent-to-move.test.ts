@@ -5,6 +5,7 @@ import { applyMove } from './apply-move.ts';
 import { stateFromText } from './board-text.ts';
 import { create } from './create.ts';
 import { intentToMove } from './intent-to-move.ts';
+import * as listMovesModule from './list-moves.ts';
 import { listMoves } from './list-moves.ts';
 
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
@@ -45,6 +46,18 @@ describe('intentToMove', () => {
     const lost = applyMove(stateFromText(['....', '.n..', '..@.', '....']), { kind: 'wait' }).state;
     expect(intentToMove(lost, tap(cell(2, 2)))).toBeNull();
     expect(intentToMove(lost, tap(cell(3, 3)))).toBeNull();
+  });
+
+  it('matches a listed move by kind and square, whatever order its keys are in', () => {
+    const real = listMovesModule.listMoves;
+    jest
+      .spyOn(listMovesModule, 'listMoves')
+      .mockImplementation((state) =>
+        real(state).map((legal) =>
+          legal.kind === 'wait' ? legal : { row: legal.row, col: legal.col, kind: legal.kind },
+        ),
+      );
+    expect(intentToMove(STATE, tap(cell(1, 1)))).toStrictEqual({ kind: 'step', col: 1, row: 1 });
   });
 
   it('ignores intents this game does not use', () => {

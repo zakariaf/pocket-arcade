@@ -11,7 +11,8 @@ import type {
   ScrapShoveState,
 } from './scrap-shove-types.ts';
 
-function isSameMove(a: ScrapShoveMove, b: ScrapShoveMove): boolean {
+/** True when two moves are the same kind onto the same square, whatever order their keys are in. */
+export function isSameMove(a: ScrapShoveMove, b: ScrapShoveMove): boolean {
   if (a.kind === 'wait' || b.kind === 'wait') return a.kind === b.kind;
   return a.kind === b.kind && a.col === b.col && a.row === b.row;
 }

@@ -1,4 +1,5 @@
 // apps/scrap-shove/src/rules/intent-to-move.ts
+import { isSameMove } from './apply-move.ts';
 import { isSameCell } from './floor-squares.ts';
 import { listMoves, moveOnto } from './list-moves.ts';
 
@@ -33,6 +34,5 @@ function candidate(state: ScrapShoveState, intent: InputIntent): ScrapShoveMove 
 export function intentToMove(state: ScrapShoveState, intent: InputIntent): ScrapShoveMove | null {
   const move = candidate(state, intent);
   if (move === null) return null;
-  const key = JSON.stringify(move);
-  return listMoves(state).some((legal) => JSON.stringify(legal) === key) ? move : null;
+  return listMoves(state).some((legal) => isSameMove(legal, move)) ? move : null;
 }
