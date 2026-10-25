@@ -4,7 +4,7 @@ import { ENDLESS_DIFFICULTY, MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract
 import { dailyStart } from '@e07/game-kit/levels/daily-start.ts';
 import { levelsContractProblems } from '@e07/game-kit/levels/levels-contract.ts';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
-import { create } from '@e07/trail-clear/rules/create.ts';
+import { create, drawStart } from '@e07/trail-clear/rules/create.ts';
 import { listMoves } from '@e07/trail-clear/rules/list-moves.ts';
 import { outcome } from '@e07/trail-clear/rules/outcome.ts';
 
@@ -52,5 +52,14 @@ describe('TRAIL_CLEAR_LEVELS', () => {
     });
     const top = Math.max(...TRAIL_CLEAR_LEVELS.table.map((entry) => entry.difficulty));
     expect(top).toBe(MAX_LEVEL_DIFFICULTY);
+  });
+
+  it("hands out each shipped level's first board, the one the generator proved at build time", () => {
+    const moved = TRAIL_CLEAR_LEVELS.table.filter(
+      (entry) =>
+        JSON.stringify(create(entry.seed, entry.difficulty)) !==
+        JSON.stringify(drawStart(entry.seed, entry.difficulty)),
+    );
+    expect(moved.map((entry) => entry.level)).toStrictEqual([]);
   });
 });

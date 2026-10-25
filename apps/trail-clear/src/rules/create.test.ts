@@ -4,10 +4,11 @@
 // same seed always makes the same level."
 import fc from 'fast-check';
 
-import { create } from './create.ts';
+import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
 import { TUNING } from './trail-clear-tuning.ts';
+import { TRAIL_CLEAR_WITNESS, WITNESS_MAX_NODES } from './trail-clear-witness.ts';
 
-import type { PlacedTile, TileKind } from './trail-clear-types.ts';
+import type { PlacedTile, TileKind, TrailClearState } from './trail-clear-types.ts';
 
 const SIZE = TUNING.boardSize;
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
@@ -90,6 +91,52 @@ describe('create (turn-based: apply the move, then animate its events)', () => {
   });
 });
 
+/** True when the witness wins the board within its budget (spec 8.1: no level is impossible). */
+const isProven = (state: TrailClearState): boolean =>
+  TRAIL_CLEAR_WITNESS.solve(state, WITNESS_MAX_NODES).kind === 'solved';
+
+/** The daily seed of 2026-10-03 (Trail Clear's salt): its first board is one the witness loses. */
+const LOST_FIRST_SEED = 3_123_137_942;
+
+describe('create proves every level board it hands out (spec 8.1: no level is impossible)', () => {
+  it("keeps the seed's first board when the witness wins it", () => {
+    expect(isProven(drawStart(1, 0))).toBe(true);
+    expect(create(1, 0)).toStrictEqual(drawStart(1, 0));
+  });
+
+  it("draws on from the seed's stream when the witness loses the first board", () => {
+    expect(isProven(drawStart(LOST_FIRST_SEED, 45))).toBe(false);
+    const state = create(LOST_FIRST_SEED, 45);
+    expect(state).not.toStrictEqual(drawStart(LOST_FIRST_SEED, 45));
+    expect(isProven(state)).toBe(true);
+    expect(state).toMatchObject({ difficulty: 45, offered: 'ford', placements: 0, score: 0 });
+  });
+
+  it("hands out the fallback seed's proven board when no try is proven within the budget", () => {
+    const fallback = create(FALLBACK_SEED, 45);
+    expect(
+      createWithin(LOST_FIRST_SEED, 45, { attempts: 1, maxNodes: WITNESS_MAX_NODES }),
+    ).toStrictEqual(fallback);
+    expect(isProven(fallback)).toBe(true);
+  });
+
+  it('finds a proven fallback board for every level difficulty 0..99', () => {
+    const unproven = Array.from({ length: 100 }, (_, difficulty) => difficulty).filter(
+      (difficulty) => !isProven(create(FALLBACK_SEED, difficulty)),
+    );
+    expect(unproven).toStrictEqual([]);
+  });
+
+  it("keeps the endless run's first board: it is never won, so never proven", () => {
+    expect(create(LOST_FIRST_SEED, 100)).toStrictEqual(drawStart(LOST_FIRST_SEED, 100));
+  });
+
+  it("tries at most the tuning's createAttempts boards of a seed (a bounded wait)", () => {
+    expect(TUNING.createAttempts).toBe(GOLDEN_CREATE_ATTEMPTS);
+  });
+});
+
+const GOLDEN_CREATE_ATTEMPTS = 12;
 const GOLDEN_SEED_1_BOARD = [
   '... ... ... ... ...',
   '... ... ... ... ...',

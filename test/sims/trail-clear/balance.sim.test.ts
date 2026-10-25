@@ -9,7 +9,7 @@ import { summarizeCell } from '@e07/game-kit/testing/sim-stats.ts';
 import { traceBot } from '@e07/game-kit/testing/trace-bot.ts';
 import { rulesFingerprint, writeSimReport } from '@e07/tooling/sims/write-sim-report.ts';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
-import { create } from '@e07/trail-clear/rules/create.ts';
+import { drawStart } from '@e07/trail-clear/rules/create.ts';
 import { listMoves } from '@e07/trail-clear/rules/list-moves.ts';
 import { outcome } from '@e07/trail-clear/rules/outcome.ts';
 import {
@@ -34,7 +34,16 @@ type Move = TrailClearMove;
 
 const GAME_ID = 'trail-clear';
 const BANDS = parseBands(bandsJson);
-const GAME: BotGame<State, Move, TrailClearEvent> = { create, listMoves, applyMove, outcome };
+/**
+ * The tuning is measured on each seed's first board (drawStart), before create()'s proof: the
+ * boards create() hands out are, by construction, boards the greedy bot wins.
+ */
+const GAME: BotGame<State, Move, TrailClearEvent> = {
+  create: drawStart,
+  listMoves,
+  applyMove,
+  outcome,
+};
 
 /** The three standard players: the baseline, the reasonable player and the upper bound of skill. */
 const POLICIES: Readonly<Record<string, () => BotPolicy<State, Move>>> = {

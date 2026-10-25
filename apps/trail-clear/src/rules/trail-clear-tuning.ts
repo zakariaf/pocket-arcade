@@ -105,6 +105,8 @@ export const TUNING = {
   tilePoints: 10,
   /** A placement that closes a road and a river at once scores both, times this (the twist). */
   doubleMultiplier: 2,
+  /** Boards create() tries from a seed's stream before the proven fallback (spec 8.1). */
+  createAttempts: 12,
   /** Per-difficulty knobs (the tables above). */
   levelRows: LEVEL_ROWS,
   endlessRow: ENDLESS_ROW,

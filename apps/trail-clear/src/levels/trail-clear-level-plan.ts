@@ -4,7 +4,7 @@
 // placing the last tile of its bag, whatever the score, and the stars come from score thresholds
 // set by the witness's final score.
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/trail-clear/rules/create.ts';
+import { drawStart } from '@e07/trail-clear/rules/create.ts';
 
 import { TRAIL_CLEAR_SOLVER, WITNESS_MAX_NODES } from './trail-clear-solver.ts';
 
@@ -45,7 +45,9 @@ export const TRAIL_CLEAR_LEVEL_PLAN: LevelPlan<TrailClearState, TrailClearMove> 
   ],
   levelsPerPack: LEVELS_PER_PACK,
   difficultyFor,
-  create,
+  // Each candidate seed's first board, proven here at build time: create() hands out exactly that
+  // board for a shipped level, so the packs never depend on create()'s runtime search.
+  create: drawStart,
   solver: TRAIL_CLEAR_SOLVER,
   maxNodes: WITNESS_MAX_NODES,
   // Witness losses are retries: on the hardest row about three candidates in four fail.
