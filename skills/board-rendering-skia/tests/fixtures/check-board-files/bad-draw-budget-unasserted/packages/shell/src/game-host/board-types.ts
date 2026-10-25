@@ -130,7 +130,7 @@ export type GameBoard<TState, TView, TToken extends string, TMove = unknown> = {
   readonly targetRect?: (layout: BoardLayout, target: BoardTarget) => Rect | null;
   /**
    * Optional: width / height of the S13 how-to picture, for a game whose Toybox illustration is
-   * not the mockup's 320 x 206 (Flock Tilt's is 320 x 222); default 320 / 206.
+   * not the mockup's 320 x 206; default 320 / 206.
    */
   readonly exampleAspect?: number;
 };

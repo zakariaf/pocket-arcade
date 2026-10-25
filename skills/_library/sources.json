@@ -2018,7 +2018,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-types.ts",
-            "sha256": "b499021d04fc77ce0a82f7d64f36d5a88f5f45eb99a6874dcb9654188171a994"
+            "sha256": "eabd0b153ed39da20ed9cca14b2835d2992a2d66ed4e6a96b40bbf06d9da33fd"
           }
         ]
       },
