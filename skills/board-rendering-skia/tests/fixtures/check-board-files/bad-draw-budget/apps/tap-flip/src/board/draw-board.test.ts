@@ -114,10 +114,12 @@ describe('drawBoard', () => {
     expect(draw({ tracks, atMs: 200 }).texts).toStrictEqual(['۱۲']);
   });
 
-  it('keeps the label while its out-back pop overshoots, and drops it once the pop ends', () => {
+  it('keeps the moves-left label through its out-back overshoot, until its track ends', () => {
+    // The pop's eased progress passes 1 at about 37 % of its time; "playing" is its linear time.
     const tracks = buildTimeline([{ kind: 'moves-added', count: 3 }], 'full');
-    // At 400 of 600 ms the eased progress is above 1: the pop is still playing.
-    expect(draw({ tracks, atMs: 400 }).texts).toStrictEqual(['۱۲']);
+    for (const atMs of [300, 450, 590]) {
+      expect(draw({ tracks, atMs }).texts).toStrictEqual(['۱۲']);
+    }
     expect(draw({ tracks, atMs: 600 }).texts).toStrictEqual([]);
   });
 

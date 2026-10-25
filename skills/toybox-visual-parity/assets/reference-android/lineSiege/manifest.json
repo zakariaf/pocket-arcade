@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "7f9474edc0de9a4207543e12bcfea86577ff2d4d4bcbbd26f66e717d9da6bf95",
+  "design": "ab6b5e48162425e4cba46bf591731fce1889903c4a6d17fc34ca63c583341ca1",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "541f6962f9d3d1d64a3d7b73599cf4c1bbb013358fa4ab75876cccacc24f1b35",
+  "frames": "cc60ccc4f420f75bf0785608764081daeed81b1dcdda7f035efb42d07561d743",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1668,6 +1668,22 @@
    "variants": [],
    "what": "Merging main into E23 put Merge Siege and Jump Chain into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
    "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-stepstone-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-stepstone-with-jump-chain",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Jump Chain (both palettes, logos, texts and sample counters). No frame or variant of Line Siege changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
+   "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
   },
   {
    "id": "G-poker-drop",

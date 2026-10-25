@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-09-28 1`] = `
+"seed 3820087084 difficulty 45 par 4
+K..K.
+K..rB
+.....
+FK...
+.R..."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
+"seed 1993384674 difficulty 45 par 4
+.....
+R....
+K..kR
+K....
+.F..."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
+"seed 1550369566 difficulty 45 par 5
+....F
+..k..
+...BR
+.....
+.KB.."
+`;
+
+exports[`level table goldens keeps the frozen board of level 1 1`] = `
+"seed 3665735722 difficulty 0 par 3
+K....
+.F...
+.....
+RK..r
+.....
+{"kind":"par","par":3}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 30 1`] = `
+"seed 2788564383 difficulty 32 par 5
+KB...
+..R.K
+R....
+.bBFR
+..R..
+{"kind":"par","par":5}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 31 1`] = `
+"seed 2945777712 difficulty 33 par 5
+kR.B.
+...RB
+.....
+.B...
+...KF
+{"kind":"par","par":5}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 60 1`] = `
+"seed 3214704154 difficulty 65 par 5
+..NBF.
+.k...B
+B..BN.
+...NN.
+.K....
+......
+{"kind":"par","par":5}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 61 1`] = `
+"seed 2787768993 difficulty 66 par 6
+NKKN..
+..N...
+...R..
+F.R.B.
+N...k.
+.BK...
+{"kind":"par","par":6}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 90 1`] = `
+"seed 1890419349 difficulty 99 par 6
+KK.RBb.
+...KN..
+.....BK
+.F.K...
+.NN....
+..R....
+.......
+{"kind":"par","par":6}"
+`;

@@ -1,0 +1,87 @@
+# apps/stepstone/e2e/flows/smoke/10-level-1.yaml — level 1 on the real board, then a win:
+# 1. one real move by taps (Canvas content has no testIDs: with boardLayout=1 the test build renders
+#    game.board-layout, a Text holding { x, y, layout }, and game.moves-label, the move count), so a
+#    region cell becomes a tap point: (x + region.x + (col + 0.5) * region.cell) * tapScale (this
+#    board does not mirror; the debug-deep-link reference shows the mirrored formula);
+# 2. a kill (subflows/kill-app.yaml: a real process death on iOS and Android) and relaunch: the
+#    run resumes on Pause with the move kept;
+# 3. action=win-level: GameHost.debugControls().playTo('won') swaps the run's state for the game's
+#    testing.examples.win() and ends it through the host's one run-end path, as a real win does
+#    (stars, statistics and ad history saved before Result shows);
+# 4. the stars reach progress: Levels shows level 1's stars (read from the tile's VoiceOver label,
+#    "Level 1: 3 stars", because the stars are crop-only parts inside the tile) and level
+#    2 is open: tapping its tile (the tile under test) starts level 2 instead of the locked toast.
+# The move and the star count come from the game itself:
+#   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/e2e/print-level-line.ts --app stepstone --level 1
+# prints the first hop (Stepstone is a one-tap game: a tap on a stone in reach hops there, so there
+# are no FROM taps): board col 0 row 3, and the stars the example win earns on level 1 (3), which
+# apps/stepstone/e2e/testids.json lists as result.stars-3.
+appId: ${APP_ID}
+name: Stepstone level 1 accepts a move, resumes after a kill, then wins
+tags: [smoke, stepstone]
+---
+- launchApp:
+    clearState: true
+# One link: the save changes first (first run done), then the Game screen once Home's group is up.
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&level=1&ads=off&firstRun=0&reduceMotion=1&boardLayout=1&screen=game'
+      WAIT_FOR: 'game.board-layout'
+- copyTextFrom:
+    id: 'game.board-layout'
+- evalScript: ${output.board = JSON.parse(maestro.copiedText)}
+- evalScript: ${output.to = output.board.layout.regions.find((region) => region.id === 'board')}
+# No ': ' inside an evalScript (YAML would read a mapping): use arithmetic such as Number(cond).
+# Maestro's point taps are window points on iOS and pixels on Android: the probe's tapScale (the
+# density, Android only) turns one into the other.
+- evalScript: ${output.scale = output.board.tapScale || 1}
+- evalScript: ${output.toPoint = Math.round((output.board.x + output.to.x + (0 + 0.5) * output.to.cell) * output.scale) + ',' + Math.round((output.board.y + output.to.y + (3 + 0.5) * output.to.cell) * output.scale)}
+- tapOn:
+    point: ${output.toPoint}
+- assertVisible:
+    id: 'game.moves-label'
+    text: '1'
+# A real process death on both platforms (on Android killApp spares the foreground app).
+- runFlow: ../../../../../packages/shell/e2e/subflows/kill-app.yaml
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible:
+      id: 'pause.resume-button'
+    timeout: 15000
+- tapOn:
+    id: 'pause.resume-button'
+- assertVisible:
+    id: 'game.moves-label'
+    text: '1'
+# The rest of the level: the game host plays it to a win (never tap a whole line by hand here).
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.stars-3'
+- takeScreenshot: stepstone-level-1-won
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.1'
+# The count, then a space ("Level 1: 3 stars"), so the level's own number never matches it.
+- assertVisible:
+    id: 'levels.level-tile.1'
+    text: '.*[^0-9]3 .*'
+- tapOn:
+    id: 'levels.level-tile.2'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- assertNotVisible:
+    id: 'levels.locked-toast'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*2.*'
+- runFlow: ../../../../../packages/shell/e2e/subflows/assert-no-network.yaml

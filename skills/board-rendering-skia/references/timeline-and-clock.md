@@ -48,7 +48,7 @@ export type Motion = 'full' | 'reduced';
 - **After the end**, the key holds `to` exactly, with `progress` 1 and `ageMs` = duration.
 - `fxEntry(fx, channel, id)` returns `undefined` when there is no track: draw the view's final state.
 - Each entry has `values`, eased `progress` (0…1) and `ageMs` (clamped to 0…duration) for particles.
-- **So an entry exists before its track has started.** A tween of something already visible may use the held `from` (a monster waiting in its old row). An effect layer that only exists while it plays (flash, wave, glow, burst, shake) must draw only when `ageMs > 0` and `progress !== 1` (the `isPlaying` helper of the templates and the Line Siege example), or it shows at full strength at moment 0. "Ended" is exactly 1, because every easing ends at exactly 1 while `out-back` passes 1 on its way: `progress < 1` hides an overshooting effect for the second half of its pop (the template's moves-left label, 2026-10-20).
+- **So an entry exists before its track has started.** A tween of something already visible may use the held `from` (a monster waiting in its old row). An effect layer that only exists while it plays (flash, wave, glow, burst, shake) must draw only while its track plays by linear time (`playingEntry(fx, channel, id)` of `timeline/sample.ts`, which reads `fx.linear`), or it shows at full strength at moment 0; the eased `progress` cannot tell, since an `out-back` track passes 1 early and overshoots.
 
 ## Writing buildTimeline
 

@@ -3,7 +3,7 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
@@ -12,7 +12,6 @@ import { cellEntity, TURN_ENTITY } from './board-ids.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { TapFlipView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -40,15 +39,6 @@ function boardRect(frame: Frame): Rect | null {
   if (first === null || last === null) return null;
   const x = Math.min(first.x, last.x);
   return { x, y: first.y, width: cols * first.width, height: last.y + last.height - first.y };
-}
-
-/**
- * An effect that is not a tween of something visible draws only once its track has started and
- * until it ends. Every easing ends exactly at 1, but out-back passes 1 on its way (the bonus pop),
- * so "ended" is progress === 1, never progress >= 1.
- */
-function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress !== 1;
 }
 
 /** Lit cells carry a shape (the unit mark) as well as a colour: never colour alone. */
@@ -106,13 +96,15 @@ function drawHinted(canvas: SkCanvas, frame: Frame): void {
 /** The board went dark: a fading glow, then particles from its centre (full motion only). */
 function drawClear(canvas: SkCanvas, frame: Frame, board: Rect): void {
   const { kit, colors, fx } = frame;
-  const glow = fxEntry(fx, 'glow', TURN_ENTITY);
-  if (isPlaying(glow)) {
+  // Effect layers draw only while their track plays (playingEntry: by linear time, never the eased
+  // progress, which an out-back track passes early).
+  const glow = playingEntry(fx, 'glow', TURN_ENTITY);
+  if (glow !== undefined) {
     setPaintColor(kit.fill, colors.color.glow, (glow.values[0] ?? 0) * 0.6);
     canvas.drawRRect({ rect: board, rx: 12, ry: 12 }, kit.fill);
   }
-  const burst = fxEntry(fx, 'burst', TURN_ENTITY);
-  if (!isPlaying(burst)) return;
+  const burst = playingEntry(fx, 'burst', TURN_ENTITY);
+  if (burst === undefined) return;
   const spec = {
     seed: frame.view.cols * 31 + frame.view.rows,
     x: board.x + board.width / 2,
@@ -134,9 +126,9 @@ function drawClear(canvas: SkCanvas, frame: Frame, board: Rect): void {
 
 /** A continue added moves: the moves-left number pops in the middle of the board. */
 function drawBonus(canvas: SkCanvas, frame: Frame, board: Rect): void {
-  const bonus = fxEntry(frame.fx, 'bonus', TURN_ENTITY);
+  const bonus = playingEntry(frame.fx, 'bonus', TURN_ENTITY);
   const font = frame.kit.numberFont;
-  if (!isPlaying(bonus) || font === null) return;
+  if (bonus === undefined || font === null) return;
   const size = (board.width / 3) * (bonus.values[0] ?? 1);
   const rect = {
     x: board.x + (board.width - size) / 2,
