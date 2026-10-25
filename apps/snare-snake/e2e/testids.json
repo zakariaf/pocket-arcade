@@ -1,0 +1,5 @@
+{
+  "testIDs": {
+    "result.stars-3": "the stars action=win-level earns on level 1 (testing.examples.win(), printed by print-level-line.ts)"
+  }
+}

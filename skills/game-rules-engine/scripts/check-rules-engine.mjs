@@ -34,7 +34,7 @@ const SPEC = {
     '  determinism            no Math.random, Date, performance.now, Intl, ** or non-exact Math.* (tests: no clock/random)',
     '  rules-file-missing / rules-export-missing  <id>-types.ts, create.ts, list-moves.ts, apply-move.ts, outcome.ts',
     '  state-not-json         the types file uses Map, Set, Date, bigint, symbol or class',
-    '  rng-not-in-state       rules draw after create() but the state holds no RngState',
+    '  rng-not-in-state       rules draw after create() (a file outside what only create.ts imports) but the state holds no RngState',
     '  event-kind             <Pascal>Event kinds are past-tense kebab-case',
     '  illegal-move-throws    applyMove throws a RangeError for illegal moves',
     '  reason-key             lose reasons are <id>.* catalog keys',

@@ -1,0 +1,5 @@
+[
+  { "write": { "file": "apps/tap-flip/src/rules/scramble.ts", "content": "// apps/tap-flip/src/rules/scramble.ts\nimport { nextInt } from '@e07/game-kit/rng/sfc32.ts';\n\nimport type { RngDraw, RngState } from '@e07/game-kit/rng/sfc32.ts';\n\n/** One seeded cell of the opening scramble: create() calls it, nothing during play does. */\nexport function drawCell(rng: RngState, size: number): RngDraw {\n  return nextInt(rng, size);\n}\n" } },
+  { "replace": { "file": "apps/tap-flip/src/rules/create.ts", "find": "import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';\n", "with": "import { seedRng } from '@e07/game-kit/rng/sfc32.ts';\n\nimport { drawCell } from './scramble.ts';\n" } },
+  { "replace": { "file": "apps/tap-flip/src/rules/create.ts", "find": "const draw = nextInt(rng, size);", "with": "const draw = drawCell(rng, size);" } }
+]

@@ -104,6 +104,34 @@ describe('RaisedSurface', () => {
     expect(screen.getByTestId('premium.buy-button')).toHaveStyle({ top: ELEVATION.hero });
   });
 
+  it('keeps its raised face while inert, but ignores presses and reports disabled', async () => {
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+    await renderWithShell(
+      <RaisedSurface
+        label="Hint"
+        onPress={onPress}
+        testID="game.hint-button"
+        elevation={ELEVATION.control}
+        radius={RADII.md}
+        fill="transparent"
+        isReducedMotion
+        isInert
+      >
+        <AppText text="Hint" variant="label" />
+      </RaisedSurface>,
+    );
+
+    const button = screen.getByRole('button', { name: 'Hint' });
+    await user.press(button);
+
+    expect(button).toBeDisabled();
+    expect(onPress).not.toHaveBeenCalled();
+    // allow-style-assertion: an inert key (under an overlay's scrim) is drawn exactly at rest
+    expect(screen.getByText('Hint').parent).not.toHaveStyle({ borderStyle: 'dashed' });
+    expect(screen.getByTestId('game.hint-button')).not.toHaveStyle({ top: ELEVATION.control });
+  });
+
   it('reports busy and ignores presses while busy', async () => {
     const onPress = jest.fn();
     const user = userEvent.setup();

@@ -1,1 +1,0 @@
-design game noLogoGame has no logo layers

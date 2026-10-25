@@ -10,14 +10,17 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { EMPTY_LAYOUT } from '@e07/game-kit/geom/board-layout.ts';
 
 import { BoardLayoutProbe } from './board-layout-probe.tsx';
+import { CoachHandLayer } from './coach-hand-layer.tsx';
 import { recordBoard } from './record-board.ts';
 import { useBoardGestures } from './use-board-gestures.ts';
 
 import type { BoardColors, BoardHighlight, GameBoard, RenderKit } from './board-types.ts';
+import type { BoardCoachHand } from './draw-coach-hand.ts';
 import type { PanMode } from './pan-intent.ts';
 import type { BoardClock } from './use-board-clock.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { Motion } from '@e07/game-kit/timeline/track.ts';
 import type { SkSize } from '@shopify/react-native-skia';
 
 export type BoardCanvasProps<TState, TView, TToken extends string> = {
@@ -39,12 +42,18 @@ export type BoardCanvasProps<TState, TView, TToken extends string> = {
   readonly onDrawError: (message: string) => void;
   /** Test builds with the debug link's boardLayout=1 only: publish game.board-layout for flows. */
   readonly isLayoutProbeOn?: boolean;
+  /** The tutorial's pointing hand (null: none), drawn as its own picture over the board's. */
+  readonly coach: BoardCoachHand | null;
+  /** Grows with each try the tutorial refused: the hand then glides again. */
+  readonly coachReplay: number;
+  /** Reduce motion: the hand then rests at the gap instead of gliding there. */
+  readonly motion: Motion;
 };
 
 export function BoardCanvas<TState, TView, TToken extends string>(
   props: BoardCanvasProps<TState, TView, TToken>,
 ): React.JSX.Element {
-  const { board, clock, colors, kit, highlight, onDrawError } = props;
+  const { board, clock, colors, kit, highlight, onDrawError, coach } = props;
   // The worklets below capture only the two worklet functions they call, not the whole board
   // (whose describe, toView, targetsOfMove and buildPaths would be copied to the UI runtime).
   const { layout: layoutBoard, draw } = board;
@@ -81,6 +90,8 @@ export function BoardCanvas<TState, TView, TToken extends string>(
       kit,
       draw,
       onError: reportDrawError,
+      // The live hand is its own layer (CoachHandLayer): the board is not recorded per phase.
+      restingHand: null,
     }),
   );
 
@@ -95,6 +106,15 @@ export function BoardCanvas<TState, TView, TToken extends string>(
         accessibilityLabel={props.accessibilityLabel}
       >
         <Picture picture={picture} />
+        {coach === null ? null : (
+          <CoachHandLayer
+            hand={coach}
+            replay={props.coachReplay}
+            motion={props.motion}
+            layout={layout}
+            kit={kit}
+          />
+        )}
       </Canvas>
     </GestureDetector>
   );

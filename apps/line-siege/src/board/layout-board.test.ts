@@ -2,8 +2,10 @@
 import fc from 'fast-check';
 
 import { cellRect, hitTest } from '@e07/game-kit/geom/board-layout.ts';
+import { coachHandGlide } from '@e07/shell/game-host/draw-coach-hand.ts';
 
 import { DRAG_LIFT_PT, lanePoint, layoutBoard, traySlotRect, wallRect } from './layout-board.ts';
+import { lineSiegeBoard } from './line-siege-board.ts';
 
 import type { LineSiegeView } from './to-view.ts';
 import type { BoardLayout, GridRegion } from '@e07/game-kit/geom/board-layout.ts';
@@ -99,6 +101,26 @@ describe('layoutBoard', () => {
     expect(traySlotRect(tall, 2)).toStrictEqual(
       cellRect(tall, { regionId: 'tray', col: 2, row: 0 }),
     );
+  });
+
+  it('draws each tray target at its slot and the hand starts there, the tray a row or a column', () => {
+    // Spec S13: the tutorial hand glides from the tray slot to the gap. A tray target names its
+    // slot as col + row, so on a wide canvas (a tray column) slot 1 is drawn at (0, 1).
+    const wide = layoutBoard({ width: 1024, height: 700, view: VIEW, isMirrored: false });
+    const slot = { regionId: 'tray', col: 1, row: 0 };
+    const cell = { regionId: 'board', col: 7, row: 3 };
+    const { targetRect } = lineSiegeBoard;
+    if (targetRect === undefined) throw new Error('the board maps its targets');
+    expect(targetRect(wide, slot)).toStrictEqual(traySlotRect(wide, 1));
+    expect(targetRect(wide, cell)).toStrictEqual(cellRect(wide, cell));
+    const rect = traySlotRect(wide, 1);
+    if (rect === null) throw new Error('slot 1');
+    const glide = coachHandGlide(wide, {
+      hand: { from: slot, to: cell },
+      cells: [slot, cell],
+      targetRect,
+    });
+    expect(glide?.start).toStrictEqual({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
   });
 
   it('has no slots or lanes before the canvas has regions', () => {

@@ -3,9 +3,9 @@
  "game": "lineSiege",
  "platform": "android",
  "set": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 44 dp status bar (the system image's punch-hole cutout sets it) and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
- "rendered": "2026-10-16",
+ "rendered": "2026-10-25",
  "renderer": {
-  "chrome": "155.0.8059.84",
+  "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "ebcd9d1acced5d4dd1e2f12ce7cf8b645a1d514673523fd054e6a904c656f280",
-  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "6bb7e65772e1b0abe995cbee649cff6c2b7d5b0971d644eceafa0d4c7d16d884",
+  "design": "83db62c99f8c11f5e8f5d28e251c81fb9ebf1fc9a9edcfc926882b174be24660",
+  "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
+  "frames": "cc63ee25f93d34f9ed3146cc03ada317d724b7531a185edc56c6234df4e33d12",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1644,6 +1644,22 @@
    ],
    "what": "Every Android render and layout re-rendered with the measured safe top of 44 dp instead of 24 dp: everything below the status bar sits 20 dp lower, the status-bar mask is 44 dp tall. Nothing else in the design moved; the iOS set in assets/reference is unchanged.",
    "why": "The first Android capture (E18-T20) measured the parity emulator's insets as the device profile asks: the pinned google_apis API 35 image draws a punch-hole cutout, so its status bar is 44 dp (132 px); every S2 element sat exactly 20 pt low against the 24 dp profile. A measured inset is a profile change by the skill's own rule (lead, 2026-10-16)."
+  },
+  {
+   "id": "G-merge-siege",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Merge Siege added to the design as a design game. No frame or variant changed: the design and frames inputs of this manifest were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: its design pass, drafted on 2026-10-19 with the proposed defaults; the owner approves it with the E22-T01 message (pending), and the drafted design applies meanwhile"
+  },
+  {
+   "id": "G-merge-siege-with-snare-snake",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   },
   {
    "id": "G-poker-drop",

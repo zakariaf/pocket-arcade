@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // check-golden-changes.mjs: reads commits (or the staged change) and fails when a golden, baseline or
 // pixel matcher changed without a Gate-Change trailer, when an existing daily-challenge golden was
-// edited or deleted (never allowed), or when a pixel tolerance was raised without the owner's approval.
+// edited or deleted (allowed only before the game's first release tag, with a Gate-Change trailer
+// naming the daily), or when a pixel tolerance was raised without the owner's approval.
 // Paths under the in-repo skills/ library, .claude/ and generated output (REPO_SCAN_IGNORES) are
 // never goldens: a skill's fixtures hold golden-shaped files that are not the app's.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-golden-changes.mjs . --range <base>..HEAD
@@ -13,13 +14,14 @@ import { createReporter, fail, isRepoScanIgnored, matchGlob, parseArgs, requireD
 
 const SPEC = {
   name: 'check-golden-changes',
-  summary: 'Checks history (or the staged change) for the golden policy: Gate-Change trailers on every golden change, daily goldens never edited or deleted, tolerances never raised without the owner.',
+  summary: 'Checks history (or the staged change) for the golden policy: Gate-Change trailers on every golden change, daily goldens never edited or deleted once the game has a release tag, tolerances never raised without the owner.',
   usage: '[repo-root] (--range <revs> | --log <file> | --staged) [options]',
   options: {
     range: { type: 'string', value: 'revs', help: 'Commits to check, for example main..HEAD or HEAD~5..HEAD (runs git log)' },
     log: { type: 'string', value: 'file', help: 'A log captured earlier with the command below' },
     staged: { type: 'boolean', help: 'Check the staged change (git diff --cached) as one commit' },
     message: { type: 'string', value: 'file', help: 'With --staged: the planned commit message (for its trailers)' },
+    tags: { type: 'string', value: 'file', help: 'With --log: the release tags (one per line) the logged history had; without it no daily change is excused' },
     repo: { type: 'string', value: 'dir', help: 'Same as the positional repo root (the git repository)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line before the RESULT line' },
   },
@@ -30,7 +32,11 @@ const SPEC = {
     'Rules:',
     '  gate-change-missing   a commit adds, changes or deletes a golden path without "Gate-Change: <reason>" (10+ chars)',
     '  daily-golden-changed  a commit edits or deletes an existing snapshot entry whose key contains "daily"',
-    '                        (adding a new daily date is fine); never allowed, even with a trailer',
+    '                        (adding a new daily date is fine). Excused only when BOTH hold: the snapshot\'s',
+    '                        game (apps/<game-id>/...) has no <game-id>/v* release tag at that commit (no',
+    '                        player has seen a daily yet), and its Gate-Change trailer names the daily. Once',
+    '                        the game has a tag nothing excuses it. --range and --staged read the tags from',
+    '                        git (tags merged into the commit); --log reads --tags <file> or excuses nothing.',
     '  tolerance-raised      failureThreshold, MAX_DIFF_RATIO or maxDiffRatio went up without a Gate-Change',
     '                        trailer that names the owner\'s approval',
     '',
@@ -133,7 +139,21 @@ function toleranceChanges(file) {
   return raised;
 }
 
-function checkCommit(commit, report) {
+/** The game id of an app path (apps/<game-id>/...), or null. */
+function gameOf(path) {
+  return /^apps\/([a-z0-9-]+)\//.exec(path)?.[1] ?? null;
+}
+
+/**
+ * True when a changed daily golden is excused: its game has no release tag at the commit (nobody
+ * has played a daily of it yet) and the Gate-Change trailer names the daily.
+ */
+function isDailyExcused(commit, file, reason, hasReleaseTag) {
+  const game = gameOf(file.oldPath);
+  return game !== null && /daily/i.test(reason) && !hasReleaseTag(game, commit.sha);
+}
+
+function checkCommit(commit, report, hasReleaseTag) {
   const short = commit.sha.slice(0, 8);
   const subject = commit.message.split('\n')[0] ?? '';
   if (GIT_GENERATED.test(subject)) return;
@@ -148,9 +168,10 @@ function checkCommit(commit, report) {
     for (const item of file.removed) {
       if (item.entry && /daily/i.test(item.entry) && !daily.has(item.entry)) daily.set(item.entry, item.line);
     }
+    if (daily.size > 0 && isDailyExcused(commit, file, reason, hasReleaseTag)) continue;
     for (const [entry, line] of daily) {
       const key = /^exports\[`(.*?)`\]/.exec(entry)?.[1] ?? entry;
-      report.problem({ file: file.oldPath, line, rule: 'daily-golden-changed', message: `commit ${short} ${file.status === 'deleted' ? 'deletes' : 'edits'} the daily golden "${key.slice(0, 140)}"`, fix: 'Revert it: every app version must generate the same daily level for a date (spec 8.3). Keep the generator output identical, or stop and ask the owner about a new salt from a future date.' });
+      report.problem({ file: file.oldPath, line, rule: 'daily-golden-changed', message: `commit ${short} ${file.status === 'deleted' ? 'deletes' : 'edits'} the daily golden "${key.slice(0, 140)}"`, fix: 'Revert it: every app version must generate the same daily level for a date (spec 8.3). Keep the generator output identical, or stop and ask the owner about a new salt from a future date. Only a game with no release tag yet may change a daily, with a Gate-Change trailer that names the daily.' });
     }
   }
   for (const file of commit.files) {
@@ -158,6 +179,24 @@ function checkCommit(commit, report) {
       if (!/owner/i.test(reason)) report.problem({ file: file.path, line: 0, rule: 'tolerance-raised', message: `commit ${short} raises ${change.name} from ${change.from} to ${change.to}`, fix: "Restore the tolerance and fix what differs. Only the owner can agree to a new tolerance; then the commit says so: \"Gate-Change: owner approved <value> because <reason>\"." });
     }
   }
+}
+
+/**
+ * (game, sha) -> whether the game had a <game-id>/v* release tag at that commit. --log uses the
+ * --tags list for every commit (no list: every game counts as released, so nothing is excused);
+ * --range and --staged ask git for the tags merged into the commit (HEAD for the staged change).
+ */
+function releaseTags(options, positionals) {
+  if (options.log) {
+    if (options.tags === undefined) return () => true;
+    const tags = readFileSync(requireFile(options.tags, 'tags file'), 'utf8').split('\n').map((tag) => tag.trim());
+    return (game) => tags.some((tag) => tag.startsWith(`${game}/v`));
+  }
+  const repo = positionals[0] ?? options.repo ?? '.';
+  return (game, sha) => {
+    const at = sha === 'staged00' ? 'HEAD' : sha;
+    return git(repo, ['tag', '-l', `${game}/v*`, '--merged', at]).trim() !== '';
+  };
 }
 
 run(async () => {
@@ -181,9 +220,11 @@ run(async () => {
       commits = [{ sha: 'staged00', message: message.trim(), files: parseDiff(diff.split('\n')) }];
     }
   }
+  if (options.tags !== undefined && !options.log) fail('--tags goes only with --log', '--range and --staged read the release tags from git.');
+  const hasReleaseTag = releaseTags(options, positionals);
   const report = createReporter({ name: SPEC.name, json: options.json });
   // Skill fixtures edit daily snapshots and raise tolerances on purpose: never judge those paths.
   const appFiles = (commit) => commit.files.filter((file) => !isRepoScanIgnored(file.path) || !isRepoScanIgnored(file.oldPath));
-  for (const commit of commits) checkCommit({ ...commit, files: appFiles(commit) }, report);
+  for (const commit of commits) checkCommit({ ...commit, files: appFiles(commit) }, report, hasReleaseTag);
   return report.finish({ checked: commits.length, unit: 'commits' });
 });

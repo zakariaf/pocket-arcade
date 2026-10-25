@@ -51,6 +51,11 @@ export type RaisedSurfaceProps = {
   readonly isDisabled?: boolean;
   /** Pushed in, keeps its paint, ignores presses; the label says what is happening. */
   readonly isBusy?: boolean;
+  /**
+   * Drawn exactly at rest, but ignores presses and reports disabled: a key that cannot act now
+   * while its look must not change (a top bar key under an overlay's scrim).
+   */
+  readonly isInert?: boolean;
   readonly accessibilityRole?: AccessibilityRole;
   readonly isSelected?: boolean;
   readonly isChecked?: boolean;
@@ -168,6 +173,18 @@ function a11yProps(props: RaisedSurfaceProps, isInactive: boolean): PressablePro
 }
 
 /**
+ * A sunk key (disabled, busy or pushed in) sits in its shadow; an inactive one (disabled, busy or
+ * inert) ignores presses and reports disabled. An inert key is inactive but drawn at rest.
+ */
+function pressStateOf(props: RaisedSurfaceProps): { isSunk: boolean; isInactive: boolean } {
+  const isHeld = props.isDisabled === true || props.isBusy === true;
+  return {
+    isSunk: isHeld || props.isPushedIn === true,
+    isInactive: isHeld || props.isInert === true,
+  };
+}
+
+/**
  * A Toybox key: ink outline, hard shadow, and a press that sinks into the shadow and springs back.
  * Every press also runs the Shell's tap feedback (usePressFeedback, silent without its provider).
  */
@@ -177,8 +194,7 @@ export function RaisedSurface(props: RaisedSurfaceProps): ReactNode {
   const depth = useSharedValue(0);
   const squash = props.squash ?? PRESS_SQUASH.button;
   const squashFactor = isReducedMotion ? 0 : 1;
-  const isInactive = isDisabled || props.isBusy === true;
-  const isSunk = isInactive || props.isPushedIn === true;
+  const { isSunk, isInactive } = pressStateOf(props);
   const role = props.accessibilityRole ?? 'button';
   const onPressFeedback = usePressFeedback();
 

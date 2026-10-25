@@ -1,0 +1,23 @@
+{
+  "edge": "frame",
+  "text": [["label", "badge"]],
+  "graphics": [
+    ["frame", "background"],
+    ["playerFace", "player"],
+    ["robotFace", "normal"],
+    ["robotFace", "fast"],
+    ["heavyFace", "heavy"],
+    ["heapMark", "heap"],
+    ["arrow", "floor"],
+    ["hint", "floor"]
+  ],
+  "shapes": [
+    ["player", "floor"],
+    ["normal", "floor"],
+    ["fast", "floor"],
+    ["heavy", "floor"],
+    ["heap", "floor"],
+    ["badge", "floor"]
+  ],
+  "distinct": [["player", "normal", "fast", "heavy", "heap"]]
+}

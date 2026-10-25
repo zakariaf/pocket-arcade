@@ -3,9 +3,10 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import { drawBlock, drawPiece, drawRing, inset, INSET } from './draw-parts.ts';
-import { traySlotRect } from './layout-board.ts';
+import { CORNER, drawBlock, drawPiece, drawRing, inset, INSET } from './draw-parts.ts';
+import { targetRectOf, traySlotRect } from './layout-board.ts';
 
 import type { Frame } from './draw-parts.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
@@ -21,13 +22,12 @@ function slotOf(target: BoardTarget | null): number | null {
 
 /** The three slots; a refilled block grows in ('tray' track); the host's selected slot is ringed. */
 export function drawTray(canvas: SkCanvas, frame: Frame): void {
-  const { view, colors, kit, fx } = frame;
+  const { view, colors, fx } = frame;
   const selected = slotOf(frame.highlight.selected);
   view.tray.forEach((offsets, slot) => {
     const rect = traySlotRect(frame.layout, slot);
     if (rect === null) return;
-    kit.fill.setColor(colors.color.tray);
-    drawBlock(canvas, frame, { rect: inset(rect, INSET) });
+    drawBlock(canvas, frame, { rect: inset(rect, INSET), color: colors.color.tray });
     if (slot === selected)
       drawRing(canvas, frame, { rect: inset(rect, INSET / 2), width: rect.width * 0.05 });
     if (offsets.length === 0) return;
@@ -39,23 +39,40 @@ export function drawTray(canvas: SkCanvas, frame: Frame): void {
       width: mini,
       height: mini,
     };
-    kit.fill.setColor(colors.color.block);
-    drawPiece(canvas, frame, { offsets, at: start });
+    drawPiece(canvas, frame, { offsets, at: start, color: colors.color.block });
   });
 }
 
-/** The hinted move (GameBoard.targetsOfMove): its cells as a ghost with an ink ring, its slot ringed. */
+/** How faint the hinted cell's tint is, on top of the ghost's own half alpha. */
+const HINT_TINT = 0.6;
+/** The hinted cell's outline, a share of the cell: thicker than a block's ink edge (0.05). */
+const HINT_EDGE = 0.08;
+
+/**
+ * The hinted move (GameBoard.targetsOfMove, also the tutorial's pointer): each board cell it would
+ * fill is a gap to fill, so it stays EMPTY-looking: a faint ghost tint and a hollow outline in the
+ * block colour, never the ink edge and opaque fill of a placed block. Its tray slot is ringed.
+ */
 export function drawHinted(canvas: SkCanvas, frame: Frame): void {
+  const { kit, colors } = frame;
   for (const target of frame.highlight.hinted) {
     const slot = slotOf(target);
-    const rect = slot === null ? cellRect(frame.layout, target) : traySlotRect(frame.layout, slot);
+    const rect = targetRectOf(frame.layout, target);
     if (rect === null) continue;
-    if (slot === null) {
-      frame.kit.fill.setColor(frame.colors.color.ghost);
-      drawBlock(canvas, frame, { rect: inset(rect, INSET) });
-    } else {
+    if (slot !== null) {
       drawRing(canvas, frame, { rect: inset(rect, INSET / 2), width: rect.width * 0.03 });
+      continue;
     }
+    const cell = inset(rect, INSET);
+    const corner = cell.width * CORNER;
+    setPaintColor(kit.fill, colors.color.ghost, HINT_TINT);
+    canvas.drawRRect({ rect: cell, rx: corner, ry: corner }, kit.fill);
+    const edge = rect.width * HINT_EDGE;
+    drawRing(canvas, frame, {
+      rect: inset(cell, HINT_EDGE / 2),
+      width: edge,
+      color: colors.color.block,
+    });
   }
 }
 
@@ -71,6 +88,5 @@ export function drawGhost(canvas: SkCanvas, frame: Frame): void {
   const offsets = frame.view.tray[slot] ?? [];
   const anchor = cellRect(frame.layout, pointer.hover);
   if (anchor === null || offsets.length === 0) return;
-  frame.kit.fill.setColor(frame.colors.color.ghost);
-  drawPiece(canvas, frame, { offsets, at: anchor });
+  drawPiece(canvas, frame, { offsets, at: anchor, color: frame.colors.color.ghost });
 }

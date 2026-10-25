@@ -1,0 +1,66 @@
+{
+  "gameId": "scrap-shove",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.55,
+      "max": 0.8,
+      "why": "The easiest floors (4 normal robots, 1 heavy) are won by a reasonable player most of the time (0.68 measured), yet not every time: a careless step still gets you caught."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.03,
+      "max": 0.22,
+      "why": "The hardest floors (12 robots, 3 of them heavy) are hard for a one-move thinker (0.16 measured), yet still winnable."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.1,
+      "why": "Random taps never clear even the easiest floor (0.00 measured): naive play loses, so the choices matter."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 4,
+      "max": 7,
+      "why": "A floor is a short puzzle of a handful of moves (median 5 measured), never a single tap."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "twistPerRun",
+      "min": 1,
+      "max": 2,
+      "why": "On the easiest floors a shoved heap blocks or crushes a robot about once per floor (1.11 measured): the twist is the way to win, not a rare extra."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": null,
+  "notes": "Scrap Shove, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75), 100 seeds per cell. The first run found floors that never ended: with only heavy robots left, each waiting behind scrap it could not shove, the player could wait for ever (greedy hit the move cap 2, 1, 3 and 10 times). Heavy robots now smash scrap they cannot shove, and no run reaches the cap. The win rate then fell 0.66, 0.45, 0.32 and 0.23, so the hardest row got a third heavy robot (0.10). Then create began proving every floor winnable (about one raw layout in eight could not be won, and the daily is never screened), which lifted the middle row to 0.39, only 0.09 below the second; that row got a seventh normal robot (0.32). Now greedy wins 0.68/0.48/0.32/0.16, random 0.00 on every row, and the lookahead player (two plies, beam 4) 0.83 on the second row. The kill test passes on the easiest row: every greedy run gets its first crash within 3 moves (the opening crash pair meets on move 1), and a heap the player shoved blocks or crushes a robot 1.11 times per floor (the heavy robots are scrapped only that way). Floors are short puzzles: a median of 5 moves."
+}
