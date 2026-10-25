@@ -20,7 +20,7 @@ function biggestMergeIn(events: readonly MergeSiegeEvent[]): number {
 
 /**
  * 3 counters for the S10 game card (design notes, "Statistics"). `measure` sees ONE move's events;
- * the Shell folds the values over the kept move line of a finished run (undone moves never count).
+ * the Shell folds the values over the move line of a finished run (every move is final: no undo).
  * Ids are kebab-case and permanent: they are keys in the save document.
  */
 export const MERGE_SIEGE_STATS: StatsSpec<MergeSiegeEvent> = {
