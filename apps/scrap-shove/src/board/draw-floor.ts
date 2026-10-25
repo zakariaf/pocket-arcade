@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry, trackKey } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import {
   centred,
@@ -72,10 +73,8 @@ export function drawArrows(canvas: SkCanvas, frame: Frame): void {
   // The arrows track starts when every robot stands on its final square: before that alpha is 0.
   const alpha = fxEntry(frame.fx, 'arrows', TURN_ENTITY)?.values[0] ?? 1;
   if (alpha <= 0) return;
-  frame.kit.fill.setColor(frame.colors.color.arrow);
-  frame.kit.fill.setAlphaf(alpha);
+  setPaintColor(frame.kit.fill, frame.colors.color.arrow, alpha);
   for (const robot of frame.view.robots) drawArrow(canvas, frame, robot);
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** The wait pulse: a ring that grows and fades around the player. */
@@ -84,8 +83,7 @@ function drawWait(canvas: SkCanvas, frame: Frame, body: Rect): void {
   if (!isPlaying(wait)) return;
   const pulse = wait.values[0] ?? 0;
   const { stroke } = frame.kit;
-  stroke.setColor(frame.colors.color.player);
-  stroke.setAlphaf(1 - pulse);
+  setPaintColor(stroke, frame.colors.color.player, 1 - pulse);
   stroke.setStrokeWidth(Math.max(2, body.width * 0.08));
   const radius = (body.width / 2) * (1 + pulse * 0.6);
   canvas.drawCircle(body.x + body.width / 2, body.y + body.height / 2, radius, stroke);

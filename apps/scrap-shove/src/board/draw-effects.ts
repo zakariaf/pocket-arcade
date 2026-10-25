@@ -3,6 +3,7 @@
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { inset, isPlaying, squareAt } from './board-geometry.ts';
@@ -10,13 +11,13 @@ import { PLAYER_ENTITY, TURN_ENTITY } from './board-ids.ts';
 
 import type { Frame } from './board-geometry.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { SkCanvas } from '@shopify/react-native-skia';
+import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
 
 const SPARK_COUNT = 10;
 const BURST_COUNT = 18;
 const BADGE_SIZE = 0.46;
 
-/** Particles flying out of one point at an age; their colour is set by the caller. */
+/** Particles flying out of one point at an age, in one palette token. */
 type Burst = {
   readonly seed: number;
   readonly x: number;
@@ -24,6 +25,7 @@ type Burst = {
   readonly reach: number;
   readonly count: number;
   readonly ageMs: number;
+  readonly color: SkColor;
 };
 
 function drawBurst(canvas: SkCanvas, frame: Frame, burst: Burst): void {
@@ -31,15 +33,13 @@ function drawBurst(canvas: SkCanvas, frame: Frame, burst: Burst): void {
   const spec = { ...burst, minSpeed: reach, maxSpeed: reach * 3, gravity: reach * 4, lifeMs: 600 };
   for (let i = 0; i < burst.count; i += 1) {
     const particle = sampleParticle(spec, i, burst.ageMs);
-    frame.kit.fill.setAlphaf(particle.alpha);
+    setPaintColor(frame.kit.fill, burst.color, particle.alpha);
     canvas.drawCircle(particle.x, particle.y, reach * 0.06, frame.kit.fill);
   }
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** A crash or a crush throws sparks from its square (full motion only: reduced motion has no track). */
 function drawSparks(canvas: SkCanvas, frame: Frame): void {
-  frame.kit.fill.setColor(frame.colors.color.spark);
   for (const key of Object.keys(frame.fx.entries)) {
     const entry = frame.fx.entries[key];
     if (!key.startsWith('spark:') || !isPlaying(entry)) continue;
@@ -53,6 +53,7 @@ function drawSparks(canvas: SkCanvas, frame: Frame): void {
       reach: square.width,
       count: SPARK_COUNT,
       ageMs: entry.ageMs,
+      color: frame.colors.color.spark,
     };
     drawBurst(canvas, frame, burst);
   }
@@ -89,10 +90,8 @@ function drawCaught(canvas: SkCanvas, frame: Frame): void {
   const ring = inset(square, 0.02);
   const corner = square.width * 0.16;
   if (isPlaying(caught)) {
-    kit.fill.setColor(colors.color.danger);
-    kit.fill.setAlphaf((caught.values[0] ?? 0) * 0.5);
+    setPaintColor(kit.fill, colors.color.danger, (caught.values[0] ?? 0) * 0.5);
     canvas.drawRRect({ rect: ring, rx: corner, ry: corner }, kit.fill);
-    kit.fill.setAlphaf(1);
   }
   kit.stroke.setColor(colors.color.danger);
   kit.stroke.setStrokeWidth(Math.max(2, square.width * 0.08));
@@ -122,17 +121,14 @@ function drawWash(canvas: SkCanvas, frame: Frame, floor: Rect): void {
   const blink = isPlaying(revert) ? { entry: revert, color: colors.color.hint, share: 0.2 } : null;
   const shown = wash ?? blink;
   if (shown === null) return;
-  kit.fill.setColor(shown.color);
-  kit.fill.setAlphaf((shown.entry.values[0] ?? 0) * shown.share);
+  setPaintColor(kit.fill, shown.color, (shown.entry.values[0] ?? 0) * shown.share);
   canvas.drawRRect({ rect: floor, rx: floor.width * 0.03, ry: floor.width * 0.03 }, kit.fill);
-  kit.fill.setAlphaf(1);
 }
 
 /** The floor is clear: particles burst from its centre (full motion only). */
 function drawClearBurst(canvas: SkCanvas, frame: Frame, floor: Rect): void {
   const burst = fxEntry(frame.fx, 'burst', TURN_ENTITY);
   if (!isPlaying(burst)) return;
-  frame.kit.fill.setColor(frame.colors.color.glow);
   const spec = {
     seed: 7,
     x: floor.x + floor.width / 2,
@@ -140,6 +136,7 @@ function drawClearBurst(canvas: SkCanvas, frame: Frame, floor: Rect): void {
     reach: floor.width / 6,
     count: BURST_COUNT,
     ageMs: burst.ageMs,
+    color: frame.colors.color.glow,
   };
   drawBurst(canvas, frame, spec);
 }

@@ -221,3 +221,68 @@ describe('drawBoard', () => {
     expect([...recorded.calls.keys()]).toStrictEqual(['drawColor']);
   });
 });
+
+/** A paint that remembers its alpha the way Skia does: setColor takes the colour's, setAlphaf replaces it. */
+function alphaPaint(): { paint: SkPaint; alpha: () => number } {
+  let alpha = 1;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') alpha = (value as SkColor)[3] ?? 1;
+        if (name === 'setAlphaf') alpha = value as number;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha };
+}
+
+/** The highest alpha any fill or stroke draw used on a frame where every token is half transparent. */
+function highestAlpha(at: DrawAt): number {
+  const fill = alphaPaint();
+  const stroke = alphaPaint();
+  let highest = 0;
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, _name) =>
+        (...args: unknown[]) => {
+          const paint = args.at(-1);
+          if (paint === fill.paint) highest = Math.max(highest, fill.alpha());
+          if (paint === stroke.paint) highest = Math.max(highest, stroke.alpha());
+        },
+    },
+  ) as SkCanvas;
+  const half = new Float32Array([0, 0, 0, 0.5]) as SkColor;
+  const color = Object.fromEntries(TOKENS.map((token) => [token, half]));
+  const colors = { ...COLORS, color: color as Record<BoardToken, SkColor> };
+  const { view, tracks } = at.turn;
+  const fx = { ...sampleTimeline(tracks, at.atMs), pointer: IDLE_POINTER };
+  const layout = layoutBoard({ width: 390, height: 560, view, isMirrored: false });
+  const kit = { ...KIT, fill: fill.paint, stroke: stroke.paint };
+  const highlight = at.highlight ?? EMPTY_HIGHLIGHT;
+  drawBoard(canvas, { view, fx, highlight, colors, layout, kit });
+  return highest;
+}
+
+describe('drawBoard with a translucent token', () => {
+  // spec 8.12: the board draws from its palette tokens, so a fade multiplies a token's own alpha.
+  it('keeps a half-transparent token at or below its own alpha on every frame', () => {
+    const { view } = turnOf(['n.n.', '....', '....', '.@..'], { kind: 'wait' });
+    const wait = turnOf(['n...', '....', '....', '...@'], { kind: 'wait' });
+    const turns: Turn[] = [
+      BUSY,
+      CAUGHT,
+      wait,
+      { view, tracks: buildTimeline([{ kind: 'floor-cleared' }], 'full') },
+      { view, tracks: buildTimeline([{ kind: 'step-reverted' }], 'full') },
+    ];
+    const frames: DrawAt[] = turns.flatMap((turn) =>
+      Array.from({ length: 13 }, (_, i) => ({ turn, atMs: (timelineEndMs(turn.tracks) * i) / 12 })),
+    );
+    const hinted = { selected: null, hinted: [{ regionId: 'board', col: 1, row: 1 }] };
+    frames.push({ turn: idle(['n...', '....', '..@.', '....']), atMs: 0, highlight: hinted });
+    expect(Math.max(...frames.map(highestAlpha))).toBeLessThanOrEqual(0.5);
+  });
+});

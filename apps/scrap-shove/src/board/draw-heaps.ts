@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry, trackKey } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { centred, trackedSquare } from './board-geometry.ts';
 import { heapEntity } from './board-ids.ts';
@@ -27,18 +28,14 @@ function drawHeap(canvas: SkCanvas, frame: Frame, heap: HeapShape): void {
   const block = centred(heap.square, HEAP_SIZE * heap.scale);
   const corner = block.width * 0.12;
   const rivet = block.width * 0.07;
-  kit.fill.setColor(colors.color.heap);
-  kit.fill.setAlphaf(heap.alpha);
+  setPaintColor(kit.fill, colors.color.heap, heap.alpha);
   canvas.drawRRect({ rect: block, rx: corner, ry: corner }, kit.fill);
-  kit.stroke.setColor(colors.color.frame);
-  kit.stroke.setAlphaf(heap.alpha);
+  setPaintColor(kit.stroke, colors.color.frame, heap.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, heap.square.width * EDGE));
   canvas.drawRRect({ rect: block, rx: corner, ry: corner }, kit.stroke);
-  kit.stroke.setColor(colors.color.heapMark);
-  kit.stroke.setAlphaf(heap.alpha);
+  setPaintColor(kit.stroke, colors.color.heapMark, heap.alpha);
   canvas.drawLine(...at(block, 0.22, 0.3), ...at(block, 0.78, 0.7), kit.stroke);
-  kit.fill.setColor(colors.color.heapMark);
-  kit.fill.setAlphaf(heap.alpha);
+  setPaintColor(kit.fill, colors.color.heapMark, heap.alpha);
   canvas.drawCircle(...at(block, 0.26, 0.74), rivet, kit.fill);
   canvas.drawCircle(...at(block, 0.74, 0.26), rivet, kit.fill);
   kit.fill.setAlphaf(1);

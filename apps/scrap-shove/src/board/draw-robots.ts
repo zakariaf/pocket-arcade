@@ -2,6 +2,7 @@
 'worklet';
 
 import { trackKey } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { centred, drawUnitPath, trackedSquare } from './board-geometry.ts';
 import { kindAt, robotEntity } from './board-ids.ts';
@@ -22,8 +23,7 @@ const HEAD = { normal: 0.56, fast: 0.5, heavy: 0.7 } as const;
 const EDGE = 0.05;
 
 function setFill(frame: Frame, color: SkColor, alpha: number): void {
-  frame.kit.fill.setColor(color);
-  frame.kit.fill.setAlphaf(alpha);
+  setPaintColor(frame.kit.fill, color, alpha);
 }
 
 /** The head: a blocky rounded square with an ink edge (the Toybox rule: fills carry an edge). */
@@ -33,8 +33,7 @@ function drawHead(canvas: SkCanvas, frame: Frame, robot: Robot): void {
   const corner = head.width * 0.22;
   setFill(frame, colors.color[robot.kind], robot.alpha);
   canvas.drawRRect({ rect: head, rx: corner, ry: corner }, kit.fill);
-  kit.stroke.setColor(colors.color.frame);
-  kit.stroke.setAlphaf(robot.alpha);
+  setPaintColor(kit.stroke, colors.color.frame, robot.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, robot.square.width * EDGE));
   canvas.drawRRect({ rect: head, rx: corner, ry: corner }, kit.stroke);
 }
@@ -49,8 +48,7 @@ function drawFace(canvas: SkCanvas, frame: Frame, robot: Robot): void {
   setFill(frame, face, robot.alpha);
   canvas.drawCircle(head.x + head.width * 0.32, eyeY, eye, kit.fill);
   canvas.drawCircle(head.x + head.width * 0.68, eyeY, eye, kit.fill);
-  kit.stroke.setColor(face);
-  kit.stroke.setAlphaf(robot.alpha);
+  setPaintColor(kit.stroke, face, robot.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, head.width * 0.07));
   const mouthY = head.y + head.height * 0.72;
   canvas.drawLine(head.x + head.width * 0.3, mouthY, head.x + head.width * 0.7, mouthY, kit.stroke);
@@ -68,8 +66,7 @@ function drawTop(canvas: SkCanvas, frame: Frame, robot: Robot): void {
     return;
   }
   const cx = head.x + head.width / 2;
-  kit.stroke.setColor(colors.color.frame);
-  kit.stroke.setAlphaf(robot.alpha);
+  setPaintColor(kit.stroke, colors.color.frame, robot.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, head.width * 0.06));
   canvas.drawLine(cx, head.y, cx, head.y - head.height * 0.22, kit.stroke);
   setFill(frame, colors.color.frame, robot.alpha);
