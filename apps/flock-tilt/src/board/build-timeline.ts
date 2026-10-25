@@ -8,6 +8,9 @@
 //   glow   (turn)       [1] -> [0]: the field glows when every sheep is home
 //   tired  (turn)       [1] -> [0]: the field dims when the tilts ran out
 //   rewind (turn)       [1] -> [0]: the continue took the last tilt back
+import { TUNING } from '@e07/flock-tilt/rules/flock-tilt-tuning.ts';
+import { colRow as fieldColRow, STEP } from '@e07/flock-tilt/rules/tilt-field.ts';
+
 import { sheepEntity, TURN_ENTITY, wolfEntity } from './board-ids.ts';
 
 import type { Direction, FlockTiltEvent, Slide } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
@@ -24,21 +27,13 @@ const DROP_MS = 220;
 const SLID = 'animals-slid';
 const BURST_MS = 600;
 const FLASH_MS = 500;
-/** The field is 7 x 7; cells are row * 7 + col (the board draws whatever the view says). */
-const COLS = 7;
 
 /** Reduced motion: half durations, no particles, no bumps, no overshoot. */
 type Timing = { readonly scale: number; readonly isFull: boolean };
 
-const STEP: Readonly<Record<Direction, readonly [number, number]>> = {
-  up: [0, -1],
-  right: [1, 0],
-  down: [0, 1],
-  left: [-1, 0],
-};
-
+/** A cell of the field (spec 13: one 7 x 7 field) as its (column, row). */
 function colRow(cell: number): [number, number] {
-  return [cell % COLS, Math.floor(cell / COLS)];
+  return fieldColRow(cell, TUNING.side);
 }
 
 function entityOf(slide: Slide): number {

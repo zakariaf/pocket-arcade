@@ -29,7 +29,7 @@ export type Tilted = Flock & {
 type Step = readonly [number, number];
 
 /** Physical steps (swipes never mirror): one cell per direction. */
-const STEP: Readonly<Record<Direction, Step>> = {
+export const STEP: Readonly<Record<Direction, Step>> = {
   up: [0, -1],
   right: [1, 0],
   down: [0, 1],
@@ -65,6 +65,11 @@ type Ends = {
   readonly slides: Slide[];
   readonly penned: number[];
 };
+
+/** A cell index as its (column, row) on a field `cols` wide. */
+export function colRow(cell: number, cols: number): [number, number] {
+  return [cell % cols, Math.floor(cell / cols)];
+}
 
 /** The cell one step away, or -1 past the fence. */
 function stepBy(field: Pick<Field, 'cols' | 'rows'>, cell: number, step: Step): number {
