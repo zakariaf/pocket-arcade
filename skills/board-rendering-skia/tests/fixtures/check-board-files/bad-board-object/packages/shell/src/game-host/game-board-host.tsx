@@ -16,6 +16,7 @@ import type {
   RenderKit,
   ViewFormat,
 } from './board-types.ts';
+import type { BoardCoachHand } from './draw-coach-hand.ts';
 import type { PanMode } from './pan-intent.ts';
 import type { MoveResult } from './present-move.ts';
 import type { ClockTraceSample } from './use-board-clock.ts';
@@ -68,6 +69,10 @@ export type GameBoardHostProps<TState, TEvent, TView, TToken extends string> = {
   readonly traceClock?: BoardClockTrace;
   /** Test builds only: S15's frame recorder, fed from the board's frame callback. */
   readonly onFrameTime?: BoardFrameTime;
+  /** The tutorial's pointing hand over the board (null: none, the Game screen's runs). */
+  readonly coach: BoardCoachHand | null;
+  /** Grows with each try the tutorial refused: the hand then glides again. */
+  readonly coachReplay: number;
 };
 
 const NO_FLAGS: RunnableFlags = { isAppActive: false, isFocused: false, isAdShowing: false };
@@ -131,6 +136,9 @@ export function GameBoardHost<TState, TEvent, TView, TToken extends string>(
       {...(props.onMiss === undefined ? {} : { onMiss: props.onMiss })}
       onDrawError={clock.fail}
       isLayoutProbeOn={props.isLayoutProbeOn === true}
+      coach={props.coach}
+      coachReplay={props.coachReplay}
+      motion={props.motion}
     />
   );
 }

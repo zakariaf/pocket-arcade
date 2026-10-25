@@ -85,9 +85,7 @@
 //   capture-app       records the dump's scroll markers in run.json and names the offset reached
 //   check-harness     harness-scroll-marker: the parity root provides the marker, ScreenBody draws it
 //
-// Added 2026-10-19 (E28-T02, the design games read from the token file):
-//   exit 2            shoot-design --tokens with a painted game that has no logo layers is refused
-//                     (designGamesOf): a design game joins by its design pass, never by a script list
+// Added 2026-10-25 (E28-T02, merged after the design games became data on main):
 //   shoot-design      a changed design is judged by the re-render, like the map and the frames: the
 //                     good case passes after a design pass that added a game, and a design change that
 //                     reaches the set (bad-design-changed) fails reference-drift, with a note naming
@@ -420,8 +418,8 @@ function prettierJson(value, indent = 0, prefix = 0) {
     { name: 'facts file missing', script: 'check-parity.mjs', dir: 'exit2/facts-missing', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
     { name: 'facts without hasHints (never a guess)', script: 'check-parity.mjs', dir: 'exit2/facts-no-hints', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
     { name: 'packages missing from the --tooling folder', script: 'check-parity.mjs', dir: 'exit2/tooling-empty', args: ['.', '--waivers', 'none.json', '--no-write', '--tooling', fakeStateDir], exit: 2 },
+    { name: 'a design game without logo layers in the token file', script: 'shoot-design.mjs', dir: 'exit2/tokens-game-without-logo', args: ['--check', '--tokens', 'tokens.json', '--frame', 's12-error', '--theme', 'light', '--lang', 'en'], exit: 2 },
     { name: 'facts of another design game', script: 'capture-app.mjs', dir: 'exit2/facts-wrong-game', args: ['--bundle-id', 'io.applander.linesiege', '--frame', 's11-settings', '--theme', 'light', '--lang', 'en', '--out', scratch(), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], exit: 2 },
-    { name: 'a token-file design game without logo layers', script: 'shoot-design.mjs', dir: 'exit2/tokens-no-logo', args: ['--out', scratch(), '--game', 'lineSiege', '--frame', 's4-home', '--tokens', 'toybox-tokens.json'], exit: 2 },
     { name: 'the no-music variant chosen by the facts', script: 'check-parity.mjs', dir: 'variants/s11-no-music-light-en', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music (variant no-music, chosen by the game facts)', '1 of 1 runs pass'] },
     { name: 'a real S11 capture whose list edge runs under the group tab (dark fa, scroll 1042)', script: 'check-parity.mjs', dir: 'variants/s11-no-music-dark-fa-y1042-tab-edge', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music', '1 of 1 runs pass'] },
     { name: 'the S14 reset dialog over Settings without music (a background variant)', script: 'check-parity.mjs', dir: 'variants/s14-reset-no-music-light-en', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s14-reset-all-progress--no-music (variant no-music, chosen by the game facts)', '1 of 1 runs pass'] },

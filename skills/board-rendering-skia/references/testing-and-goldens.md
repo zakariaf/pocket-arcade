@@ -49,7 +49,7 @@ Gesture tests and the 44 pt hit-target test come with the `board-gestures-and-in
 - `jest.config.js` has exactly two projects: `unit` (preset `jest-expo/ios`) and `golden` (`testEnvironment: '@shopify/react-native-skia/jestEnv.js'`, `setupFilesAfterEnv: ['@shopify/react-native-skia/jestSetup.js']`, `testMatch` `*.golden.test.ts`). Skia's environment replaces React Native's export conditions, so it must not be global.
 - `test/goldens/boards/skia-golden.ts` (template) configures jest-image-snapshot 6.5.2: `failureThreshold: 0.001`, `failureThresholdType: 'percent'` (0.1 % of pixels), diffs written to `reports/visual/diff/`. Changing this file needs a `Gate-Change:` trailer.
 - Board goldens read the font with `node:fs` and use `Buffer`, and Node APIs are banned under `apps/*/src`, so they live in the root `test/goldens/boards/` (whose tsconfig has Node types).
-- The font file is the app's own `apps/<game-id>/assets/fonts/Vazirmatn-Regular.ttf`, loaded with `Skia.Typeface.MakeFreeTypeFaceFromData`.
+- The font file is the app's own `apps/<game-id>/assets/fonts/Vazirmatn-Regular.ttf`, made into the face the device's way: `boardNumberTypefaceOf(Skia, reader)` with a reader over `node:fs` (on device the reader is the BoardFont native module). Never load it differently from the device: the old `Skia.FontMgr.System()` device path drew blank digits on Android while the goldens, which loaded the TTF from disk, stayed green.
 
 ## Pixel goldens: writing and accepting
 

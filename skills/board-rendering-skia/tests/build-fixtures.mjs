@@ -46,6 +46,8 @@ function templateFiles({ withTooling, withGolden }) {
   add('game-kit', 'packages/game-kit/src');
   add('shell/game-host', 'packages/shell/src/game-host');
   add('shell/app', 'packages/shell/src/app');
+  add('shell/native/ios', 'packages/shell/ios');
+  add('shell/native/android', 'packages/shell/android/src/main/java/io/applander/e07shell');
   add('game/board', `apps/${GAME}/src/board`, { isFilled: true });
   if (withTooling) add('tooling/quality', 'packages/tooling/src/quality');
   if (withGolden) {

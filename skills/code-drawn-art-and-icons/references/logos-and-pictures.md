@@ -5,7 +5,7 @@
 - Where logos appear
 - GAME_ART: how the Shell gets the logo and the credits
 - The logo grid and the six roles
-- The three painted games' logos
+- The design games' logos
 - Designing a logo for a new game
 - The logo tile (frame) per place
 - The rating star (two colours)
@@ -57,17 +57,16 @@ Logos use a `viewBox 0 0 48 48` and are drawn at 88 % of the tile's content box.
 
 A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: `LogoArt` in `packages/shell/src/art/logo-art.ts`; each game exports `LOGO_ART` from `apps/<game>/src/art/logo-art.ts`; `logoOps()` expands roles into paint operations (a fill before its edge) for both the in-app canvas and the Node art script.
 
-## The painted games' logos
-
-Every game the Toybox token file paints has its logo there too (`logos.games.<camel id>`); its app copies it exactly.
-
+## The design games' logos
 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
-- **Trail Clear** (design pass of 2026-10-19, `logos.games.trailClear`): four white tiles in a 2 x 2 square (`w`), a pop loop road with ink edges running through all four (`p`, a ring: the inner outline drawn counter-clockwise so it stays a hole), and ink road dashes on it (`kl`).
+- **Snare Snake** (its design pass, 2026-10-19; the layers in the token file's `logos.games.snareSnake`): a white snake curled into a closed ring (`w`, a rounded square with a hole), a pop tongue (`pl`), the white head overlapping the ring's top end (`w`) with an ink eye (`k`) and its white glint (`w0`), a pop ladybird inside the loop (`p`), one ink-line layer (`kl`) holding the ring's four segment marks and the ladybird's wing line, and the ladybird's spots (`k`): eight layers, the recipe's limit.
+- **Merge Siege** (its design pass, `logos.games.mergeSiege` in `assets/toybox-tokens.json`): a white spiky enemy (`w`) with two ink eyes (`k`), a white tile (`w`) with two ink up-chevrons (`kl`) smashing into it, and a pop spark where they meet (`p`).
+- **Trail Clear** (its design pass, 2026-10-19, `logos.games.trailClear`): four white tiles in a 2 x 2 square (`w`), a pop loop road with ink edges running through all four (`p`, a ring: the inner outline drawn counter-clockwise so it stays a hole), and ink road dashes on it (`kl`).
 
-`check-icons-and-logos` fails if a painted game's logo differs from its Toybox data.
+`check-icons-and-logos` fails if a design game's logo differs from the Toybox data.
 
 ## Designing a logo for a new game
 

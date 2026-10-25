@@ -63,15 +63,17 @@ export function applyMutation(dir, ops, label) {
 }
 
 /**
- * Returns a temporary fixtures folder: good/ plus one bad-<case>/ per folder in `mutations`
- * (each with its EXPECT.txt). `build(dir)` writes the good repo.
+ * Returns a temporary fixtures folder: good/ plus one bad-<case>/ or pass-<case>/ per folder in
+ * `mutations` (each with its EXPECT.txt; a pass- case is a change the checker must still pass).
+ * `build(dir)` writes the good repo.
  */
 export function assembleFixtures(mutations, build) {
   const out = makeTempDir('rules-engine-fixtures-');
   const good = join(out, 'good');
   mkdirSync(good);
   build(good);
-  for (const name of readdirSync(mutations).filter((entry) => entry.startsWith('bad-')).sort()) {
+  const cases = readdirSync(mutations).filter((entry) => entry.startsWith('bad-') || entry.startsWith('pass-'));
+  for (const name of cases.sort()) {
     const target = join(out, name);
     cpSync(good, target, { recursive: true });
     const ops = JSON.parse(readFileSync(join(mutations, name, 'mutation.json'), 'utf8'));

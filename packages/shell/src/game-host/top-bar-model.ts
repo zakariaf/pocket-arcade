@@ -74,8 +74,12 @@ function undoTool(input: TopBarInput): GameTool | null {
 function hintTool(input: TopBarInput): GameTool | null {
   const { view } = input;
   if (!view.isHintSupported || input.hintOffer === 'hidden') return null;
-  const isAvailable = view.status === 'playing' && !view.isHintShown;
-  return { label: input.labels.hint, isAvailable, onPress: input.onHint };
+  const isFree = !view.isHintShown;
+  // Spec S6: Pause covers the run, so the key cannot act; it rests (inert) under the scrim as the
+  // S6 frame draws it, and VoiceOver reads it as disabled.
+  const isInert = view.status === 'paused' && isFree;
+  const tool = { label: input.labels.hint, isAvailable: view.status === 'playing' && isFree };
+  return { ...tool, ...(isInert ? { isInert } : {}), onPress: input.onHint };
 }
 
 /** Everything the S5 top bar (GameTopBar) shows, from the session view. */

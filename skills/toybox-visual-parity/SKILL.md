@@ -108,7 +108,7 @@ Makes the owner's rule true: every built screen is compared with its Toybox desi
 | `assets/design/fonts/` | The TTFs the app bundles, OFL texts, SOURCES.md (shared, synced) | Read by the design copy |
 | `assets/frames.json` | Per frame: root testID, the app state it draws, settle time, reference variants (`when`, `derive`, `scope`), the board or picture a frame masks, sample fixes and design masks; the design's facts; the fixture values, and `fixtureSave` (the same player as save sections, with `gameFrame`) | Workflow steps 2 and 3 |
 | `assets/screen-testids.json` | The shared testID map: every element of every frame (shared, synced) | Workflow step 3 |
-| `assets/toybox-tokens.json` | The Toybox token file (shared, synced): its `color.games` are the design games, each with its logo layers (`designGamesOf` in `scripts/lib/frames.mjs`) | When adding a design game |
+| `assets/toybox-tokens.json` | The shared Toybox token file (synced): its `color.games`, each with its logo layers in `logos.games`, are the design games every script accepts | Read by the scripts; a new game joins through its design pass |
 | `assets/device/iphone16pro.json` | Parity device: geometry, safe areas, masks, simulator name, locales, status bar | Read by the scripts |
 | `assets/device/android-phone.json` | Android parity device: AVD `e07-android-parity`, system image, 402 x 874 dp at 3.0 (`hw.lcd.*`), status and gesture-bar insets and masks, app locales, demo-mode status bar | Read by the scripts with `--platform android` |
 | `assets/reference-android/` | The Android reference set: the same 32 frames and 6 variants x light, dark x en, fa, rendered at the Android profile's geometry; its manifest says `"platform": "android"` | Workflow steps 3 and 6 on Android (read) |

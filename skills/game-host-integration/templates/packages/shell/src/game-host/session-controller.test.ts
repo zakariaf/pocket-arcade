@@ -135,6 +135,23 @@ describe('createSessionController', () => {
     expect(stuck.controller.canHint()).toBe(false);
   });
 
+  it("runs the game's hint search once for one press: canHint, then the hint itself", () => {
+    const asked: number[] = [];
+    const suggest = (state: TallyState): TallyMove => {
+      asked.push(state.count);
+      return { kind: 'add', amount: 2 };
+    };
+    const { controller } = controllerFor({
+      gameRules: { ...TALLY_GAME.rules, hints: { kind: 'solver', suggest } },
+    });
+    expect(controller.canHint()).toBe(true);
+    controller.handle.send({ type: 'hint' });
+    controller.handle.send(tap(0));
+    expect(controller.canHint()).toBe(true);
+    // One search per position: the press at count 0, then the new position at count 1.
+    expect(asked).toStrictEqual([0, 1]);
+  });
+
   it('highlights the hinted move only for the position it was asked for', () => {
     const { controller } = controllerFor();
     controller.handle.send({ type: 'hint' });

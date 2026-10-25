@@ -1,6 +1,8 @@
 // packages/shell/src/screens/first-run/use-tutorial-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
+import { AccessibilityInfo } from 'react-native';
 
+import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createGameHost } from '@e07/shell/game-host/game-host.ts';
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
@@ -43,7 +45,11 @@ function tapColumn(col: number): InputIntent {
 }
 
 /** The host the composition root builds, with a board factory that hands the test the run. */
-function hostFor(save: SaveService, onRun: (handle: SessionHandle) => void) {
+function hostFor(
+  save: SaveService,
+  onRun: (handle: SessionHandle) => void,
+  game: typeof TALLY_GAME = TALLY_GAME,
+) {
   const deps: GameHostDeps = {
     save,
     clock: TEST_CLOCK,
@@ -58,17 +64,21 @@ function hostFor(save: SaveService, onRun: (handle: SessionHandle) => void) {
     },
     feedback: { audio: createFakeAudio(), haptics: createFakeHaptics() },
   };
-  return createGameHost(TALLY_GAME, deps);
+  return createGameHost(game, deps);
 }
 
 /** renderWithShell's providers, the game's texts and the game host around the Tutorial model. */
-async function tutorial() {
+async function tutorial(game: typeof TALLY_GAME = TALLY_GAME) {
   const { save } = createTestSave();
   const shell = createShellWrapper({ services: { save, clock: TEST_CLOCK } });
   let handle: SessionHandle | null = null;
-  const host = hostFor(save, (opened) => {
-    handle = opened;
-  });
+  const host = hostFor(
+    save,
+    (opened) => {
+      handle = opened;
+    },
+    game,
+  );
   const ShellRoot = shell.wrapper;
   const wrapper = ({ children }: { readonly children: ReactNode }): ReactNode => (
     <ShellRoot>
@@ -97,10 +107,25 @@ describe('useTutorialModel', () => {
     const model = result.current;
     expect(stripIsolates(model.welcomeText ?? '')).toBe('Welcome to Tally!');
     expect(model.coachText).toBe('Tap the left column to add one.');
-    expect(model.coachTargets).toStrictEqual([{ regionId: 'board', col: 0, row: 0 }]);
+    expect(model.coachPointer).toStrictEqual({
+      kind: 'target',
+      target: { regionId: 'board', col: 0, row: 0 },
+    });
     expect([model.skipKey, model.continueKey]).toStrictEqual([null, null]);
     expect(model.BoardHost).not.toBeNull();
     expect(save.doc().run?.ref).toStrictEqual({ kind: 'tutorial' });
+  });
+
+  it("hands the board the step's own pointer, which the board turns into every cell it fills", async () => {
+    // Spec S13: one pointer per step. The board resolves it through the game (coachPointerOf),
+    // so a drag marks every cell of the block, not only the cell it drops on.
+    const { result, send } = await tutorial();
+    expect(result.current.coachPointer).toStrictEqual({
+      kind: 'target',
+      target: { regionId: 'board', col: 0, row: 0 },
+    });
+    await send({ type: 'pause' });
+    expect(result.current.coachPointer).toBeNull();
   });
 
   it('accepts only the step it expects, then shows the next step with Skip', async () => {
@@ -111,6 +136,59 @@ describe('useTutorialModel', () => {
     expect(result.current.coachText).toBe('Now add two to hit the target.');
     expect(result.current.welcomeText).toBeNull();
     expect(result.current.skipKey?.label).toBe('Skip');
+  });
+
+  it('nudges a refused try: "Follow the hand.", the sentence again, the hand replays, VoiceOver hears it', async () => {
+    // Spec S13 is silent on a wrong move (CLAUDE.md product rule: build the default, never stay
+    // silent, never skip): the copy deck's "Follow the hand." over the step's own sentence, the
+    // pointing hand plays again, and VoiceOver reads both. Hints during play covers nudges (S11).
+    const speak = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
+    systemA11yStore.setState({ isScreenReaderOn: true });
+    const { result, send } = await tutorial();
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect(result.current.nudgeText).toBe('Follow the hand.');
+    expect(result.current.coachText).toBe('Tap the left column to add one.');
+    expect([result.current.welcomeText, result.current.coachReplay]).toStrictEqual([null, 1]);
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect(result.current.coachReplay).toBe(2);
+    expect(speak.mock.calls).toStrictEqual([
+      ['Follow the hand. Tap the left column to add one.'],
+      ['Follow the hand. Tap the left column to add one.'],
+    ]);
+    await send({ type: 'intent', intent: tapColumn(0) });
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
+    systemA11yStore.setState({ isScreenReaderOn: false });
+  });
+
+  it('nudges a refused try with "Try again" on a step that draws no hand (pointer none or hud)', async () => {
+    // "Follow the hand." only where a hand is drawn: a 'none' or 'hud' pointer draws none, so the
+    // copy deck's pointer-neutral "Try again" stands over the step's sentence instead.
+    const { steps } = TALLY_GAME.teaching.tutorial;
+    const [first, second] = steps;
+    if (first === undefined || second === undefined) throw new Error('tally has two steps');
+    for (const pointer of [{ kind: 'none' }, { kind: 'hud', element: 'undo' }] as const) {
+      const teaching = {
+        ...TALLY_GAME.teaching,
+        tutorial: { ...TALLY_GAME.teaching.tutorial, steps: [{ ...first, pointer }, second] },
+      };
+      const { result, send, unmount } = await tutorial({ ...TALLY_GAME, teaching });
+      await send({ type: 'intent', intent: tapColumn(1) });
+      expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([
+        'Try again',
+        1,
+      ]);
+      await unmount();
+    }
+  });
+
+  it('leaves the nudge out while Hints during play is off', async () => {
+    const { result, send, stores } = await tutorial();
+    await act(() => {
+      stores.settings.getState().dispatch({ type: 'set-hints-during-play', enabled: false });
+    });
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
   });
 
   it('asks for a tap while paused, and the continue key resumes the run', async () => {

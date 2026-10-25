@@ -1,0 +1,58 @@
+{
+  "light": {
+    "background": "#FFD6B8",
+    "floor": "#FFFBF7",
+    "cell": "#FFE8D7",
+    "gate": "#E6DCFF",
+    "base": "#CFF3E4",
+    "edge": "#1D1B3A",
+    "tile": "#FFFFFF",
+    "tileInk": "#1D1B3A",
+    "enemy": "#A98BFF",
+    "enemyInk": "#1D1B3A",
+    "burst": "#63DDB0",
+    "hint": "#1D1B3A"
+  },
+  "dark": {
+    "background": "#2B1838",
+    "floor": "#3F2550",
+    "cell": "#351E44",
+    "gate": "#4D2F66",
+    "base": "#24453F",
+    "edge": "#F1E4FF",
+    "tile": "#FBF4FF",
+    "tileInk": "#2B1838",
+    "enemy": "#B9A0FF",
+    "enemyInk": "#2B1838",
+    "burst": "#74EBC0",
+    "hint": "#FBF4FF"
+  },
+  "colorBlindLight": {
+    "background": "#FFD6B8",
+    "floor": "#FFFBF7",
+    "cell": "#FFE8D7",
+    "gate": "#E6DCFF",
+    "base": "#CFF3E4",
+    "edge": "#1D1B3A",
+    "tile": "#FFFFFF",
+    "tileInk": "#000000",
+    "enemy": "#E69F00",
+    "enemyInk": "#000000",
+    "burst": "#0072B2",
+    "hint": "#1D1B3A"
+  },
+  "colorBlindDark": {
+    "background": "#2B1838",
+    "floor": "#3F2550",
+    "cell": "#351E44",
+    "gate": "#4D2F66",
+    "base": "#24453F",
+    "edge": "#F1E4FF",
+    "tile": "#FFFFFF",
+    "tileInk": "#000000",
+    "enemy": "#E69F00",
+    "enemyInk": "#000000",
+    "burst": "#56B4E9",
+    "hint": "#FBF4FF"
+  }
+}

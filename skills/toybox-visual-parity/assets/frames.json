@@ -64,6 +64,22 @@
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
       },
+      "snareSnake": {
+        "gameStats": ["214", "96", "23"],
+        "progressMid": "3 / 6",
+        "progressFull": "6 / 6",
+        "progressMidParams": { "caught": 3, "total": 6 },
+        "progressFullParams": { "caught": 6, "total": 6 },
+        "loseReasonId": "snare-snake.lose.tangled"
+      },
+      "mergeSiege": {
+        "gameStats": ["1,532", "2,876", "512"],
+        "progressMid": "5 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "smashed": 5, "total": 12 },
+        "progressFullParams": { "smashed": 12, "total": 12 },
+        "loseReasonId": "merge-siege.lose.overrun"
+      },
       "trailClear": {
         "gameStats": ["214", "1,386", "9"],
         "progressMid": "12 / 30",
@@ -278,6 +294,16 @@
         "scrap-shoved": 1562,
         "biggest-crash": 4
       },
+      "snareSnake": {
+        "critters-caught": 214,
+        "loops-closed": 96,
+        "longest-snake": 23
+      },
+      "mergeSiege": {
+        "enemies-smashed": 1532,
+        "tiles-merged": 2876,
+        "biggest-tile": 512
+      },
       "trailClear": {
         "loops-closed": 214,
         "tiles-placed": 1386,
@@ -336,6 +362,16 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "snareSnake": {
+          "progressMid": { "caught": 3, "total": 6 },
+          "progressFull": { "caught": 6, "total": 6 },
+          "loseReasonId": "snare-snake.lose.tangled"
+        },
+        "mergeSiege": {
+          "progressMid": { "smashed": 5, "total": 12 },
+          "progressFull": { "smashed": 12, "total": 12 },
+          "loseReasonId": "merge-siege.lose.overrun"
         },
         "trailClear": {
           "progressMid": { "placed": 12, "total": 30 },
