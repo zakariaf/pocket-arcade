@@ -105,6 +105,26 @@ describe('topBarPropsOf', () => {
     expect(noUndoYet.undo?.isAvailable).toBe(false);
   });
 
+  // Spec S6: Pause is an overlay on the game, so the top bar under its scrim keeps its keys at rest,
+  // as the Toybox frame draws them; a finished run still disables the hint.
+  it('keeps the hint key at rest while the run is paused and disables it once the run ends', () => {
+    expect(topBarPropsOf(input({ view: { ...VIEW, status: 'paused' } })).hint?.isAvailable).toBe(
+      false,
+    );
+    expect(topBarPropsOf(input({ view: { ...VIEW, status: 'won' } })).hint?.isAvailable).toBe(
+      false,
+    );
+  });
+
+  it('draws the paused hint key inert (at rest, unpressable), never a finished or shown one', () => {
+    const inertOf = (view: SessionView): boolean | undefined =>
+      topBarPropsOf(input({ view })).hint?.isInert;
+    expect(inertOf({ ...VIEW, status: 'paused' })).toBe(true);
+    expect(inertOf({ ...VIEW, status: 'playing' })).toBeUndefined();
+    expect(inertOf({ ...VIEW, status: 'won' })).toBeUndefined();
+    expect(inertOf({ ...VIEW, status: 'paused', isHintShown: true })).toBeUndefined();
+  });
+
   it('hides the hint when there is no way to pay for it and in games without hints', () => {
     expect(topBarPropsOf(input({ hintOffer: 'hidden' })).hint).toBeNull();
     const view = { ...VIEW, isHintSupported: false };

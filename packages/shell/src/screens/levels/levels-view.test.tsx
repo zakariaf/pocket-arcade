@@ -1,5 +1,5 @@
 // packages/shell/src/screens/levels/levels-view.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 
 import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
 import { localeTagFor } from '@e07/shell/i18n/digits.ts';
@@ -126,6 +126,28 @@ describe('LevelsView', () => {
     expect(screen.getByTestId('levels.locked-toast')).toHaveTextContent(
       'Unlock this one by finishing level 3.',
     );
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  // The design's .pk-h is one wrapping row (icon, heading flex 1 1 auto, Locked sticker): the
+  // sticker sits at the row's end beside a heading that fits on one line ("Pack 2 – Rocky hills")
+  // and drops below a heading that needs the whole row.
+  it('puts the Locked sticker beside a one-line pack heading and below a wrapping one', async () => {
+    await renderWithShell(<LevelsView model={modelWith()} />);
+    const heading = (): ReturnType<typeof screen.getByTestId> =>
+      screen.getByTestId('levels.pack.2.heading');
+    const headerRow = (): unknown => heading().parent?.parent;
+    const badgeRow = (): unknown =>
+      screen.getByTestId('levels.pack.2.locked-badge', { includeHiddenElements: true }).parent
+        ?.parent;
+
+    await fireEvent(heading(), 'textLayout', { nativeEvent: { lines: [{ width: 181 }] } });
+    expect(badgeRow() === headerRow()).toBe(true);
+
+    await fireEvent(heading(), 'textLayout', {
+      nativeEvent: { lines: [{ width: 170 }, { width: 60 }] },
+    });
+    expect(badgeRow() === headerRow()).toBe(false);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

@@ -79,7 +79,8 @@ A tolerance is a gate, not a golden: raising `failureThreshold` in `skia-golden.
 Spec 8.3: the daily level comes from today's local date plus the game's own salt, through the same generator as normal levels, at the game's daily difficulty; every phone on the same date gets the same level, offline. So:
 
 - The daily goldens pin `describeLevel(dailySeed(date, SALT), DAILY_DIFFICULTY)` for fixed dates. Every app version must produce exactly those levels.
-- **An existing daily golden never changes and is never deleted**, not even with a Gate-Change trailer: players on an older app version and players on the new one would get different levels on the same day. `check-golden-changes.mjs` fails any commit that edits or removes an existing daily entry.
+- **An existing daily golden never changes and is never deleted once the game has a release tag** (`<game-id>/v*`, made by the release scripts), not even with a Gate-Change trailer: players on an older app version and players on the new one would get different levels on the same day. `check-golden-changes.mjs` fails any commit that edits or removes an existing daily entry.
+- **Before the game's first release tag** no player has seen any daily, so a bug fix that changes a daily board may re-accept it. `check-golden-changes.mjs` excuses the change only when both hold: the snapshot's game (`apps/<game-id>/...`) has no `<game-id>/v*` tag merged into that commit, and the commit's `Gate-Change:` trailer names the daily (for example `Gate-Change: packs and daily goldens regenerated for <the bug>`). `--range` and `--staged` read the tags from git; a `--log` run reads them from `--tags <file>` (one tag per line) and excuses nothing without it.
 - Adding a new date is fine (a normal Gate-Change commit).
 - If the generator must change, the change must keep every pinned daily level identical. When that is impossible, stop and ask the owner: the options are a new salt from a future date (so past and present days stay identical) or accepting that the daily contract breaks for everyone on one release day.
 - `dailySeed` itself and the RNG's pinned sequence are part of the same contract.
@@ -91,7 +92,7 @@ Spec 8.3: the daily level comes from today's local date plus the game's own salt
 2. Decide: is the new output a bug or the intended result of the change you just made?
    - A bug (a rule change leaked into generation, a draw call moved): fix the code; the golden stays.
    - Intended: update that one file with `-u`, look at every changed entry or PNG, commit with Gate-Change.
-   - A daily entry changed: it is always a bug (see above).
+   - A daily entry changed: it is always a bug (see above); after the first release tag the daily stays as it is, before it the fix may re-accept it with a trailer naming the daily.
 3. A pixel golden that differs between two runs on the same commit means the draw path reads time or randomness (CanvasKit renders are byte-identical run to run): fix the draw path, never the tolerance.
 
 ## Obsolete and orphaned snapshots

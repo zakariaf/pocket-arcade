@@ -1,0 +1,66 @@
+{
+  "gameId": "flock-tilt",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.65,
+      "max": 0.95,
+      "why": "The easiest fields (3 sheep, par 3-4) are a calm start: a reasonable player pens the flock in most of them (0.79 measured); the losses are mostly tilting back and forth until the 40-tilt budget runs out, which undo prevents for a person."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.5,
+      "max": 0.85,
+      "why": "The hardest fields (6 sheep, 2 wolves, par 6-8) still leave a calm puzzle winnable (0.68 measured); the second wolf adds the losses."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.3,
+      "why": "Naive bots should lose: random swipes pen the whole flock in few easy fields (0.18 measured) and mostly push a sheep into the wolf."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 4,
+      "max": 7,
+      "why": "A second-row field takes a handful of tilts (median 5 measured), never one."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "medianMoves",
+      "min": 7,
+      "max": 12,
+      "why": "A hardest-row field takes clearly more tilts (median 9 measured): more sheep to pen, more to plan."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "medianMoves", "direction": "up", "minStep": 1 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": null,
+  "notes": "Flock Tilt, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75), 100 seeds. The first run (2 sheep in the easiest row) showed the twist almost never: two sheep met only 0.15 times per easy run. So the rows start at 3 sheep and every field create keeps must have a shortest line where a sheep stops against another sheep (the twist from the first field). Measured now: greedy wins 0.79/0.76/0.71/0.68 and needs a median of 4/5/7/9 tilts; random wins 0.18/0.19/0.06/0.05; lookahead wins 0.93 of the second row. The difficulty curve is the tilts a field takes (it rises by at least 1 per row), because a calm puzzle stays winnable while it asks for longer plans; the win rate falls only gently. Kill test: the greedy bot pens its first sheep within 3 tilts in 94 % of easiest runs and sees 1.87 sheep-against-sheep stops per run. Most greedy losses are tilting back and forth until the 40-tilt budget ends (undo saves a person from that); the rest are a sheep pushed into the wolf."
+}

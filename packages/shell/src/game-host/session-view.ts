@@ -30,6 +30,11 @@ export type SessionView = {
   readonly summary: RunSummary | null;
   /** Changes with every applied, undone or continued move (the board presents a new scene). */
   readonly eventSeq: number;
+  /**
+   * The tutorial only, while a scripted step waits for its move: the tries it refused since the
+   * step began (spec S13 is silent; the coach nudges once per refusal). Absent otherwise.
+   */
+  readonly refusedMoves?: number;
 };
 
 /** What screens and the board send. Paid perks (hint, continue) are sent only after payment. */
@@ -64,4 +69,12 @@ export function continueStateOf<TState, TMove, TEvent>(
   if (!isContinueAllowed || policy.kind === 'none') return 'none';
   if (session.continuesUsed > 0) return 'used';
   return session.status === 'lost' ? 'offered' : 'none';
+}
+
+/**
+ * A run still in play: playing, or paused under the Pause scrim. Won and lost runs are over, and
+ * 'missing' (the Game screen's controls with no run open) is not a run.
+ */
+export function isRunLive(status: SessionStatus | 'missing'): boolean {
+  return status === 'playing' || status === 'paused';
 }
