@@ -1,4 +1,6 @@
 // apps/toggle-drop/src/rules/toggle-drop-persistence.ts
+import { TOGGLE_DROP_TEACHING } from '@e07/toggle-drop/tutorial/toggle-drop-teaching.ts';
+
 import { TUNING } from './toggle-drop-tuning.ts';
 
 import type { PegCell, ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
@@ -56,26 +58,73 @@ function parseSizes(json: Json): Sizes | null {
 const sum = (counts: readonly number[]): number => counts.reduce((total, n) => total + n, 0);
 
 /**
- * Whether legal play can reach this run: its size is a tuning row's, each peg row keeps that row's
- * switches, it has one cup up to the row's cups needing no more balls than the row's winning line,
- * its balls left and dropped add up to the row's balls, and its cups and switches hold no more
- * than its drops brought (one ball fills at most one cup and flips at most one switch a row).
+ * What a board that legal play starts from looks like: its size, the switches of each peg row,
+ * the cup counts it may have, the balls its cups may need at most and the balls it starts with.
  */
-function isReachable(state: ToggleDropState): boolean {
-  const knobs = TUNING.levelRows.find((row) => row.cols === state.cols && row.rows === state.rows);
-  if (knobs === undefined) return false;
-  const { cols, rows, pegs, needs, drops } = state;
-  const rowSwitches = Array.from(
+type RunShape = {
+  readonly cols: number;
+  readonly rows: number;
+  readonly rowSwitches: readonly number[];
+  readonly cupCounts: readonly number[];
+  readonly lineDrops: number;
+  readonly balls: number;
+};
+
+/** The switches in each peg row of a board. */
+function switchesByRow(board: Pick<ToggleDropState, 'cols' | 'rows' | 'pegs'>): number[] {
+  const { cols, rows, pegs } = board;
+  return Array.from(
     { length: rows },
     (_, row) => pegs.slice(row * cols, (row + 1) * cols).filter((peg) => peg !== -1).length,
   );
-  const cups = needs.filter((need) => need > 0).length;
+}
+
+const cupsOf = (needs: readonly number[]): number => needs.filter((need) => need > 0).length;
+
+/** The boards create() makes: one shape per tuning row. */
+const LEVEL_SHAPES: readonly RunShape[] = TUNING.levelRows.map((knobs) => ({
+  cols: knobs.cols,
+  rows: knobs.rows,
+  rowSwitches: Array.from({ length: knobs.rows }, () => knobs.switchesPerRow),
+  cupCounts: Array.from({ length: knobs.cups }, (_, index) => index + 1),
+  lineDrops: knobs.witnessDrops,
+  balls: knobs.witnessDrops + knobs.spareBalls,
+}));
+
+/** The scripted tutorial board (S13), which a kill may interrupt like any run. */
+function shapeOfStart(start: ToggleDropState): RunShape {
+  return {
+    cols: start.cols,
+    rows: start.rows,
+    rowSwitches: switchesByRow(start),
+    cupCounts: [cupsOf(start.needs)],
+    lineDrops: sum(start.needs),
+    balls: start.ballsLeft + start.drops,
+  };
+}
+
+const SHAPES: readonly RunShape[] = [
+  ...LEVEL_SHAPES,
+  shapeOfStart(TOGGLE_DROP_TEACHING.tutorial.start),
+];
+
+/**
+ * Whether legal play can reach this run: it starts from a board create() makes or from the
+ * tutorial's (its size, each peg row's switches, its cup count, cups needing no more balls than
+ * that board's winning line, balls left and dropped adding up to that board's balls), and its
+ * cups and switches hold no more than its drops brought (one ball fills at most one cup and flips
+ * at most one switch a row).
+ */
+function isReachable(state: ToggleDropState): boolean {
+  const { cols, rows, needs, drops } = state;
+  const shape = SHAPES.find((each) => each.cols === cols && each.rows === rows);
+  if (shape === undefined) return false;
+  const rowSwitches = switchesByRow(state);
   return (
-    rowSwitches.every((count) => count === knobs.switchesPerRow) &&
-    cups >= 1 &&
-    cups <= knobs.cups &&
-    sum(needs) <= knobs.witnessDrops &&
-    state.ballsLeft + drops === knobs.witnessDrops + knobs.spareBalls &&
+    rowSwitches.every((count, row) => count === shape.rowSwitches[row]) &&
+    shape.cupCounts.includes(cupsOf(needs)) &&
+    sum(needs) <= shape.lineDrops &&
+    state.ballsLeft + drops === shape.balls &&
     sum(state.filled) <= drops &&
     sum(state.flips) <= drops * rows
   );

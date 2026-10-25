@@ -2,6 +2,7 @@
 import fc from 'fast-check';
 
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { TOGGLE_DROP_TEACHING } from '@e07/toggle-drop/tutorial/toggle-drop-teaching.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
@@ -101,6 +102,23 @@ describe('parseState with runs legal play cannot reach', () => {
   it('reads a run back after its drops, with its counts adding up', () => {
     const played = applyMove(EASY, { kind: 'drop', col: 0 }).state;
     expect(parseState(throughJson(played))).toStrictEqual(played);
+  });
+});
+
+describe('parseState with the tutorial run', () => {
+  const { tutorial } = TOGGLE_DROP_TEACHING;
+  const scripted = tutorial.steps.flatMap((step) =>
+    step.expect.kind === 'move' ? [step.expect.move] : [],
+  );
+
+  // Spec S13 and 8.6: a tutorial interrupted by a kill comes back where it was, like any run.
+  it('reads back the tutorial board and every state its scripted drops reach', () => {
+    const reached = scripted.reduce(
+      (line, move) => [...line, applyMove(line.at(-1) ?? tutorial.start, move).state],
+      [tutorial.start],
+    );
+    expect(reached).toHaveLength(4);
+    expect(reached.map((state) => parseState(throughJson(state)))).toStrictEqual(reached);
   });
 });
 
