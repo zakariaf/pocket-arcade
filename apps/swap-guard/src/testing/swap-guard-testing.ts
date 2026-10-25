@@ -2,6 +2,7 @@
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { applyMove } from '@e07/swap-guard/rules/apply-move.ts';
 import { create } from '@e07/swap-guard/rules/create.ts';
+import { planLine } from '@e07/swap-guard/rules/plan-line.ts';
 
 import { swapGuardBot } from './swap-guard-bot.ts';
 
@@ -21,13 +22,20 @@ function walkIntoStrike(start: SwapGuardState): SwapGuardMove {
   return { kind: 'swap', cell: pickAt(start.enemies, 0).cell };
 }
 
+/** Level 1 won along planLine's line (create keeps only starts that line wins). */
+function wonRun(): SwapGuardState {
+  const start = START();
+  const line = planLine(start) ?? [];
+  return line.reduce((state, move) => applyMove(state, move).state, start);
+}
+
 /** Example states for screenshots, the debug menu and E2E setup: start, middle, win, lose. */
 export const SWAP_GUARD_TESTING: TestingSpec<SwapGuardState, SwapGuardMove> = {
   bot: swapGuardBot,
   examples: {
     start: START,
     middle: () => applyMove(START(), doubleHit(START())).state,
-    win: () => ({ ...START(), enemies: [], swaps: 4, score: 450 }),
+    win: wonRun,
     lose: () => applyMove(START(), walkIntoStrike(START())).state,
   },
 };

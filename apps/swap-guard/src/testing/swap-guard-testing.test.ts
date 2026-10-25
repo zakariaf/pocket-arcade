@@ -5,6 +5,8 @@ import { applyMove } from '@e07/swap-guard/rules/apply-move.ts';
 import { create } from '@e07/swap-guard/rules/create.ts';
 import { listMoves } from '@e07/swap-guard/rules/list-moves.ts';
 import { outcome } from '@e07/swap-guard/rules/outcome.ts';
+import { planLine } from '@e07/swap-guard/rules/plan-line.ts';
+import { parseState } from '@e07/swap-guard/rules/swap-guard-persistence.ts';
 
 import { SWAP_GUARD_TESTING } from './swap-guard-testing.ts';
 
@@ -26,6 +28,21 @@ describe('SWAP_GUARD_TESTING (spec 10 TESTING: a bot and example states)', () =>
     const { examples } = SWAP_GUARD_TESTING;
     expect(examples.middle().enemies).toHaveLength(examples.start().enemies.length - 2);
     expect(examples.lose().lastSwap).not.toBeNull();
+  });
+
+  // Spec 8.6: an example the debug menu or an E2E flow opens is saved like any run, so it must be a
+  // run legal play reaches, or the next launch drops it.
+  it('reaches every example through the rules, so a saved example loads back unchanged', () => {
+    const states = Object.values(SWAP_GUARD_TESTING.examples).map((example) => example());
+    const reloaded = states.map((state) => parseState(JSON.parse(JSON.stringify(state))));
+    expect(reloaded).toStrictEqual(states);
+  });
+
+  it('plays the win example from level 1’s start along the planned line', () => {
+    const start = create(1, 0);
+    const line = planLine(start) ?? [];
+    const end = line.reduce((state, move) => applyMove(state, move).state, start);
+    expect(SWAP_GUARD_TESTING.examples.win()).toStrictEqual(end);
   });
 
   it('lets the bot pick a legal move', () => {
