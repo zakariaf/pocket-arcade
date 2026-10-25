@@ -83,8 +83,9 @@ export const TUNING = {
   /** Hard cap of one move's simulation (20 s): a cascade always ends. */
   maxTicks: 2400,
   /** Boards create() draws from a seed's stream before the fallback: each must be proven
-   *  winnable by the witness (spec 8.1); at difficulty 99 about one board in two is. */
-  createAttempts: 24,
+   *  winnable by the witness (spec 8.1); at difficulty 99 about one board in two is, and two
+   *  years of dailies (difficulty 45) need at most three. Each try is one witness game. */
+  createAttempts: 4,
   /** Rows of the well the one continue empties, from the top (spec 8.10; more = kinder). */
   continueRows: 1,
   /** Per-difficulty knobs (the tables above). */

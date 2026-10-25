@@ -5,6 +5,7 @@ import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
+import { addDays } from '@e07/game-kit/dates/date-key.ts';
 import {
   POKER_DROP_DAILY_DIFFICULTY,
   POKER_DROP_DAILY_SALT,
@@ -181,6 +182,42 @@ describe('create (simulate-then-replay rules: a tap drops a card, the cascade is
       });
       createWithin(2, 45, { ...CREATE_BUDGET, solver: counting.solver });
       expect(counting.solves()).toBeGreaterThanOrEqual(2);
+    });
+
+    it('asks the witness at most the attempts of its budget, the fallback included', () => {
+      const solve = jest.spyOn(POKER_DROP_WITNESS, 'solve');
+      try {
+        createWithin(12_345, 45, { attempts: 3, maxNodes: 1 });
+        expect(solve).toHaveBeenCalledTimes(3);
+      } finally {
+        solve.mockRestore();
+      }
+    });
+
+    it('keeps the create budget to a few witness games per start', () => {
+      expect(TUNING.createAttempts).toBeLessThanOrEqual(4);
+    });
+
+    it('hands out the fallback seed’s own first board, proven at every level difficulty', () => {
+      for (let difficulty = 0; difficulty <= 99; difficulty += 1) {
+        expect(isProven(drawStart(FALLBACK_SEED, difficulty))).toBe(true);
+      }
+    });
+
+    // Spec 8.3: every day's daily is the same proven board on every phone, and it starts fast.
+    it('proves two years of dailies, each within the create budget and the same every time', () => {
+      const counting = countingSolver();
+      for (let day = 0; day < 731; day += 1) {
+        const seed = dailySeed(addDays('2026-10-01', day), POKER_DROP_DAILY_SALT);
+        const before = counting.solves();
+        const state = createWithin(seed, POKER_DROP_DAILY_DIFFICULTY, {
+          ...CREATE_BUDGET,
+          solver: counting.solver,
+        });
+        expect(counting.solves() - before).toBeLessThanOrEqual(TUNING.createAttempts);
+        expect(state).toStrictEqual(create(seed, POKER_DROP_DAILY_DIFFICULTY));
+        expect(isProven(state)).toBe(true);
+      }
     });
 
     it('proves the board of any level seed and difficulty', () => {

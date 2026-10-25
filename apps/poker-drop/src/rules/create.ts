@@ -79,10 +79,11 @@ function searchBoards(rng: RngState, level: number, budget: CreateBudget): Searc
 
 /**
  * create() with an explicit budget: the first proven board of the seed, or, when none is proven
- * within the budget, the fallback seed's proven board of the difficulty. The endless run is never
- * won, so it is never proven: it keeps the seed's first board. A shipped level is the seed's first
- * board, proven when its pack was generated, so it is not searched again. Bounded: at most
- * 2 x attempts witness runs.
+ * within the budget, the fallback seed's first board of the difficulty (proven for every level
+ * difficulty, a test checks each, so it is handed out without another search). The endless run is
+ * never won, so it is never proven: it keeps the seed's first board. A shipped level is the seed's
+ * first board, proven when its pack was generated, so it is not searched again. Bounded: at most
+ * `attempts` witness runs.
  */
 export function createWithin(
   seed: number,
@@ -93,9 +94,7 @@ export function createWithin(
   // The endless run has no win to prove; a shipped level was proven when its pack was generated.
   if (isEndlessDifficulty(level) || isShippedLevel(seed, level)) return drawStart(seed, level);
   const found = searchBoards(seedRng(seed), level, budget);
-  return found.isProven
-    ? found.state
-    : searchBoards(seedRng(FALLBACK_SEED), level, CREATE_BUDGET).state;
+  return found.isProven ? found.state : drawStart(FALLBACK_SEED, level);
 }
 
 /**
