@@ -1,0 +1,20 @@
+{
+  "edge": "edge",
+  "text": [["label", "pen"]],
+  "graphics": [
+    ["edge", "grass"],
+    ["edge", "background"],
+    ["arrow", "key"],
+    ["hint", "background"],
+    ["lost", "grass"]
+  ],
+  "shapes": [
+    ["sheep", "grass"],
+    ["wolf", "grass"],
+    ["rock", "grass"],
+    ["pen", "grass"],
+    ["fence", "background"],
+    ["key", "background"]
+  ],
+  "distinct": [["sheep", "wolf", "rock"]]
+}

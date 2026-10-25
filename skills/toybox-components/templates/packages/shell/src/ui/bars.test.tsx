@@ -8,6 +8,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { BannerBand } from './banner-band.tsx';
 import { BrandLock } from './brand-lock.tsx';
+import { COMPONENT_SPECS } from './component-specs.ts';
 import { GameTopBar } from './game-top-bar.tsx';
 import { IconButton } from './icon-button.tsx';
 import { TopBar } from './top-bar.tsx';
@@ -136,6 +137,33 @@ describe('GameTopBar', () => {
     await user.press(screen.getByRole('button', { name: 'Undo' }));
     expect(onUndo).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('button', { name: 'Hint' })).toBeDisabled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('keeps an inert key raised at rest, unpressable and reported disabled', async () => {
+    const onHint = jest.fn();
+    const user = userEvent.setup();
+    await renderWithShell(
+      <GameTopBar
+        testIDBase="game"
+        pauseLabel="Pause"
+        onPause={jest.fn()}
+        modeText="Level 12"
+        progressText="Sheep 0 / 3"
+        scoreText="0"
+        hint={{ label: 'Hint', onPress: onHint, isInert: true }}
+        isReducedMotion
+      />,
+    );
+
+    const hint = screen.getByRole('button', { name: 'Hint' });
+    await user.press(hint);
+    expect(hint).toBeDisabled();
+    expect(onHint).not.toHaveBeenCalled();
+    // allow-style-assertion: the inert key stays raised (a disabled key sinks by its elevation)
+    expect(screen.getByTestId('game.hint-button')).not.toHaveStyle({
+      top: COMPONENT_SPECS.iconButton.elevation,
+    });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

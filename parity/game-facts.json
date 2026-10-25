@@ -1,6 +1,12 @@
 {
   "version": 1,
   "games": {
+    "flock-tilt": {
+      "designGame": "flockTilt",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "line-siege": {
       "designGame": "lineSiege",
       "hasMusic": false,

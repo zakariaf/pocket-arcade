@@ -14,6 +14,7 @@ import { BOARD_PALETTES } from '@e07/tap-flip/board/board-palettes.ts';
 import { buildTimeline } from '@e07/tap-flip/board/build-timeline.ts';
 import { timelineEndMs } from '@e07/game-kit/timeline/track.ts';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
+import { boardNumberTypefaceOf } from '@e07/shell/game-host/board-number-typeface.ts';
 import { paintBoardPng } from '@e07/shell/game-host/paint-board-png.ts';
 
 import { toMatchPixelGolden } from './skia-golden.ts';
@@ -23,10 +24,13 @@ import type { TapFlipEvent } from '@e07/tap-flip/rules/tap-flip-types.ts';
 
 expect.extend({ toMatchImageSnapshot: toMatchPixelGolden });
 
-/** Skia's jestSetup mocks useFonts/matchFont: load the app's bundled TTF explicitly. */
-const FONT = join(process.cwd(), 'apps/tap-flip/assets/fonts/Vazirmatn-Regular.ttf');
-const TYPEFACE = Skia.Typeface.MakeFreeTypeFaceFromData(
-  Skia.Data.fromBytes(new Uint8Array(readFileSync(FONT))),
+/**
+ * The digits face comes the device's way (board-number-typeface.ts): from the bytes of the font
+ * the app bundles, here read from its assets folder instead of the BoardFont native module.
+ */
+const FONTS = join(process.cwd(), 'apps/tap-flip/assets/fonts');
+const TYPEFACE = boardNumberTypefaceOf(Skia, (fileName) =>
+  Uint8Array.from(readFileSync(join(FONTS, fileName))),
 );
 const KIT = makeBoardKit(Skia, {
   paths: tapFlipBoard.buildPaths(Skia),

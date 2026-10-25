@@ -5,6 +5,7 @@ import { useT } from '@e07/shell/i18n/t-context.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { ProgressBar } from '@e07/shell/ui/progress-bar.tsx';
 import { RatingStar } from '@e07/shell/ui/rating-star.tsx';
+import { useWindowClass } from '@e07/shell/ui/use-window-class.ts';
 
 import { PackTile } from './pack-tile.tsx';
 import { LEVEL_COLUMN_GAP, tileWidthFor } from './tile-width.ts';
@@ -31,6 +32,8 @@ const styles = StyleSheet.create({
     columnGap: 10,
   },
   heading: { flex: 1 },
+  // At 200 % text the heading takes the whole row, so the level count wraps under it (8.11).
+  headingStacked: { flexGrow: 1, flexBasis: '100%' },
   progress: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -50,6 +53,7 @@ export function PackSection({
 }: PackSectionProps): ReactNode {
   const t = useT();
   const { width, scale } = useWindowDimensions();
+  const { isLargeText } = useWindowClass();
   const tileWidth = tileWidthFor(width, scale);
   const id = `levels.pack.${String(pack.number)}`;
   const progressText = t('levels.pack.progress', {
@@ -59,7 +63,7 @@ export function PackSection({
   return (
     <View testID={id}>
       <View style={styles.header}>
-        <View style={styles.heading}>
+        <View style={isLargeText ? styles.headingStacked : styles.heading}>
           <AppText
             text={t('levels.pack.heading', { packNumber: pack.number, packName: pack.name })}
             variant="heading"

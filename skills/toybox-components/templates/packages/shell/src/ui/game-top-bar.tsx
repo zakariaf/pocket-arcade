@@ -17,6 +17,8 @@ export type GameKey = {
   readonly label: string;
   readonly onPress: () => void;
   readonly isDisabled?: boolean;
+  /** Drawn at rest but unpressable and reported disabled: the bar sits under an overlay. */
+  readonly isInert?: boolean;
 };
 
 export type GameTopBarProps = {
@@ -63,6 +65,7 @@ function smallKey(
       testID={`${props.testIDBase}.${icon}-button`}
       isReducedMotion={props.isReducedMotion}
       {...(key.isDisabled === true ? { isDisabled: true } : {})}
+      {...(key.isInert === true ? { isInert: true } : {})}
     />
   );
 }

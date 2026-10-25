@@ -4,6 +4,7 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
@@ -103,10 +104,8 @@ function drawClear(canvas: SkCanvas, frame: Frame, board: Rect): void {
   const { kit, colors, fx } = frame;
   const glow = fxEntry(fx, 'glow', TURN_ENTITY);
   if (isPlaying(glow)) {
-    kit.fill.setColor(colors.color.glow);
-    kit.fill.setAlphaf((glow.values[0] ?? 0) * 0.6);
+    setPaintColor(kit.fill, colors.color.glow, (glow.values[0] ?? 0) * 0.6);
     canvas.drawRRect({ rect: board, rx: 12, ry: 12 }, kit.fill);
-    kit.fill.setAlphaf(1);
   }
   const burst = fxEntry(fx, 'burst', TURN_ENTITY);
   if (!isPlaying(burst)) return;
