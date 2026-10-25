@@ -237,6 +237,24 @@
           "total": 3
         },
         "loseReasonId": "toggle-drop.lose.out-of-balls"
+      },
+      "pokerDrop": {
+        "gameStats": [
+          "836",
+          "97",
+          "×4"
+        ],
+        "progressMid": "3 / 8",
+        "progressFull": "8 / 8",
+        "progressMidParams": {
+          "made": 3,
+          "total": 8
+        },
+        "progressFullParams": {
+          "made": 8,
+          "total": 8
+        },
+        "loseReasonId": "poker-drop.lose.well-full"
       }
     }
   },
@@ -473,6 +491,11 @@
         "balls-dropped": 412,
         "switches-flipped": 1938,
         "cups-filled": 286
+      },
+      "pokerDrop": {
+        "hands-made": 836,
+        "big-hands": 97,
+        "biggest-cascade": 4
       }
     },
     "hints": {
@@ -611,6 +634,17 @@
             "total": 3
           },
           "loseReasonId": "toggle-drop.lose.out-of-balls"
+        },
+        "pokerDrop": {
+          "progressMid": {
+            "made": 3,
+            "total": 8
+          },
+          "progressFull": {
+            "made": 8,
+            "total": 8
+          },
+          "loseReasonId": "poker-drop.lose.well-full"
         }
       }
     }

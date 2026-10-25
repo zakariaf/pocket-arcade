@@ -25,6 +25,7 @@ const SPEC = {
     '  frame-callback-body    useFrameCallback((info) => { runXFrame(...); }, false): one runner call, starts inactive',
     '  draw-pure              draw files import Skia types only and never create Skia objects or read clocks/random',
     '  skia-path-api          paths use Skia.PathBuilder (immutable), never Skia.Path.Make() + add*/moveTo mutators',
+    '                         (an add* call that continues a PathBuilder.Make() chain is the builder\'s own API)',
     '  measure-text           no SkFont.measureText (unimplemented in CanvasKit); sum glyph widths',
     '  font-system-manager    no FontMgr.System().matchFamilyStyle for a board font: Android\'s manager reads only /system/fonts',
     '                         (allowed only as board-number-typeface.ts\'s iOS fallback, behind os !== \'ios\')',
@@ -141,10 +142,25 @@ function isIosFontFallback(rel, code) {
   return rel === FONT_FALLBACK_FILE && /\bos\s*!==\s*['"]ios['"]/.test(code);
 }
 
+/** A PathBuilder chain starts here: Skia.PathBuilder.Make() or MakeFromPath(). */
+const BUILDER_START = /\bPathBuilder\.Make(FromPath)?\s*\(/;
+
+/**
+ * True when the add* call at `index` continues a PathBuilder chain: the statement it sits in (from
+ * the last line that ends in ; { or }) starts the builder. SkPathBuilder has its own addCircle,
+ * addRect, addRRect, addOval, addArc, addPath and addPoly, which are the immutable API.
+ */
+function isBuilderChain(code, index) {
+  if (!code.startsWith('.add', index)) return false;
+  let start = 0;
+  for (const match of code.slice(0, index).matchAll(/[;{}][ \t]*\n/g)) start = match.index + match[0].length;
+  return BUILDER_START.test(code.slice(start, index));
+}
+
 const PATTERN_RULES = [
   { rule: 'frame-clock', re: /\btimeSinceFirstFrame\b/g, runtimeOnly: true, message: 'uses timeSinceFirstFrame, which Reanimated resets to 0 whenever a frame callback is re-activated', fix: 'Stamp startAt = info.timestamp on the first frame (tickClock) and use elapsed = timestamp - startAt.' },
   { rule: 'worklets-api', re: /\brunOn(JS|UI)\b/g, runtimeOnly: false, message: 'uses the deprecated runOnJS/runOnUI', fix: 'Use scheduleOnRN(fn, ...args) / scheduleOnUI(fn, ...args) from react-native-worklets.' },
-  { rule: 'skia-path-api', re: /\b[sS]kia\.Path\.Make\s*\(|\.add(Circle|Rect|RRect|Oval|Arc|Path|Poly)\s*\(/g, runtimeOnly: true, message: 'uses the mutable Skia path API (deprecated in Skia 2.6, to be removed)', fix: 'Build unit-size paths once with Skia.PathBuilder.Make()...build() (or Skia.Path.Circle) and place them with canvas.translate/scale.' },
+  { rule: 'skia-path-api', re: /\b[sS]kia\.Path\.Make\s*\(|\.add(Circle|Rect|RRect|Oval|Arc|Path|Poly)\s*\(/g, runtimeOnly: true, skip: isBuilderChain, message: 'uses the mutable Skia path API (deprecated in Skia 2.6, to be removed)', fix: 'Build unit-size paths once with Skia.PathBuilder.Make()...build() (or Skia.Path.Circle) and place them with canvas.translate/scale.' },
   { rule: 'measure-text', re: /\.measureText\s*\(/g, runtimeOnly: false, message: 'uses SkFont.measureText, which CanvasKit (Jest, Node) does not implement', fix: 'Sum font.getGlyphWidths(font.getGlyphIDs(text)) as textWidth() in draw-centered-text.ts does.' },
   { rule: 'font-system-manager', re: /FontMgr\.System\s*\(\s*\)\s*\.matchFamilyStyle\s*\(/g, runtimeOnly: true, allow: isIosFontFallback, message: "asks Skia's system font manager for a board font: on Android it reads only /system/fonts and answers an app font with an empty face, so every digit draws blank", fix: 'Make the face from the bundled TTF bytes on both platforms: boardNumberTypeface() (board-number-font.ts: boardNumberTypefaceOf with the BoardFont native module).' },
   { rule: 'token-alpha', re: /\b([\w.]+)\.setColor\(\s*[^;()]*\.color\b(?:\.\w+|\[[^\]]+\])?\s*\)\s*;\s*\1\.setAlphaf\s*\(/g, runtimeOnly: true, message: "sets a palette token with setColor, then replaces the token's own alpha with setAlphaf: a translucent token (alpha below 1) draws too strong", fix: "Call setPaintColor(paint, token, alpha) (board-kit.ts): it sets the token and multiplies its alpha by yours." },
@@ -159,7 +175,10 @@ function checkPatterns(ctx) {
   for (const spec of PATTERN_RULES) {
     if (spec.runtimeOnly && isTestFile(rel)) continue;
     if (spec.allow?.(rel, code) === true) continue;
-    for (const match of code.matchAll(spec.re)) report.problem({ file: rel, line: lineOf(code, match.index), rule: spec.rule, message: spec.message, fix: spec.fix });
+    for (const match of code.matchAll(spec.re)) {
+      if (spec.skip?.(code, match.index)) continue;
+      report.problem({ file: rel, line: lineOf(code, match.index), rule: spec.rule, message: spec.message, fix: spec.fix });
+    }
   }
   if (BOARD_CODE.test(rel) && !isTestFile(rel)) {
     for (const match of code.matchAll(/scaleX\s*:\s*-\s*1\b|\.scale\(\s*-\s*1\s*,/g)) {

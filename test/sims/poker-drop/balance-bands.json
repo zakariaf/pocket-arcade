@@ -1,0 +1,81 @@
+{
+  "gameId": "poker-drop",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [75]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.9,
+      "max": 1,
+      "why": "The first row (the 9-to-ace deck, two prepared two-pair rows) is the warm-up: a reasonable player wins it (1.0 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.3,
+      "max": 0.7,
+      "why": "The hardest row (the full deck, a row rising every 4th drop) is hard (0.5 measured), yet a reasonable player wins half."
+    },
+    {
+      "policy": "random",
+      "difficulty": 25,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.2,
+      "why": "From the second row on, dropping anywhere loses (0.02 measured): where a card goes must matter. The warm-up row forgives it (0.69)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 12,
+      "max": 30,
+      "why": "A level lasts a minute or two (median 19 drops), never a handful of drops."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 75,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": {
+    "policy": "greedy",
+    "difficulty": 100,
+    "bands": [
+      {
+        "metric": "medianMoves",
+        "min": 30,
+        "max": 100,
+        "why": "An endless run outlasts a level (median 54 drops measured) and still ends: its rows rise ever faster."
+      },
+      {
+        "metric": "medianScore",
+        "min": 250,
+        "max": 700,
+        "why": "A reasonable endless run scores more than a level (median 400 measured)."
+      },
+      {
+        "metric": "twistPerRun",
+        "min": 0.4,
+        "max": 3,
+        "why": "Cascades still happen without a prepared opening (0.81 per run measured)."
+      }
+    ]
+  },
+  "notes": "Poker Drop, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75) and the endless run at 100, 100 seeds. Greedy wins 1.0/0.89/0.74/0.5, random 0.69 on the warm-up row and at most 0.02 after it, lookahead 0.74 on the hardest row. The kill test passes: on the easiest level the greedy bot bursts its first hand on the first drop in every run (the prepared gap), and cascades come 1.56 times per run (the second prepared row falls into a second two pair). Without the rising row the greedy bot won every level and never ended an endless run, so the row rises every 8/5/5/4 drops by row and, in the endless run, every 10th drop and one drop sooner every 40 drops (median 54 drops, every run ends). The decks shorten the easy rows (9 to ace, 5 to ace, 3 to ace, the full deck): fewer ranks make more pairs. Every number is a default until the owner's play-test."
+}

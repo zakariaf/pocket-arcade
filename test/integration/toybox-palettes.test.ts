@@ -4,6 +4,7 @@ import { PALETTE as FLOCK_TILT } from '@e07/flock-tilt/theme/palette.ts';
 import { PALETTE as JUMP_CHAIN } from '@e07/jump-chain/theme/palette.ts';
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { PALETTE as MERGE_SIEGE } from '@e07/merge-siege/theme/palette.ts';
+import { PALETTE as POKER_DROP } from '@e07/poker-drop/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
@@ -46,6 +47,11 @@ describe('Toybox palettes', () => {
 
   it('keeps Toggle Drop readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(TOGGLE_DROP)).toStrictEqual([]);
+  });
+
+  // spec 8.12: the Shell takes each game's own palette; spec 8.11 (O5): every text 4.5:1.
+  it('keeps Poker Drop readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(POKER_DROP)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including

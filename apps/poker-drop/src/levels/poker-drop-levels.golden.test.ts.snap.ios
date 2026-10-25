@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-10-19 1`] = `
+"seed 1281771625 difficulty 45 goal 8 hand 8s next 6d rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+7d 8d 5c .. Ah
+Th Td 9h .. 9d"
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
+"seed 591082173 difficulty 45 goal 8 hand 6h next 9c rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+6c Js 6d Qd ..
+As Ts Ah Td .."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
+"seed 1755254529 difficulty 45 goal 8 hand 9c next 9d rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+As .. Jc 8d 5h
+Ts .. Tc Kd Kh"
+`;
+
+exports[`level table goldens keeps the frozen board of level 1 1`] = `
+"seed 1328980271 difficulty 0 goal 6 hand Ts next Jd rises every 8
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. Kc Ac Kd Ad
+.. 9c 9d Qd Qs
+{"kind":"score","thresholds":[0,200,240]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 30 1`] = `
+"seed 2687942343 difficulty 32 goal 8 hand Ks next Js rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+Ad 9d Ac Jd ..
+Ts 6s Th 6c ..
+{"kind":"score","thresholds":[0,230,276]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 31 1`] = `
+"seed 697620440 difficulty 33 goal 8 hand 9d next 6c rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+Ah .. 6d 7d 8d
+Qc .. Qs Tc Ts
+{"kind":"score","thresholds":[0,270,324]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 60 1`] = `
+"seed 3067369685 difficulty 65 goal 8 hand Js next 8d rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+Th 9d 3c 4h ..
+6h Ac As 6s ..
+{"kind":"score","thresholds":[0,200,240]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 61 1`] = `
+"seed 2623656905 difficulty 66 goal 8 hand Qh next 6d rises every 5
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. Tc 9c 3c 7s
+.. 4c 9d 9s 4d
+{"kind":"score","thresholds":[0,370,444]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 90 1`] = `
+"seed 700677818 difficulty 99 goal 8 hand Tc next 8d rises every 4
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. ..
+Ts Jd 2s Qd ..
+Ks Kh 6s 6h ..
+{"kind":"score","thresholds":[0,210,252]}"
+`;

@@ -1,3 +1,4 @@
 skia-path-api
 demo-grid-board.ts:15
 demo-grid-board.ts:16
+demo-grid-board.ts:19

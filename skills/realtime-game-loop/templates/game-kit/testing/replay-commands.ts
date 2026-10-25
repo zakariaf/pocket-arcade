@@ -22,16 +22,25 @@ export type ReplayInput<TSim> = {
   readonly ticks: number;
 };
 
-/** Steps `sim` in place for `ticks` ticks, applying each logged command from its tick on. */
+/**
+ * Steps `sim` in place for `ticks` ticks, applying each logged command from its tick on. Every
+ * change due by a tick is applied before it (several on one tick: the last one wins). A log whose
+ * ticks go backwards was not recorded by a sim, so it throws a RangeError instead of replaying.
+ */
 export function replayCommands<TSim>(
   input: ReplayInput<TSim>,
   log: readonly CommandChange[],
 ): TSim {
+  log.forEach((change, index) => {
+    const before = log[index - 1];
+    if (before !== undefined && change.tick < before.tick) {
+      throw new RangeError(`command log goes back in time at entry ${String(index)}`);
+    }
+  });
   let command = 0;
   let next = 0;
   for (let tick = 0; tick < input.ticks; tick += 1) {
-    const change = log[next];
-    if (change?.tick === tick) {
+    for (let change = log[next]; change !== undefined && change.tick <= tick; change = log[next]) {
       command = change.command;
       next += 1;
     }
