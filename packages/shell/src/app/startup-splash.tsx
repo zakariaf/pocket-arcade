@@ -1,5 +1,4 @@
 // packages/shell/src/app/startup-splash.tsx
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -10,6 +9,7 @@ import { BusyBlocks } from '@e07/shell/ui/busy-blocks.tsx';
 import { LogoTile } from '@e07/shell/ui/logo-tile.tsx';
 import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
 import { useBodyBottomTopUp } from '@e07/shell/ui/use-body-bottom-top-up.ts';
+import { useWrappedText } from '@e07/shell/ui/use-wrapped-text.ts';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { ReactNode } from 'react';
@@ -58,11 +58,7 @@ export function StartupSplash({
   const theme = useTheme();
   const bottomTopUp = useBodyBottomTopUp();
   // The tagline that wrapped: its box takes the full 290 pt, a one-line tagline fits its text.
-  const [wrappedTagline, setWrappedTagline] = useState<string | null>(null);
-  const isWrapped = wrappedTagline === tagline;
-  const handleTaglineLines = (lines: number): void => {
-    setWrappedTagline(lines > 1 ? tagline : null);
-  };
+  const { isWrapped, onLineCount } = useWrappedText(tagline, { isSticky: false });
   return (
     <ScreenFrame testID="splash.screen">
       <View style={[styles.page, { paddingBottom: bottomTopUp }]}>
@@ -80,7 +76,7 @@ export function StartupSplash({
           <View style={isWrapped ? styles.taglineWrapped : styles.tagline}>
             <AppText
               text={tagline}
-              onLineCount={handleTaglineLines}
+              onLineCount={onLineCount}
               variant="splashTagline"
               tone="muted"
               align="center"
