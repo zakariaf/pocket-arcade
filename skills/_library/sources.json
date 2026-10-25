@@ -5254,11 +5254,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-controller.ts",
-            "sha256": "1d342aefa4340440d7821985e40c409baedc920da6d9d609ac928548f2498f3b"
+            "sha256": "54ed7e90ffc02a38b26132069a4813cb1f6f6f8af9fd0210bddb4b063b91b4fd"
           }
         ]
       },

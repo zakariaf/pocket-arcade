@@ -78,6 +78,8 @@ type Parts<TState, TMove, TEvent> = {
   readonly store: GameSessionStore<TState, TMove, TEvent>;
   readonly extras: StoreApi<ViewExtras<TMove>>;
   readonly playClock: PlayClock;
+  /** The game's last hint search: one press (canHint, then the hint) runs it once per position. */
+  suggestion: { readonly atSeq: number; readonly move: TMove | null } | null;
 };
 
 type Session<TState, TMove, TEvent> = GameSession<TState, TMove, TEvent>;
@@ -166,7 +168,11 @@ function hintToGive<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>):
   if (hints.kind !== 'solver' || session.status !== 'playing') return null;
   const shown = parts.extras.getState().hint;
   if (shown !== null && shown.atSeq === session.eventSeq) return null;
-  return hints.suggest(session.state);
+  const cached = parts.suggestion;
+  if (cached !== null && cached.atSeq === session.eventSeq) return cached.move;
+  const move = hints.suggest(session.state);
+  parts.suggestion = { atSeq: session.eventSeq, move };
+  return move;
 }
 
 function showHint<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
@@ -312,7 +318,13 @@ export function createSessionController<TState, TMove, TEvent>(
     initial,
     persist,
   });
-  const parts = { deps, store, extras, playClock: createPlayClock(deps.nowMs) };
+  const parts: Parts<TState, TMove, TEvent> = {
+    deps,
+    store,
+    extras,
+    playClock: createPlayClock(deps.nowMs),
+    suggestion: null,
+  };
   const hintedMove = (): TMove | null => {
     const hint = extras.getState().hint;
     return hint !== null && hint.atSeq === store.getState().session.eventSeq ? hint.move : null;
