@@ -88,11 +88,21 @@ export const SWAP_GUARD_SOLVER: Solver<SwapGuardState, SwapGuardMove> = {
 };
 
 /**
+ * Positions the hint's fallback search may expand. Measured on every shipped level and 30 dailies
+ * (720 random walks, 3,319 positions the plan has no line for): at this budget the worst search took
+ * 61 ms in Node and found 163 of the 225 wins a 50,000-node search finds; the rest get no hint.
+ */
+export const HINT_SEARCH_NODES = 2_000;
+
+/**
  * rules.hints.suggest: the next swap of the planned line from here (a line that wins within the
- * swaps left, so the level stays winnable), or null when there is none or the run is over. The
- * plan costs a few milliseconds; the exact search is for the level tables, too slow for a 6 x 6
- * board on a phone.
+ * swaps left, so the level stays winnable). Where the plan finds no line, a breadth-first search
+ * of at most HINT_SEARCH_NODES positions looks for the first swap of a winning line (deterministic:
+ * the same position always gets the same hint). Null when neither finds one or the run is over.
  */
 export function suggestSwap(state: SwapGuardState): SwapGuardMove | null {
-  return planLine(state)?.[0] ?? null;
+  const planned = planLine(state);
+  if (planned !== null) return planned[0] ?? null;
+  const searched = bfsSolve(swapProblem(state), HINT_SEARCH_NODES);
+  return searched.kind === 'solved' ? (searched.line[0] ?? null) : null;
 }

@@ -191,6 +191,22 @@ describe('suggestSwap (rules.hints: the next swap of a sure line)', () => {
     expect(suggestSwap(off)).toStrictEqual(planLine(off)?.[0] ?? null);
   });
 
+  // Spec 8.5: "The game's solver suggests the next good move": a swap that still wins. The plan
+  // cannot reach a spear on the top edge facing down from behind; the bounded search wins in four.
+  it('searches for a winning swap where the plan finds no line', () => {
+    const lone = board(5, [['spear', 'down', 1]]);
+    expect(planLine(lone)).toBeNull();
+    const hint = suggestSwap(lone);
+    expect(hint).toStrictEqual({ kind: 'swap', cell: 1 });
+    if (hint === null) throw new Error('no hint');
+    expect(SWAP_GUARD_SOLVER.solve(applyMove(lone, hint).state, 200_000).kind).toBe('solved');
+  });
+
+  it('suggests nothing when no swap wins within the swaps left', () => {
+    const tight = board(5, [['spear', 'down', 1]], 3);
+    expect(suggestSwap(tight)).toBeNull();
+  });
+
   it('suggests nothing once the level is won or lost', () => {
     const won = replay(OPENING_PAIR, [{ kind: 'swap', cell: 6 }]);
     const lost = applyMove(OPENING_PAIR, { kind: 'swap', cell: 11 }).state;
