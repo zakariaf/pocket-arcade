@@ -2,8 +2,10 @@
 // Spec 8.6 and N10: a saved run is JSON from disk; rebuild a fresh typed state with explicit checks
 // and return null on anything unexpected (a wrong type, a missing or extra field, a value out of
 // range): the Shell then drops only the run (8.14). Never cast. Pure, like the rules.
-import { isDark } from './board-squares.ts';
-import { TUNING } from './jump-chain-tuning.ts';
+import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
+
+import { SIDE_ROW, isDark } from './board-squares.ts';
+import { TUNING, knobsFor, marchEveryFor } from './jump-chain-tuning.ts';
 
 import type { Enemy, JumpChainMove, JumpChainState, Square } from './jump-chain-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -13,8 +15,6 @@ import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 export const JUMP_CHAIN_STATE_VERSION = 1;
 
 const UINT32_MAX = 4_294_967_295;
-/** The highest enemy row a saved run can hold before it ends (your side's row). */
-const SIDE_ROW = TUNING.rows - 1;
 /** Rows above the board a waiting rank can stand on (far beyond any level's queue). */
 const LOWEST_WAITING_ROW = -999;
 /** A chain never jumps more enemies than a board holds. */
@@ -109,22 +109,50 @@ function parseCounts(json: JsonRecord) {
     : null;
 }
 
+type Counts = {
+  readonly difficulty: number;
+  readonly total: number;
+  readonly captured: number;
+  readonly nextId: number;
+  readonly nextRank: number;
+  readonly ranksCleared: number;
+  readonly marchIn: number;
+  readonly score: number;
+};
+
+/** Made ranks with no enemy left: each one was cleared by the capture of its last enemy. */
+function emptyRanks(enemies: readonly Enemy[], nextRank: number): number {
+  const standing = new Set(enemies.map((enemy) => enemy.rank));
+  return Array.from({ length: nextRank }, (_, rank) => rank).filter((rank) => !standing.has(rank))
+    .length;
+}
+
+/**
+ * The counters legal play keeps: every enemy made took the next id (nextId = total), a level
+ * makes only its opening ranks, the march clock runs 1..its pace while the run goes on (0 only
+ * after the move that won a level), and each capture and cleared rank scored at least its points.
+ */
+function isCountReachable(enemies: readonly Enemy[], counts: Counts): boolean {
+  const isEndless = isEndlessDifficulty(counts.difficulty);
+  const isWon = !isEndless && enemies.length === 0;
+  const pace = marchEveryFor(counts.difficulty, counts.nextRank);
+  const leastScore = TUNING.jumpPoints * counts.captured + TUNING.rankPoints * counts.ranksCleared;
+  return (
+    counts.nextId === counts.total &&
+    (isEndless || counts.nextRank === knobsFor(counts.difficulty).ranks) &&
+    counts.marchIn >= (isWon ? 0 : 1) &&
+    counts.marchIn <= pace &&
+    counts.ranksCleared === emptyRanks(enemies, counts.nextRank) &&
+    counts.score >= leastScore
+  );
+}
+
 /**
  * The run is one legal play can reach: unique enemy ids below nextId, captured + left = total, no
- * two pieces on one square (enemies or your piece), every enemy of a rank already made, and no
- * more ranks cleared than made.
+ * two pieces on one square (enemies or your piece), every enemy of a rank already made, and the
+ * counters isCountReachable checks.
  */
-function isConsistent(
-  enemies: readonly Enemy[],
-  piece: Square,
-  counts: {
-    total: number;
-    captured: number;
-    nextId: number;
-    nextRank: number;
-    ranksCleared: number;
-  },
-): boolean {
+function isConsistent(enemies: readonly Enemy[], piece: Square, counts: Counts): boolean {
   const ids = enemies.map((enemy) => enemy.id);
   const squares = [piece, ...enemies].map(
     (square) => `${String(square.col)},${String(square.row)}`,
@@ -135,7 +163,7 @@ function isConsistent(
     counts.captured + enemies.length === counts.total &&
     new Set(squares).size === squares.length &&
     enemies.every((enemy) => enemy.rank < counts.nextRank) &&
-    counts.ranksCleared <= counts.nextRank
+    isCountReachable(enemies, counts)
   );
 }
 

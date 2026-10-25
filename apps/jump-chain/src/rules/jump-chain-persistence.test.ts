@@ -4,12 +4,18 @@
 import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
+import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
+import { randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { jumpChainBot } from '@e07/jump-chain/testing/jump-chain-bot.ts';
 
 import { applyMove } from './apply-move.ts';
+import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { JUMP_CHAIN_PERSISTENCE, parseMove, parseState } from './jump-chain-persistence.ts';
+import { marchEveryFor } from './jump-chain-tuning.ts';
 import { listMoves } from './list-moves.ts';
+import { outcome } from './outcome.ts';
 
 import type { JumpChainMove, JumpChainState } from './jump-chain-types.ts';
 
@@ -39,6 +45,39 @@ function withEnemies(
   return { ...startRecord(), enemies: change(START.enemies) };
 }
 
+/** One step next to the front rank, then a capture: a played record (one enemy captured). */
+function playedRecord(): Record<string, unknown> {
+  const stepped = applyMove(START, { kind: 'step', to: { col: 4, row: 6 } }).state;
+  return saved(applyMove(stepped, { kind: 'jump', path: [{ col: 6, row: 4 }] }).state) as Record<
+    string,
+    unknown
+  >;
+}
+
+/**
+ * Every state a bot game reaches from (seed, difficulty), the greedy bot or a random one, with
+ * the one continue taken after the first loss: what a save can ever hold.
+ */
+function botStates(seed: number, difficulty: number, isGreedy: boolean): JumpChainState[] {
+  const policy = isGreedy ? jumpChainBot : randomPolicy<JumpChainState, JumpChainMove>();
+  let state = create(seed, difficulty);
+  let rng = seedRng(seed);
+  const states = [state];
+  for (let played = 0; played < 200; played += 1) {
+    if (outcome(state).kind === 'lost' && !state.hasContinued) {
+      state = continueAfterLoss(state).state;
+      states.push(state);
+    }
+    const moves = listMoves(state);
+    if (outcome(state).kind !== 'playing' || moves.length === 0) break;
+    const choice = policy(state, moves, rng);
+    rng = choice.rng;
+    state = applyMove(state, choice.move).state;
+    states.push(state);
+  }
+  return states;
+}
+
 /** Replays a move line from its start: the run a save restores. */
 function replay(start: JumpChainState, moves: readonly JumpChainMove[]): JumpChainState {
   return moves.reduce((state, move) => applyMove(state, move).state, start);
@@ -66,6 +105,22 @@ describe('parseState', () => {
       }),
       { numRuns: 40 },
     );
+  });
+
+  it('returns every state a bot game reaches unchanged, continues and endings included', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, fc.boolean(), (seed, difficulty, isGreedy) => {
+        for (const state of botStates(seed, difficulty, isGreedy)) {
+          expect(parseState(saved(state))).toStrictEqual(state);
+        }
+      }),
+      { numRuns: 30 },
+    );
+  });
+
+  it('accepts a won level whose march clock ran out on the winning move', () => {
+    const won = { ...startRecord(), enemies: [], captured: START.total, ranksCleared: 3 };
+    expect(parseState({ ...won, score: 10 * START.total + 150, marchIn: 0 })).not.toBeNull();
   });
 
   it.each([
@@ -118,6 +173,22 @@ describe('parseState', () => {
       ),
     ],
     ['more ranks cleared than made', { ...startRecord(), ranksCleared: START.nextRank + 1 }],
+    ['a cleared rank not counted', { ...startRecord(), ranksCleared: 1 }],
+    [
+      'a rank counted as cleared that still has enemies',
+      { ...playedRecord(), ranksCleared: 1, score: 1000 },
+    ],
+    ['a march clock at 0 while playing', { ...startRecord(), marchIn: 0 }],
+    [
+      'a march clock beyond its pace',
+      { ...startRecord(), marchIn: marchEveryFor(START.difficulty, START.nextRank) + 1 },
+    ],
+    ['a next id that is not the enemies made', { ...startRecord(), nextId: START.total + 1 }],
+    [
+      'a level with more ranks than it opens with',
+      { ...startRecord(), nextRank: START.nextRank + 1, ranksCleared: 1, score: 50 },
+    ],
+    ['a score below the captures it counts', { ...playedRecord(), score: 9 }],
     ['an RNG state of three words', { ...startRecord(), rng: [1, 2, 3] }],
     ['an RNG word above 32 bits', { ...startRecord(), rng: [1, 2, 3, 2 ** 33] }],
   ])('rejects %s', (_name, json) => {
