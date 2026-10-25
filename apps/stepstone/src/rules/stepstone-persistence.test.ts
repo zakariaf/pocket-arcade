@@ -49,6 +49,16 @@ function expectEveryHopReadBack(state: StepstoneState): void {
 
 const START = create(1, 0);
 
+/** A version 1 save, frozen: a 3 x 3 pond one hop in, the frog on the king. */
+const GOLDEN_SAVE_V1 = {
+  side: 3,
+  cells: ['sunk', 'water', 'flag', 'water', 'king', 'water', 'rook', 'water', 'water'],
+  frog: 4,
+  moves: 1,
+  par: 2,
+  kindsUsed: ['bishop', 'king'],
+};
+
 describe('parseState', () => {
   it('returns every state that legal hops reach unchanged after a JSON round trip', () => {
     fc.assert(
@@ -106,6 +116,29 @@ describe('parseState', () => {
   ])('refuses %s', (_reason, json) => {
     expect(parseState(viaJson(json))).toBeNull();
   });
+
+  // A save no legal play reaches: each hop sinks the stone it leaves (sunk stones = hops), the
+  // start stone is a hop kind, each hop adds at most one new kind, and the frog's own stone is one
+  // it stands on. The frozen save above keeps every one of these.
+  it.each([
+    ['more hops than sunk stones', { ...GOLDEN_SAVE_V1, moves: 2 }],
+    [
+      'a sunk stone the hop count does not explain',
+      {
+        ...GOLDEN_SAVE_V1,
+        cells: GOLDEN_SAVE_V1.cells.map((cell, i) => (i === 6 ? 'sunk' : cell)),
+      },
+    ],
+    ['no hop kind used', { ...GOLDEN_SAVE_V1, kindsUsed: [] }],
+    [
+      'more new kinds than hops allow',
+      { ...GOLDEN_SAVE_V1, kindsUsed: ['bishop', 'king', 'rook'] },
+    ],
+    ["the frog's own stone kind never used", { ...GOLDEN_SAVE_V1, kindsUsed: ['bishop', 'rook'] }],
+    ['a par of no hops', { ...GOLDEN_SAVE_V1, par: 0 }],
+  ])('refuses a save legal play cannot reach: %s', (_reason, json) => {
+    expect(parseState(viaJson(json))).toBeNull();
+  });
 });
 
 describe('parseMove', () => {
@@ -150,13 +183,3 @@ describe('STEPSTONE_PERSISTENCE', () => {
     expect(STEPSTONE_PERSISTENCE.migrateState(START, 0)).toBeNull();
   });
 });
-
-/** A version 1 save, frozen: a 3 x 3 pond one hop in, the frog on the king. */
-const GOLDEN_SAVE_V1 = {
-  side: 3,
-  cells: ['sunk', 'water', 'flag', 'water', 'king', 'water', 'rook', 'water', 'water'],
-  frog: 4,
-  moves: 1,
-  par: 2,
-  kindsUsed: ['bishop', 'king'],
-};
