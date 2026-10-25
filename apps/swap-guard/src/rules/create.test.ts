@@ -3,6 +3,13 @@
 // animate. It is played with a tap on the square to swap with (engine.panMode 'none').
 import fc from 'fast-check';
 
+import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
+import { addDays } from '@e07/game-kit/dates/date-key.ts';
+import {
+  SWAP_GUARD_DAILY_DIFFICULTY,
+  SWAP_GUARD_DAILY_SALT,
+} from '@e07/swap-guard/levels/swap-guard-levels.ts';
+
 import { applyMove } from './apply-move.ts';
 import { create, joinersOf, openingsOf, startFor } from './create.ts';
 import { outcome } from './outcome.ts';
@@ -74,6 +81,13 @@ function fallbackOutcomes(knobs: DifficultyKnobs, openings: readonly Opening[]):
   });
 }
 
+/** The outcome of playing planLine's own line from a start through applyMove ('none': no line). */
+function plannedOutcome(start: SwapGuardState): string {
+  const line = planLine(start);
+  if (line === null) return 'none';
+  return outcome(line.reduce((state, move) => applyMove(state, move).state, start)).kind;
+}
+
 describe('create (turn-based: the swap applies, then its events animate)', () => {
   it('keeps the pinned board for seed 1 (a changed board breaks saved levels)', () => {
     expect(boardText(startFor(1, GOLDEN_KNOBS))).toBe(GOLDEN_SEED_1_BOARD);
@@ -105,6 +119,17 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
     );
     expect(won.length).toBeGreaterThan(100);
     expect(new Set(won)).toStrictEqual(new Set(['won']));
+  });
+
+  // Spec 8.3: the daily runs "through the same generator as normal levels", and spec 8.1: no level
+  // is impossible. Two years of dailies from 2026-10-01: create never throws, and planLine's line,
+  // played through applyMove within the board's own budget, wins every one.
+  it('hands out a board won within its budget for every daily of two years', () => {
+    const outcomes = Array.from({ length: 730 }, (_, day) => {
+      const seed = dailySeed(addDays('2026-10-01', day), SWAP_GUARD_DAILY_SALT);
+      return plannedOutcome(create(seed, SWAP_GUARD_DAILY_DIFFICULTY));
+    });
+    expect(outcomes.filter((kind) => kind !== 'won')).toStrictEqual([]);
   });
 
   it('clamps difficulties outside 0..100', () => {
