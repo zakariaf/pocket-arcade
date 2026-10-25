@@ -3,10 +3,12 @@ import fc from 'fast-check';
 
 import { applyMove } from '@e07/flock-tilt/rules/apply-move.ts';
 import { create } from '@e07/flock-tilt/rules/create.ts';
+import { fieldKey } from '@e07/flock-tilt/rules/field-search.ts';
 import { parseField } from '@e07/flock-tilt/rules/field-text.ts';
 import { TUNING, knobsFor } from '@e07/flock-tilt/rules/flock-tilt-tuning.ts';
 import { listMoves } from '@e07/flock-tilt/rules/list-moves.ts';
 import { outcome } from '@e07/flock-tilt/rules/outcome.ts';
+import { DIRECTIONS, tiltField } from '@e07/flock-tilt/rules/tilt-field.ts';
 import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
 import { verifyLine } from '@e07/game-kit/solver/verify-line.ts';
 
@@ -17,7 +19,11 @@ import {
 } from './flock-tilt-levels.ts';
 import { FLOCK_TILT_SOLVER, HINT_MAX_NODES, suggestTilt } from './flock-tilt-solver.ts';
 
-import type { FlockTiltMove, FlockTiltState } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
+import type {
+  Field,
+  FlockTiltMove,
+  FlockTiltState,
+} from '@e07/flock-tilt/rules/flock-tilt-types.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 
 const ENGINE = { listMoves, applyMove, outcome };
@@ -144,5 +150,36 @@ describe('suggestTilt on the shipped fields', () => {
     const states = [...levels, ...dailies].flatMap(hintStates);
     expect(states.length).toBeGreaterThan(levels.length * 3);
     for (const state of states) expect(suggestTilt(state)).toStrictEqual(engineHint(state));
+  });
+});
+
+/** Every flock a field can reach without losing a sheep, however many tilts it takes. */
+function reachableFlocks(field: Field): number {
+  const seen = new Set<string>([fieldKey(field)]);
+  const queue: Field[] = [field];
+  // for-of over an array also visits the flocks pushed while it runs (a breadth-first queue).
+  for (const current of queue) {
+    for (const direction of DIRECTIONS) {
+      const tilted = tiltField(current, direction);
+      const key = fieldKey(tilted);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (tilted.losses.length === 0) {
+        queue.push({ ...current, sheep: tilted.sheep, wolves: tilted.wolves });
+      }
+    }
+  }
+  return seen.size;
+}
+
+describe('the hint budget on the shipped fields', () => {
+  it('holds every flock a level or daily field can reach mid-run, so a hint search never runs out', () => {
+    const levels = FLOCK_TILT_LEVELS.table.map((entry) => create(entry.seed, entry.difficulty));
+    const dailies = Array.from({ length: 31 }, (_, day) => {
+      const date: DateKey = `2026-12-${String(day + 1).padStart(2, '0')}`;
+      return create(dailySeed(date, FLOCK_TILT_DAILY_SALT), FLOCK_TILT_DAILY_DIFFICULTY);
+    });
+    const largest = Math.max(...[...levels, ...dailies].map(reachableFlocks));
+    expect(largest).toBeLessThan(HINT_MAX_NODES / 4);
   });
 });
