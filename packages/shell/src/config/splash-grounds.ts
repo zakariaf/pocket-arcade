@@ -11,4 +11,5 @@ export const SPLASH_GROUNDS: Readonly<Partial<Record<string, SplashColors>>> = {
   'scrap-shove': { light: '#F7DF7E', dark: '#261C45', accent: '#1FB5A9' },
   'snare-snake': { light: '#C9B8F0', dark: '#10302B', accent: '#3FA34D' },
   stepstone: { light: '#CFC7F6', dark: '#142238', accent: '#27A776' },
+  'swap-guard': { light: '#CCC0F4', dark: '#2A1838', accent: '#5C9DFF' },
 };

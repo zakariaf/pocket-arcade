@@ -42,6 +42,12 @@
       "hasMusic": false,
       "winLine": "moves",
       "hasHints": true
+    },
+    "swap-guard": {
+      "designGame": "swapGuard",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
     }
   }
 }

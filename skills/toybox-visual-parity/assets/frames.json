@@ -95,6 +95,14 @@
         "progressMidParams": { "moves": 3, "par": 7 },
         "progressFullParams": { "moves": 7, "par": 7 },
         "loseReasonId": "stepstone.lose.stuck"
+      },
+      "swapGuard": {
+        "gameStats": ["1,146", "2,318", "87"],
+        "progressMid": "2 / 5",
+        "progressFull": "5 / 5",
+        "progressMidParams": { "defeated": 2, "total": 5 },
+        "progressFullParams": { "defeated": 5, "total": 5 },
+        "loseReasonId": "swap-guard.lose.hit"
       }
     }
   },
@@ -321,6 +329,11 @@
         "tiles-stepped": 1342,
         "levels-at-par": 46,
         "kinds-used": 4
+      },
+      "swapGuard": {
+        "enemies-defeated": 1146,
+        "swaps-made": 2318,
+        "double-hits": 87
       }
     },
     "hints": {
@@ -395,6 +408,11 @@
           "progressMid": { "moves": 3, "par": 7 },
           "progressFull": { "moves": 7, "par": 7 },
           "loseReasonId": "stepstone.lose.stuck"
+        },
+        "swapGuard": {
+          "progressMid": { "defeated": 2, "total": 5 },
+          "progressFull": { "defeated": 5, "total": 5 },
+          "loseReasonId": "swap-guard.lose.hit"
         }
       }
     }

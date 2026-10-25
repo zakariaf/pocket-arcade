@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "ab6b5e48162425e4cba46bf591731fce1889903c4a6d17fc34ca63c583341ca1",
+  "design": "b356bb755d8ea279a42af7394b242ae9caa477932253126ced8d2f176389b659",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "cc60ccc4f420f75bf0785608764081daeed81b1dcdda7f035efb42d07561d743",
+  "frames": "17f3b160bf5d2d156157f425c5bc3aab8b184f8dbc7c356ffe26598e471e71c7",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1874,6 +1874,30 @@
    "variants": [],
    "what": "Merging main into E24 put Stepstone into the design next to Jump Chain (both palettes, logos, texts and sample counters). No frame or variant of Line Siege changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
    "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
+  },
+  {
+   "id": "G-swap-guard",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves. After the merge with Snare Snake's design pass (2026-10-25) the manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en with Chrome 155.0.8059.85, which came out byte-identical; no committed PNG or layout moved",
+   "why": "spec 13: its design pass (E25-T01), drafted on 2026-10-19 with the proposed defaults; the owner approves it with the lead’s combined message"
+  },
+  {
+   "id": "G-swap-guard-with-jump-chain",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E25 put Swap Guard next to Merge Siege and Jump Chain in the design (every palette, logo, text and sample counter kept). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
+  },
+  {
+   "id": "G-swap-guard-with-stepstone",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E25 put Swap Guard next to Stepstone in the design (both palettes, logos, texts and sample counters kept). No frame or variant changed: the design and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
   }
  ]
 }
