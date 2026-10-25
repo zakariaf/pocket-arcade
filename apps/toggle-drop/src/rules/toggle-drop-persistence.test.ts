@@ -69,6 +69,41 @@ describe('parseState', () => {
   });
 });
 
+/** The easiest board of seed 1 (5 x 3, two switches a row, cups under 1 and 3, six balls). */
+const EASY = create(1, 0);
+
+/** A 6 x 3 board: a size between the tuning rows, with arrays that fit it. */
+const ODD_SIZE = {
+  ...EASY,
+  cols: 6,
+  pegs: [1, -1, -1, 0, -1, -1, 0, 1, -1, -1, -1, -1, -1, -1, 0, -1, 1, -1],
+  flips: Array.from({ length: 18 }, () => 0),
+  needs: [0, 1, 0, 1, 0, 0],
+  filled: [0, 0, 0, 0, 0, 0],
+};
+
+describe('parseState with runs legal play cannot reach', () => {
+  // Spec 8.6, 8.14 and N10: a damaged save is dropped alone, so a state no run can reach never
+  // loads to break later.
+  it.each([
+    ['a board size no tuning row has', ODD_SIZE],
+    ['balls left and dropped that do not add up to the row', { ...EASY, ballsLeft: 5 }],
+    ['a peg row with a switch missing', { ...EASY, pegs: [-1, ...EASY.pegs.slice(1)] }],
+    ['a board without a cup', { ...EASY, needs: [0, 0, 0, 0, 0], filled: [0, 0, 0, 0, 0] }],
+    ['more cups than the row has', { ...EASY, needs: [1, 1, 0, 1, 0] }],
+    ['cups needing more balls than the winning line drops', { ...EASY, needs: [0, 2, 0, 1, 0] }],
+    ['a cup holding a ball no drop brought', { ...EASY, filled: [0, 1, 0, 0, 0] }],
+    ['a switch flipped by no drop', { ...EASY, flips: [1, ...EASY.flips.slice(1)] }],
+  ])('refuses %s', (_name, json) => {
+    expect(parseState(throughJson(json))).toBeNull();
+  });
+
+  it('reads a run back after its drops, with its counts adding up', () => {
+    const played = applyMove(EASY, { kind: 'drop', col: 0 }).state;
+    expect(parseState(throughJson(played))).toStrictEqual(played);
+  });
+});
+
 describe('parseMove', () => {
   it('returns every legal move unchanged after a JSON round trip (property)', () => {
     fc.assert(

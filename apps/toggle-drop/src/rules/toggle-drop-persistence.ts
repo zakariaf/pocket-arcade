@@ -1,4 +1,6 @@
 // apps/toggle-drop/src/rules/toggle-drop-persistence.ts
+import { TUNING } from './toggle-drop-tuning.ts';
+
 import type { PegCell, ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
 
@@ -51,6 +53,34 @@ function parseSizes(json: Json): Sizes | null {
     : null;
 }
 
+const sum = (counts: readonly number[]): number => counts.reduce((total, n) => total + n, 0);
+
+/**
+ * Whether legal play can reach this run: its size is a tuning row's, each peg row keeps that row's
+ * switches, it has one cup up to the row's cups needing no more balls than the row's winning line,
+ * its balls left and dropped add up to the row's balls, and its cups and switches hold no more
+ * than its drops brought (one ball fills at most one cup and flips at most one switch a row).
+ */
+function isReachable(state: ToggleDropState): boolean {
+  const knobs = TUNING.levelRows.find((row) => row.cols === state.cols && row.rows === state.rows);
+  if (knobs === undefined) return false;
+  const { cols, rows, pegs, needs, drops } = state;
+  const rowSwitches = Array.from(
+    { length: rows },
+    (_, row) => pegs.slice(row * cols, (row + 1) * cols).filter((peg) => peg !== -1).length,
+  );
+  const cups = needs.filter((need) => need > 0).length;
+  return (
+    rowSwitches.every((count) => count === knobs.switchesPerRow) &&
+    cups >= 1 &&
+    cups <= knobs.cups &&
+    sum(needs) <= knobs.witnessDrops &&
+    state.ballsLeft + drops === knobs.witnessDrops + knobs.spareBalls &&
+    sum(state.filled) <= drops &&
+    sum(state.flips) <= drops * rows
+  );
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): ToggleDropState | null {
   if (!isRecord(json) || !hasKeys(json, STATE_KEYS)) return null;
@@ -74,7 +104,8 @@ export function parseState(json: unknown): ToggleDropState | null {
   if (filled === null) return null;
   // The rules' own key order, so a saved state reads back byte for byte.
   const { ballsLeft, drops } = sizes;
-  return { cols, rows, pegs: pegs.filter(isPeg), flips, needs, filled, ballsLeft, drops };
+  const state = { cols, rows, pegs: pegs.filter(isPeg), flips, needs, filled, ballsLeft, drops };
+  return isReachable(state) ? state : null;
 }
 
 /** One logged move -> a typed move, or null (the Shell then drops only the undo history). */
