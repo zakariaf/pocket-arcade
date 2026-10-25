@@ -48,6 +48,19 @@ const NEXT_TO_ROBOT = stateFromText([
   '......#.',
 ]);
 const LOST = applyMove(NEXT_TO_ROBOT, { kind: 'wait' }).state;
+/** The floor of NEXT_TO_ROBOT, as the rescue of LOST saves it. */
+const RESCUE = {
+  player: NEXT_TO_ROBOT.player,
+  robots: NEXT_TO_ROBOT.robots,
+  heaps: NEXT_TO_ROBOT.heaps,
+  nextId: NEXT_TO_ROBOT.nextId,
+};
+const FIRST_ROBOT = START.robots.at(0) ?? { id: 1, kind: 'normal', col: 0, row: 0 };
+/** START with one more robot, counted in robotsTotal, so only its square can be wrong. */
+function withRobotOn(col: number, row: number): Record<string, unknown> {
+  const robot = { id: 50, kind: 'normal', col, row };
+  return { ...START, robots: [...START.robots, robot], robotsTotal: START.robotsTotal + 1 };
+}
 
 describe('parseState (spec 8.6: a run survives every kill and every update)', () => {
   it('returns every state reached by legal play unchanged after a JSON round trip', () => {
@@ -68,6 +81,57 @@ describe('parseState (spec 8.6: a run survives every kill and every update)', ()
     expect(parseState(roundTrip(LOST))).toStrictEqual(LOST);
     const continued = continueRun(LOST).state;
     expect(parseState(roundTrip(continued))).toStrictEqual(continued);
+  });
+
+  it('keeps a run caught again after its one continue', () => {
+    const caughtAgain = applyMove(continueRun(LOST).state, { kind: 'wait' }).state;
+    expect([caughtAgain.caughtBy !== null, caughtAgain.hasContinued]).toStrictEqual([true, true]);
+    expect(parseState(roundTrip(caughtAgain))).toStrictEqual(caughtAgain);
+  });
+
+  it.each([
+    ['a lost run with no rescue floor that has not continued', { ...LOST, rescue: null }],
+    [
+      'a rescue floor with more robots than the run started with',
+      {
+        ...LOST,
+        rescue: {
+          ...RESCUE,
+          robots: [...RESCUE.robots, { id: 50, kind: 'normal', col: 0, row: 0 }],
+        },
+      },
+    ],
+    ['two robots on one square', withRobotOn(FIRST_ROBOT.col, FIRST_ROBOT.row)],
+    [
+      'a robot on the player that did not catch them',
+      withRobotOn(START.player.col, START.player.row),
+    ],
+    [
+      'a heap on a robot',
+      {
+        ...START,
+        heaps: [
+          ...START.heaps,
+          { id: 50, col: FIRST_ROBOT.col, row: FIRST_ROBOT.row, isShoved: false },
+        ],
+      },
+    ],
+    [
+      'a heap on the player',
+      { ...START, heaps: [...START.heaps, { id: 50, ...START.player, isShoved: false }] },
+    ],
+    [
+      'two pieces on one square of the rescue floor',
+      {
+        ...LOST,
+        rescue: {
+          ...RESCUE,
+          heaps: [...RESCUE.heaps, { id: 50, ...RESCUE.player, isShoved: false }],
+        },
+      },
+    ],
+  ])('refuses %s (the Shell quarantines it)', (_name, json) => {
+    expect(parseState(roundTrip(json))).toBeNull();
   });
 
   it.each([

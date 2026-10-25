@@ -98,10 +98,33 @@ function parseFloor(json: unknown): Floor | null {
   return { player, robots, heaps, nextId };
 }
 
+/**
+ * True when no two pieces share a square. Play never stacks pieces: a robot that reaches scrap or
+ * another robot is scrapped, so only the catcher (the robot named by caughtBy) stands on the player.
+ */
+function isApart(floor: Floor, catcherId: number | null): boolean {
+  const squares = [
+    floor.player,
+    ...floor.robots.filter((robot) => robot.id !== catcherId),
+    ...floor.heaps,
+  ].map((piece) => piece.row * TUNING.side + piece.col);
+  return new Set(squares).size === squares.length;
+}
+
 /** The saved rescue floor: null when there is none, undefined when it is broken. */
 function parseRescue(value: unknown): Floor | null | undefined {
   if (value === null) return null;
   return parseFloor(value) ?? undefined;
+}
+
+/**
+ * True when legal play can reach the run: a catch always saves the floor before it (applyMove)
+ * until the one continue, the rescue is a floor of this run, and no two pieces share a square.
+ */
+function isPlayable(floor: Floor, run: Omit<ScrapShoveState, keyof Floor>): boolean {
+  const { caughtBy, rescue, hasContinued, robotsTotal } = run;
+  if (rescue === null) return caughtBy === null || hasContinued ? isApart(floor, caughtBy) : false;
+  return rescue.robots.length <= robotsTotal && isApart(rescue, null) && isApart(floor, caughtBy);
 }
 
 /** The run bookkeeping around the floor, or null when a value is out of range. */
@@ -115,7 +138,7 @@ function parseRun(json: Json, floor: Floor): Omit<ScrapShoveState, keyof Floor> 
   const isFlag = typeof hasContinued === 'boolean';
   if (!isSide || !isTotal || catcher === undefined || rescue === undefined || !isFlag) return null;
   const caught = catcher === null ? null : catcher.id;
-  return {
+  const run = {
     cols: TUNING.side,
     rows: TUNING.side,
     robotsTotal,
@@ -123,6 +146,7 @@ function parseRun(json: Json, floor: Floor): Omit<ScrapShoveState, keyof Floor> 
     rescue,
     hasContinued,
   };
+  return isPlayable(floor, run) ? run : null;
 }
 
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
