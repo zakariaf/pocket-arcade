@@ -1,0 +1,74 @@
+{
+  "gameId": "stepstone",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [0, 25, 50, 75]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.65,
+      "max": 0.95,
+      "why": "The first row (5x5 ponds, plus and ring hops) is the warm-up: a reasonable player crosses most ponds (0.81 measured), yet a two-stone trap still catches one who reads a single stone ahead."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.1,
+      "max": 0.35,
+      "why": "The hardest row (7x7 ponds, all four hop kinds) is hard (0.21 measured), yet a reasonable player still crosses some on the first try."
+    },
+    {
+      "policy": "lookahead",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.6,
+      "max": 0.9,
+      "why": "Reading two hops ahead crosses most of the hardest ponds (0.74 measured): the ceiling is skill, not luck."
+    },
+    {
+      "policy": "random",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.25,
+      "why": "Random taps rarely cross a big pond (0.14 measured): the stone you pick decides whether the frog is stranded."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 3,
+      "max": 5,
+      "why": "A second-row pond takes a few hops (median 4), never one or two: minPar keeps the flag out of easy reach."
+    },
+    {
+      "policy": "lookahead",
+      "difficulty": 50,
+      "metric": "medianMoves",
+      "min": 5,
+      "max": 8,
+      "why": "A third-row pond takes the strongest player about six hops (median 6), close to its par: the route is long enough to plan."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 50,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": null,
+  "notes": "Stepstone: four tuning rows on the 0..99 scale sampled at their lower bounds (0/25/50/75), 100 seeds per cell, lookahead at depth 2 and beam 4. The first run showed a cliff into the third row (greedy 0.81, 0.65, 0.30, 0.21: a 0.35 drop, then only 0.09) because the 6x6 row added the knight, a bigger pond and two more traps at once; one change, the third row's traps tried 7 to 5, gives greedy 0.81, 0.65, 0.40, 0.21 (steps 0.16, 0.25, 0.19). Random tapping wins 0.73, 0.51, 0.23 and 0.14, the lookahead 0.99, 0.96, 0.83 and 0.74, so at the third row each player beats the one below by 0.17 and 0.43. The greedy bot reaches its first payoff (a new hop kind or the flag) within 3 hops in every easiest run (on the first hop in 91 %), and chains one hop kind into another 1.97 times per easiest run (the twist). Every run ends by reaching the flag or by the frog being stranded (stepstone.lose.stuck); no run comes near the 400-move cap, since every hop sinks a stone. The greedy bot judges 'closer to the flag' by eye (king steps), as a person does; with the solver's exact hop count one hop of lookahead would already play perfectly. Bands stay proposed until the owner's play-test (O6)."
+}

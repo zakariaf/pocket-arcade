@@ -1,0 +1,272 @@
+[
+  {
+    "level": 31,
+    "seed": 2945777712,
+    "difficulty": 33,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 32,
+    "seed": 3508905301,
+    "difficulty": 34,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 33,
+    "seed": 3931829729,
+    "difficulty": 35,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 34,
+    "seed": 1791200803,
+    "difficulty": 36,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 35,
+    "seed": 2504635415,
+    "difficulty": 37,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 36,
+    "seed": 343218137,
+    "difficulty": 38,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 37,
+    "seed": 786930917,
+    "difficulty": 40,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 38,
+    "seed": 3480712951,
+    "difficulty": 41,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 39,
+    "seed": 3637926280,
+    "difficulty": 42,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 40,
+    "seed": 1665664062,
+    "difficulty": 43,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 41,
+    "seed": 3622430727,
+    "difficulty": 44,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 42,
+    "seed": 2081277033,
+    "difficulty": 45,
+    "stars": {
+      "kind": "par",
+      "par": 4
+    }
+  },
+  {
+    "level": 43,
+    "seed": 2174448061,
+    "difficulty": 46,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 44,
+    "seed": 654082719,
+    "difficulty": 47,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 45,
+    "seed": 477531915,
+    "difficulty": 48,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 46,
+    "seed": 3751451706,
+    "difficulty": 50,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 47,
+    "seed": 3307738926,
+    "difficulty": 51,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 48,
+    "seed": 939960256,
+    "difficulty": 52,
+    "stars": {
+      "kind": "par",
+      "par": 6
+    }
+  },
+  {
+    "level": 49,
+    "seed": 2930282159,
+    "difficulty": 53,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 50,
+    "seed": 1953902649,
+    "difficulty": 54,
+    "stars": {
+      "kind": "par",
+      "par": 6
+    }
+  },
+  {
+    "level": 51,
+    "seed": 2380837810,
+    "difficulty": 55,
+    "stars": {
+      "kind": "par",
+      "par": 6
+    }
+  },
+  {
+    "level": 52,
+    "seed": 3401885315,
+    "difficulty": 56,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 53,
+    "seed": 4077753956,
+    "difficulty": 57,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 54,
+    "seed": 803834165,
+    "difficulty": 58,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 55,
+    "seed": 1230769326,
+    "difficulty": 60,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 56,
+    "seed": 2251816831,
+    "difficulty": 61,
+    "stars": {
+      "kind": "par",
+      "par": 6
+    }
+  },
+  {
+    "level": 57,
+    "seed": 2388241808,
+    "difficulty": 62,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 58,
+    "seed": 2646051217,
+    "difficulty": 63,
+    "stars": {
+      "kind": "par",
+      "par": 6
+    }
+  },
+  {
+    "level": 59,
+    "seed": 3052198026,
+    "difficulty": 64,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  },
+  {
+    "level": 60,
+    "seed": 3214704154,
+    "difficulty": 65,
+    "stars": {
+      "kind": "par",
+      "par": 5
+    }
+  }
+]

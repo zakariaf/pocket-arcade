@@ -37,6 +37,12 @@
       "winLine": "score",
       "hasHints": false
     },
+    "stepstone": {
+      "designGame": "stepstone",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "swap-guard": {
       "designGame": "swapGuard",
       "hasMusic": false,

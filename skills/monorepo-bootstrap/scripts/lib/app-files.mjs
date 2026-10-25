@@ -82,7 +82,7 @@ export const CONTINUE_ALLOWED = Object.freeze({ once: true, none: false });
 export const VIOLENCE_RATINGS = Object.freeze(['NONE', 'INFREQUENT_OR_MILD', 'FREQUENT_OR_INTENSE']);
 
 /** Lose-reason slugs of the games in the copy deck: games.<id>.loseReason becomes <id>.lose.<slug>. */
-export const DECK_LOSE_SLUGS = Object.freeze({ 'line-siege': 'broke-through', 'flock-tilt': 'wolf-got-sheep', 'scrap-shove': 'caught', 'snare-snake': 'tangled', 'merge-siege': 'overrun', 'jump-chain': 'overrun', 'swap-guard': 'hit' });
+export const DECK_LOSE_SLUGS = Object.freeze({ 'line-siege': 'broke-through', 'flock-tilt': 'wolf-got-sheep', 'scrap-shove': 'caught', 'snare-snake': 'tangled', 'merge-siege': 'overrun', 'jump-chain': 'overrun', stepstone: 'stuck', 'swap-guard': 'hit' });
 /** The lose slug of a game outside the deck (the Tap Flip templates: no moves left). */
 export const DEFAULT_LOSE_SLUG = 'out-of-moves';
 export const LOSE_SLUG = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;

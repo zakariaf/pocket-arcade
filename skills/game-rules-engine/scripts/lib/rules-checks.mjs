@@ -36,6 +36,9 @@ const PAST_TENSE_WORDS = new Set([
   'grown', 'shown', 'flown', 'chosen', 'frozen', 'woken', 'risen', 'ridden', 'written', 'eaten',
   'fought', 'caught', 'taught', 'brought', 'bought', 'kept', 'slept', 'felt', 'meant', 'burnt',
   'over', 'froze', 'rose', 'rode', 'wrote', 'ate', 'became', 'came', 'went', 'got', 'gave', 'took',
+  'sank', 'sunk', 'swam', 'swum', 'sprang', 'sprung', 'rang', 'rung', 'sang', 'sung', 'stood', 'shook',
+  'shaken', 'flew', 'blew', 'grew', 'threw', 'knew', 'known', 'tore', 'torn', 'wore', 'worn', 'stole',
+  'stolen', 'drove', 'driven', 'woke', 'leapt', 'crept', 'dove', 'swore',
 ]);
 
 /** Past tense (heuristic): some word ends in -ed or is an irregular past form. */

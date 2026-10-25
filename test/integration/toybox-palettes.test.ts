@@ -7,6 +7,7 @@ import { PALETTE as MERGE_SIEGE } from '@e07/merge-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
+import { PALETTE as STEPSTONE } from '@e07/stepstone/theme/palette.ts';
 import { PALETTE as SWAP_GUARD } from '@e07/swap-guard/theme/palette.ts';
 
 describe('Toybox palettes', () => {
@@ -32,6 +33,10 @@ describe('Toybox palettes', () => {
 
   it('keeps Jump Chain readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(JUMP_CHAIN)).toStrictEqual([]);
+  });
+
+  it('keeps Stepstone readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(STEPSTONE)).toStrictEqual([]);
   });
 
   it('keeps Swap Guard readable, one-ink in light and colour-blind equal to standard', () => {

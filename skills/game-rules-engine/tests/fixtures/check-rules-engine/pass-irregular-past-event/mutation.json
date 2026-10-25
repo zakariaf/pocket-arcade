@@ -1,0 +1,5 @@
+[
+  { "replace": { "file": "apps/tap-flip/src/rules/tap-flip-types.ts", "find": "'board-cleared'", "with": "'board-sank'", "all": true } },
+  { "replace": { "file": "apps/tap-flip/src/rules/apply-move.ts", "find": "'board-cleared'", "with": "'board-sank'", "all": true } },
+  { "replace": { "file": "apps/tap-flip/src/rules/tap-flip-stats.ts", "find": "'board-cleared'", "with": "'board-sank'", "all": true } }
+]

@@ -3,7 +3,7 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Swap Guard
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
@@ -137,6 +137,24 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#A996FF` Crown lilac | `#B9A8FF` Night lilac |
 | onPop | onPop | `#1D1B3A` | `#2B1820` |
 
+### Stepstone
+
+Added by its design pass (game 7, 2026-10-19).
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#CFC7F6` Lilac pond | `#142238` Night pond |
+| surface | surface | `#FBFAFF` Pebble | `#213452` Wet stone |
+| sunken | sunken | `#E9E5FC` | `#1A2B46` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#F2F6FF` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#B3C2E0` Mist |
+| outline | border | `#1D1B3A` | `#DCE6FF` |
+| shadow | shadow | `#1D1B3A` | `#050B16` |
+| accent | primary | `#27A776` Lily pad | `#45D6A0` Glow pad |
+| onAccent | onPrimary | `#1D1B3A` | `#142238` |
+| pop | pop | `#FF8DB5` Lotus | `#FF9DC2` Night lotus |
+| onPop | onPop | `#1D1B3A` | `#142238` |
+
 ### Swap Guard
 
 Added by its design pass (2026-10-19): `write-palette.mjs --game swap-guard` takes it from the token file like the games above.
@@ -207,7 +225,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Swap Guard) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Stepstone, Swap Guard) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).
