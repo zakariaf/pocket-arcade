@@ -1,5 +1,4 @@
 // packages/shell/src/screens/levels/locked-pack-panel.tsx
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -7,6 +6,7 @@ import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { IconTile } from '@e07/shell/ui/icon-tile.tsx';
 import { Panel } from '@e07/shell/ui/panel.tsx';
 import { Sticker } from '@e07/shell/ui/sticker.tsx';
+import { useWrappedText } from '@e07/shell/ui/use-wrapped-text.ts';
 
 import type { LevelPackModel } from './levels-model.ts';
 import type { ReactNode } from 'react';
@@ -33,11 +33,7 @@ export function LockedPackPanel({ pack }: LockedPackPanelProps): ReactNode {
   const headingText = t('levels.pack.heading', { packNumber: pack.number, packName: pack.name });
   // The heading that wrapped beside the sticker: the sticker then drops below it. Only the row's
   // own measure decides, so the wider heading below never flips the layout back.
-  const [wrappedHeading, setWrappedHeading] = useState<string | null>(null);
-  const isWrapped = wrappedHeading === headingText;
-  const handleHeadingLines = (lines: number): void => {
-    if (!isWrapped && lines > 1) setWrappedHeading(headingText);
-  };
+  const { isWrapped, onLineCount } = useWrappedText(headingText, { isSticky: true });
   const badge = (
     <Sticker
       testID={`${id}.locked-badge`}
@@ -57,7 +53,7 @@ export function LockedPackPanel({ pack }: LockedPackPanelProps): ReactNode {
             text={headingText}
             variant="heading"
             isHeader
-            onLineCount={handleHeadingLines}
+            onLineCount={onLineCount}
             testID={`${id}.heading`}
           />
         </View>
