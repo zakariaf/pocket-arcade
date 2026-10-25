@@ -9,8 +9,15 @@ import { swapGuardBot } from './swap-guard-bot.ts';
 import type { TestingSpec } from '@e07/game-kit/contract/testing.ts';
 import type { SwapGuardMove, SwapGuardState } from '@e07/swap-guard/rules/swap-guard-types.ts';
 
+/**
+ * Level 1 of levels/pack-1.json, the level the debug links and E2E flows open. Copied, not imported:
+ * the Node tools that load this module (print-level-line.ts) cannot import JSON without an import
+ * attribute; the testing test proves the copy matches the pack.
+ */
+export const LEVEL_1 = { seed: 568_326_197, difficulty: 0 } as const;
+
 /** Level 1's board: the guard in the threatening spear's strike, the double hit one swap away. */
-const START = (): SwapGuardState => create(1, 0);
+const START = (): SwapGuardState => create(LEVEL_1.seed, LEVEL_1.difficulty);
 
 /** The swap with the opening's second enemy (id 1): the two hit each other. */
 function doubleHit(start: SwapGuardState): SwapGuardMove {

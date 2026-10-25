@@ -1,6 +1,7 @@
 // apps/swap-guard/src/testing/swap-guard-testing.test.ts
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 import { playBot } from '@e07/game-kit/testing/play-bot.ts';
+import pack1 from '@e07/swap-guard/levels/pack-1.json';
 import { applyMove } from '@e07/swap-guard/rules/apply-move.ts';
 import { create } from '@e07/swap-guard/rules/create.ts';
 import { listMoves } from '@e07/swap-guard/rules/list-moves.ts';
@@ -8,7 +9,7 @@ import { outcome } from '@e07/swap-guard/rules/outcome.ts';
 import { planLine } from '@e07/swap-guard/rules/plan-line.ts';
 import { parseState } from '@e07/swap-guard/rules/swap-guard-persistence.ts';
 
-import { SWAP_GUARD_TESTING } from './swap-guard-testing.ts';
+import { LEVEL_1, SWAP_GUARD_TESTING } from './swap-guard-testing.ts';
 
 const GAME = { create, listMoves, applyMove, outcome };
 
@@ -38,8 +39,14 @@ describe('SWAP_GUARD_TESTING (spec 10 TESTING: a bot and example states)', () =>
     expect(reloaded).toStrictEqual(states);
   });
 
+  // The examples are level 1's real board (pack-1.json), so the debug links and E2E flows that open
+  // them on level 1 show what level 1 plays.
   it('plays the win example from level 1’s start along the planned line', () => {
-    const start = create(1, 0);
+    const level1 = pack1.find((entry) => entry.level === 1);
+    if (level1 === undefined) throw new Error('pack-1.json has no level 1');
+    expect(LEVEL_1).toStrictEqual({ seed: level1.seed, difficulty: level1.difficulty });
+    const start = create(level1.seed, level1.difficulty);
+    expect(SWAP_GUARD_TESTING.examples.start()).toStrictEqual(start);
     const line = planLine(start) ?? [];
     const end = line.reduce((state, move) => applyMove(state, move).state, start);
     expect(SWAP_GUARD_TESTING.examples.win()).toStrictEqual(end);
