@@ -290,6 +290,30 @@ describe('drawBoard', () => {
   });
 });
 
+/** A win on a flag in the top row, drawn on a square canvas where the pond fills the height. */
+const TOP_WIN = turnOf(
+  applyMove(pond(['..F..', '.....', '..r..', '.....', '.....'], 3), { kind: 'hop', to: 2 }),
+);
+
+describe('drawBoard at the edge of the canvas', () => {
+  it('keeps the hop-count chip of a top-row flag inside the canvas', () => {
+    const square = layoutBoard({ width: 390, height: 390, view: TOP_WIN.view, isMirrored: false });
+    for (const atMs of [400, 600, 800]) {
+      const { canvas, recorded } = recordingCanvas();
+      drawBoard(canvas, { ...frameAt({ turn: TOP_WIN, atMs }), layout: square });
+      const chips = recorded.calls.flatMap((call) => {
+        if (call.name !== 'drawRRect') return [];
+        const rrect = call.args[0] as { rect: { y: number; height: number }; rx: number };
+        return Math.abs(rrect.rx * 2 - rrect.rect.height) < 1e-9 ? [rrect.rect] : [];
+      });
+      expect(chips).toHaveLength(2);
+      for (const chip of chips) {
+        expect([atMs, chip.y >= 0, chip.y + chip.height <= 390]).toStrictEqual([atMs, true, true]);
+      }
+    }
+  });
+});
+
 describe('drawBoard on the frog', () => {
   it("pops the glyph on the frog's belly when a new hop kind lands, where the player sees it", () => {
     // The stone's own glyph is under the frog; the belly glyph sits 0.08 of a cell below its centre.

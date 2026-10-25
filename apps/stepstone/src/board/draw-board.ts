@@ -89,10 +89,13 @@ function drawGlow(canvas: SkCanvas, frame: Frame, flag: Rect): void {
   canvas.drawCircle(flag.x + flag.width / 2, flag.y + flag.height / 2, flag.width * scale, fill);
   const font = frame.kit.numberFont;
   if (font === null) return;
-  // The hop count in a chip above the flag, popping with the glow: it reads over any stone.
+  // The hop count in a chip above the flag, popping with the glow: it reads over any stone. A flag
+  // in the top row has only the pond's padding above it, so its chip sits below the flag instead.
   const width = flag.width * 0.8 * scale;
   const height = flag.width * 0.44 * scale;
-  const chip = { x: flag.x + (flag.width - width) / 2, y: flag.y - height, width, height };
+  const isTopRow = frame.view.frog < frame.view.side;
+  const y = isTopRow ? flag.y + flag.height : flag.y - height;
+  const chip = { x: flag.x + (flag.width - width) / 2, y, width, height };
   fill.setColor(frame.colors.color.background);
   canvas.drawRRect({ rect: chip, rx: height / 2, ry: height / 2 }, fill);
   frame.kit.stroke.setColor(frame.colors.color.label);
