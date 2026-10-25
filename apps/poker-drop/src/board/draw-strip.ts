@@ -5,7 +5,7 @@ import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
 
 import { TURN_ENTITY } from './board-ids.ts';
 import { drawCard, drawScaledText } from './draw-card.ts';
-import { cardFace, lerpRect } from './draw-parts.ts';
+import { cardFace, hasEnded, lerpRect } from './draw-parts.ts';
 import { dealRects } from './layout-board.ts';
 
 import type { Frame } from './draw-parts.ts';
@@ -32,7 +32,7 @@ function drawCardIn(
 function drawDeal(canvas: SkCanvas, frame: Frame, deal: DealRects): void {
   const { view } = frame;
   const entry = fxEntry(frame.fx, 'deal', TURN_ENTITY);
-  if (entry === undefined || entry.progress >= 1) {
+  if (entry === undefined || hasEnded(frame.fx, 'deal', TURN_ENTITY)) {
     drawCardIn(canvas, frame, { card: view.hand, slot: deal.hand });
     drawCardIn(canvas, frame, { card: view.next, slot: deal.next });
     return;

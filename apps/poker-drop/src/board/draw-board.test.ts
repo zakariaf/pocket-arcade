@@ -1,11 +1,12 @@
 // apps/poker-drop/src/board/draw-board.test.ts
-import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
+import { sampleTimeline, trackKey } from '@e07/game-kit/timeline/sample.ts';
 import { timelineEndMs } from '@e07/game-kit/timeline/track.ts';
 import { continueAfterLoss } from '@e07/poker-drop/rules/continue-run.ts';
 import { create } from '@e07/poker-drop/rules/create.ts';
 import { busiestBoardTurn } from '@e07/poker-drop/testing/poker-drop-board-turn.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 
+import { burstEntity } from './board-ids.ts';
 import { buildTimeline } from './build-timeline.ts';
 import { drawBoard } from './draw-board.ts';
 import { layoutBoard } from './layout-board.ts';
@@ -13,6 +14,7 @@ import { toView } from './to-view.ts';
 
 import type { BoardToken } from './board-palettes.ts';
 import type { PokerDropView } from './to-view.ts';
+import type { FxSample } from '@e07/game-kit/timeline/sample.ts';
 import type { Track } from '@e07/game-kit/timeline/track.ts';
 import type { BoardColors, BoardHighlight, RenderKit } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas, SkColor, SkFont, SkPaint, SkPath } from '@shopify/react-native-skia';
@@ -89,6 +91,8 @@ type DrawAt = {
   readonly highlight?: BoardHighlight;
   readonly kit?: RenderKit;
   readonly size?: { readonly width: number; readonly height: number };
+  /** Replaces the sampled tracks' entries (to hold a moment the clock rarely lands on). */
+  readonly reshape?: (fx: FxSample) => FxSample;
 };
 
 function draw(at: DrawAt): Recorded {
@@ -99,7 +103,8 @@ function draw(at: DrawAt): Recorded {
     size.width > 0
       ? layoutBoard({ ...size, view, isMirrored: false })
       : { ...size, isMirrored: false, regions: [] };
-  const fx = { ...sampleTimeline(at.tracks, at.atMs), pointer: IDLE_POINTER };
+  const sample = sampleTimeline(at.tracks, at.atMs);
+  const fx = { ...(at.reshape?.(sample) ?? sample), pointer: IDLE_POINTER };
   const highlight = at.highlight ?? EMPTY_HIGHLIGHT;
   drawBoard(canvas, { view, fx, highlight, colors: COLORS, layout, kit: at.kit ?? KIT });
   return recorded;
@@ -142,6 +147,20 @@ describe('drawBoard', () => {
     expect(draw({ tracks: TRACKS, atMs: END_MS }).texts).toContain('۸');
     expect(draw({ tracks: TRACKS, atMs: 1255 }).texts).toContain('×۲');
     expect(draw({ tracks: TRACKS, atMs: 700 }).texts).not.toContain('×۲');
+  });
+
+  // An effect plays while its track's linear time runs. The badge pops with out-back, whose eased
+  // scale reads exactly 1 at about 37 % of its time on its way to the overshoot: still playing.
+  it('keeps the cascade badge up where its pop’s eased scale reads exactly 1, mid-track', () => {
+    const key = trackKey('step', burstEntity(1));
+    const atOne = (fx: FxSample): FxSample => {
+      const entry = fx.entries[key];
+      return entry === undefined
+        ? fx
+        : { ...fx, entries: { ...fx.entries, [key]: { ...entry, progress: 1 } } };
+    };
+    expect(sampleTimeline(TRACKS, 1255).linear[key]).toBeLessThan(1);
+    expect(draw({ tracks: TRACKS, atMs: 1255, reshape: atOne }).texts).toContain('×۲');
   });
 
   it('flashes each bursting line while its hand bursts', () => {

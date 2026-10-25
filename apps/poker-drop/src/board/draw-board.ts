@@ -1,13 +1,13 @@
 // apps/poker-drop/src/board/draw-board.ts
 'worklet';
 
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { TURN_ENTITY } from './board-ids.ts';
 import { drawGoneCards, drawWellCards } from './draw-cards.ts';
 import { drawBursts } from './draw-effects.ts';
-import { cardFace, isPlaying, slotAt, valueAt } from './draw-parts.ts';
+import { cardFace, slotAt, valueAt } from './draw-parts.ts';
 import { drawStrip } from './draw-strip.ts';
 import { wellFrame, wellRegion } from './layout-board.ts';
 
@@ -29,8 +29,8 @@ function drawWell(canvas: SkCanvas, frame: Frame, rect: Rect): void {
   kit.stroke.setColor(colors.color.edge);
   kit.stroke.setStrokeWidth(3);
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
-  const overflow = fxEntry(frame.fx, 'overflow', TURN_ENTITY);
-  if (!isPlaying(overflow)) return;
+  const overflow = playingEntry(frame.fx, 'overflow', TURN_ENTITY);
+  if (overflow === undefined) return;
   setPaintColor(kit.stroke, colors.color.warn, valueAt(overflow, 0));
   kit.stroke.setStrokeWidth(8);
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);

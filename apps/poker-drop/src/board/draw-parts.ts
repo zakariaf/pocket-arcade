@@ -1,12 +1,14 @@
 // apps/poker-drop/src/board/draw-parts.ts
 'worklet';
 
+import { trackKey } from '@e07/game-kit/timeline/sample.ts';
+
 import { wellCellRect } from './layout-board.ts';
 
 import type { BoardToken } from './board-palettes.ts';
 import type { PokerDropView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
+import type { FxEntry, FxSample } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 
 export type Frame = DrawFrame<PokerDropView, BoardToken>;
@@ -16,17 +18,13 @@ const CARD_WIDTH = 0.78;
 const CARD_HEIGHT = 0.94;
 
 /**
- * An effect that is not a tween of something visible draws only once its track has started and
- * until it ends. Every easing ends exactly at 1, but out-back passes 1 on its way (the badge's
- * pop), so "ended" is progress === 1, never progress >= 1.
+ * True once the key's track has run to its end, by its linear time. An effect that plays only while
+ * its track runs uses the kit's playingEntry; neither reads the eased progress, which an out-back
+ * track (the badge's pop) passes 1 with long before it ends.
  */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress !== 1;
-}
-
-/** True once a track has run to its end. */
-export function isOver(entry: FxEntry): boolean {
-  return entry.ageMs > 0 && entry.progress === 1;
+export function hasEnded(fx: FxSample, channel: string, entityId: number): boolean {
+  const linear = fx.linear[trackKey(channel, entityId)];
+  return linear !== undefined && linear >= 1;
 }
 
 /** One sampled value of a track (0 for a value the track does not carry). */

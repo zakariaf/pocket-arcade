@@ -1,12 +1,12 @@
 // apps/poker-drop/src/board/draw-cards.ts
 'worklet';
 
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, goneEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawCard } from './draw-card.ts';
-import { cardFace, isOver, isPlaying, lerpRect, slotAt, valueAt } from './draw-parts.ts';
+import { cardFace, hasEnded, lerpRect, slotAt, valueAt } from './draw-parts.ts';
 import { dealRects } from './layout-board.ts';
 
 import type { Frame } from './draw-parts.ts';
@@ -50,8 +50,8 @@ function slotOf(frame: Frame, entityId: number, at: Placed): Rect | null {
 /** The card's face, squashed down onto its cell while it lands. */
 function faceOf(frame: Frame, entityId: number, slot: Rect): Rect {
   const face = cardFace(slot, 1);
-  const land = fxEntry(frame.fx, 'land', entityId);
-  if (!isPlaying(land)) return face;
+  const land = playingEntry(frame.fx, 'land', entityId);
+  if (land === undefined) return face;
   const squash = valueAt(land, 0) * SQUASH;
   const height = face.height * (1 - squash);
   const width = face.width * (1 + squash / 2);
@@ -128,9 +128,10 @@ function drawGoneCard(
   const { entityId, gone } = at;
   const card = valueAt(gone, 0);
   const still = { col: valueAt(gone, 1), row: valueAt(gone, 2) };
-  const slot = isOver(gone) ? null : slotOf(frame, entityId, placeOf(frame, entityId, still));
+  const isGone = hasEnded(frame.fx, 'gone', entityId);
+  const slot = isGone ? null : slotOf(frame, entityId, placeOf(frame, entityId, still));
   if (slot === null) return;
-  if (isPlaying(gone)) {
+  if (playingEntry(frame.fx, 'gone', entityId) !== undefined) {
     drawVanishing(canvas, frame, { card, slot, kind: valueAt(gone, 3), progress: gone.progress });
     return;
   }

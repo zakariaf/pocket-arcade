@@ -2,12 +2,12 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { burstEntity } from './board-ids.ts';
 import { drawScaledText } from './draw-card.ts';
-import { isPlaying, pointAt, valueAt } from './draw-parts.ts';
+import { pointAt, valueAt } from './draw-parts.ts';
 
 import type { Frame } from './draw-parts.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
@@ -24,8 +24,8 @@ const BADGE_RADIUS = 0.4;
 
 /** A hand's line flashes across its five cards and fades. */
 function drawLine(canvas: SkCanvas, frame: Frame, order: number): void {
-  const line = fxEntry(frame.fx, 'line', burstEntity(order));
-  if (!isPlaying(line)) return;
+  const line = playingEntry(frame.fx, 'line', burstEntity(order));
+  if (line === undefined) return;
   const from = pointAt(frame, valueAt(line, 0), valueAt(line, 1));
   const to = pointAt(frame, valueAt(line, 2), valueAt(line, 3));
   // Every line spans five cells, so its length is never 0.
@@ -42,8 +42,8 @@ function drawLine(canvas: SkCanvas, frame: Frame, order: number): void {
 
 /** Particles fly out of the middle of a bursting line (full motion only: reduced has no track). */
 function drawParticles(canvas: SkCanvas, frame: Frame, order: number): void {
-  const burst = fxEntry(frame.fx, 'burst', burstEntity(order));
-  if (!isPlaying(burst)) return;
+  const burst = playingEntry(frame.fx, 'burst', burstEntity(order));
+  if (burst === undefined) return;
   const centre = pointAt(frame, valueAt(burst, 0), valueAt(burst, 1));
   const spec = {
     seed: burstEntity(order),
@@ -66,8 +66,8 @@ function drawParticles(canvas: SkCanvas, frame: Frame, order: number): void {
 
 /** The cascade badge: "×2" pops over the line that led the second (and every later) step. */
 function drawBadge(canvas: SkCanvas, frame: Frame, order: number): void {
-  const badge = fxEntry(frame.fx, 'step', burstEntity(order));
-  if (!isPlaying(badge)) return;
+  const badge = playingEntry(frame.fx, 'step', burstEntity(order));
+  if (badge === undefined) return;
   const { view, kit, colors } = frame;
   const centre = pointAt(frame, valueAt(badge, 0), valueAt(badge, 1));
   const radius = centre.cell * BADGE_RADIUS * valueAt(badge, 3);
