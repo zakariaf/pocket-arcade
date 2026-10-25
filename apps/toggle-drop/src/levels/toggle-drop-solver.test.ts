@@ -4,13 +4,26 @@ import fc from 'fast-check';
 import { verifyLine } from '@e07/game-kit/solver/verify-line.ts';
 import { applyMove } from '@e07/toggle-drop/rules/apply-move.ts';
 import { create } from '@e07/toggle-drop/rules/create.ts';
+import { dropPath } from '@e07/toggle-drop/rules/drop-path.ts';
 import { listMoves } from '@e07/toggle-drop/rules/list-moves.ts';
 import { outcome } from '@e07/toggle-drop/rules/outcome.ts';
 import { knobsFor } from '@e07/toggle-drop/rules/toggle-drop-tuning.ts';
 
 import { HINT_MAX_NODES, TOGGLE_DROP_SOLVER, suggestDrop } from './toggle-drop-solver.ts';
 
+import type * as ApplyMoveRules from '@e07/toggle-drop/rules/apply-move.ts';
+import type * as DropPathRules from '@e07/toggle-drop/rules/drop-path.ts';
 import type { ToggleDropState } from '@e07/toggle-drop/rules/toggle-drop-types.ts';
+
+// Counting wrappers around the real rules: the hint's cost is the falls its search plays.
+jest.mock('@e07/toggle-drop/rules/apply-move.ts', () => {
+  const actual: typeof ApplyMoveRules = jest.requireActual('@e07/toggle-drop/rules/apply-move.ts');
+  return { applyMove: jest.fn(actual.applyMove) };
+});
+jest.mock('@e07/toggle-drop/rules/drop-path.ts', () => {
+  const actual: typeof DropPathRules = jest.requireActual('@e07/toggle-drop/rules/drop-path.ts');
+  return { ...actual, dropPath: jest.fn(actual.dropPath) };
+});
 
 const ENGINE = { listMoves, applyMove, outcome };
 
@@ -106,5 +119,36 @@ describe('suggestDrop (rules.hints: solver)', () => {
   it('suggests nothing on a won or a lost board', () => {
     expect(suggestDrop(board({ filled: [1, 1, 0] }))).toBeNull();
     expect(suggestDrop(board({ ballsLeft: 0 }))).toBeNull();
+  });
+});
+
+describe('suggestDrop on a phone', () => {
+  /** A 9 x 9 board full of switches, twenty balls and a cup no line can fill: the search never ends. */
+  const HUGE: ToggleDropState = {
+    cols: 9,
+    rows: 9,
+    pegs: Array.from({ length: 81 }, (_, index) => (index % 3 === 0 ? 1 : 0)),
+    flips: Array.from({ length: 81 }, () => 0),
+    needs: [0, 0, 0, 0, 30, 0, 0, 0, 0],
+    filled: Array.from({ length: 9 }, () => 0),
+    ballsLeft: 20,
+    drops: 0,
+  };
+
+  beforeEach(() => {
+    jest.mocked(applyMove).mockClear();
+    jest.mocked(dropPath).mockClear();
+  });
+
+  // Spec 8.5: a hint answers at once. Measured over every shipped level and 30 dailies, the
+  // searches needed at most 1,000 positions; the budget stops a far bigger board within 20,000 falls.
+  it('gives up within a small search on a board far beyond any level', () => {
+    expect(suggestDrop(HUGE)).toBeNull();
+    expect(jest.mocked(dropPath).mock.calls.length).toBeLessThanOrEqual(20_000);
+  });
+
+  it('suggests a drop without replaying the line through the rules', () => {
+    expect(suggestDrop(board())).toStrictEqual({ kind: 'drop', col: 0 });
+    expect(jest.mocked(applyMove)).not.toHaveBeenCalled();
   });
 });

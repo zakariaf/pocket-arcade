@@ -60,11 +60,19 @@ export const TOGGLE_DROP_SOLVER: Solver<ToggleDropState, ToggleDropMove> = {
   },
 };
 
-/** Budget for a hint on the phone: the boards solve far below it. */
-export const HINT_MAX_NODES = 60_000;
+/**
+ * Positions a hint's search may expand on the phone. Measured in Node over every shipped level and
+ * 30 dailies (720 random walks, 4,164 positions still in play): every winnable one (3,806) is
+ * solved within 1,000 positions, the slowest search took 5.3 ms, and no hint is lost at this cap.
+ * A board far beyond any level stops here within a few milliseconds instead of a second.
+ */
+export const HINT_MAX_NODES = 2_000;
 
-/** rules.hints.suggest: the first drop of a shortest line, or null when there is none to find. */
+/**
+ * rules.hints.suggest: the first drop of a shortest line, or null when there is none to find
+ * within the budget. The search alone answers: a hint needs no final state, so nothing is replayed.
+ */
 export function suggestDrop(state: ToggleDropState): ToggleDropMove | null {
-  const result = TOGGLE_DROP_SOLVER.solve(state, HINT_MAX_NODES);
+  const result = bfsSolve(dropProblem(state), HINT_MAX_NODES);
   return result.kind === 'solved' ? (result.line[0] ?? null) : null;
 }
