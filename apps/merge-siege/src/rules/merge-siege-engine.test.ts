@@ -83,8 +83,11 @@ describe('MERGE_SIEGE_RULES', () => {
     });
   });
 
-  it('allows unlimited undo, no hints and one continue that pushes the enemies back', () => {
-    expect(MERGE_SIEGE_RULES.undo).toStrictEqual({ kind: 'unlimited' });
+  // Spec 8.5: "Undo: if the game supports it ... (the game can limit it)". Design notes, Undo: none,
+  // every move is final (the next enemy and tile come from the seeded future, so an undo would let a
+  // player fish for good draws).
+  it('allows no undo, no hints and one continue that pushes the enemies back', () => {
+    expect(MERGE_SIEGE_RULES.undo).toStrictEqual({ kind: 'none' });
     expect(MERGE_SIEGE_RULES.hints).toStrictEqual({ kind: 'none' });
     expect(MERGE_SIEGE_RULES.continueRun).toMatchObject({
       kind: 'once',

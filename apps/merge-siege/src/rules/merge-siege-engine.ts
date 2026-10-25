@@ -44,7 +44,8 @@ export function mergeSiegeHud(state: MergeSiegeState): Hud {
 /** The rules beyond the engine: the top-bar line, undo, hints and the one continue. */
 export const MERGE_SIEGE_RULES: GameRules<MergeSiegeState, MergeSiegeMove, MergeSiegeEvent> = {
   hud: mergeSiegeHud,
-  undo: { kind: 'unlimited' },
+  // Every move is final (design notes, Undo): the future is drawn from the seed.
+  undo: { kind: 'none' },
   // No exact solver can suggest a move in a game that draws its future from the RNG.
   hints: { kind: 'none' },
   // Spec 8.10: one rescue per run: every enemy is pushed back one row.
