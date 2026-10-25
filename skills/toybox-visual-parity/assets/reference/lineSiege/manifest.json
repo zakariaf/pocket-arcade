@@ -1,7 +1,7 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-10-24",
+ "rendered": "2026-10-25",
  "renderer": {
   "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "00ac0c1224c4e81599aff197a2031fca3a750dc2afb31172df8127a67585bd34",
-  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "f78a5380d0734c1e3b14a116a475c1903f3aa3948263f89c642c42eb860c114c",
+  "design": "83db62c99f8c11f5e8f5d28e251c81fb9ebf1fc9a9edcfc926882b174be24660",
+  "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
+  "frames": "cc63ee25f93d34f9ed3146cc03ada317d724b7531a185edc56c6234df4e33d12",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1826,6 +1826,14 @@
    "variants": [],
    "what": "Merge Siege added to the design as a design game. No frame or variant changed: the design, map and frames inputs of this manifest were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render) after a full --check found every other frame unchanged, apart from the four fa s7-result-win renders that already drift on main (Chrome 154 to 155, 156 pixels each, left as they are)",
    "why": "spec 13: its design pass, drafted on 2026-10-19 with the proposed defaults; the owner approves it with the E22-T01 message (pending), and the drafted design applies meanwhile"
+  },
+  {
+   "id": "G-merge-siege-with-snare-snake",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   }
  ]
 }
