@@ -24,6 +24,10 @@ describe('openShots', () => {
     expect(openShots(board({ filled: [1, 0, 0] }))).toBe(2);
     expect(openShots(board({ filled: [0, 1, 0] }))).toBe(1);
   });
+
+  it('counts no shot into a column it has no cup counts for (a damaged board)', () => {
+    expect(openShots(board({ needs: [], filled: [] }))).toBe(0);
+  });
 });
 
 describe('evaluateToggleDrop', () => {
