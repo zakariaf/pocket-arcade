@@ -5258,7 +5258,16 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-controller.ts",
-            "sha256": "54ed7e90ffc02a38b26132069a4813cb1f6f6f8af9fd0210bddb4b063b91b4fd"
+            "sha256": "672b621f89fdd917bfad729bc70d7e9210c2535c438dae4d608c0d48a6d656f3"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-hints.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-hints.ts",
+            "sha256": "4e2617abbc6e7e655e16597b32e99928ab5f91c2f313546b7720886ecec2f037"
           }
         ]
       },
