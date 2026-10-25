@@ -217,6 +217,11 @@
       "ranks-cleared": 318,
       "longest-chain": 5
     },
+    "stepstone": {
+      "tiles-stepped": 1342,
+      "levels-at-par": 46,
+      "kinds-used": 4
+    },
     "toggleDrop": {
       "balls-dropped": 412,
       "switches-flipped": 1938,
@@ -326,6 +331,17 @@
           "total": 12
         },
         "loseReasonId": "jump-chain.lose.overrun"
+      },
+      "stepstone": {
+        "progressMid": {
+          "moves": 3,
+          "par": 7
+        },
+        "progressFull": {
+          "moves": 7,
+          "par": 7
+        },
+        "loseReasonId": "stepstone.lose.stuck"
       },
       "toggleDrop": {
         "progressMid": {

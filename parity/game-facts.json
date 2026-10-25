@@ -37,6 +37,12 @@
       "winLine": "score",
       "hasHints": false
     },
+    "stepstone": {
+      "designGame": "stepstone",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "toggle-drop": {
       "designGame": "toggleDrop",
       "hasMusic": false,

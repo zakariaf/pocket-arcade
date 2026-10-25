@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "e5e0fc09ea5f3963153e9aa51d47f2c641f54b5b08fd276763e973586af389ba",
+  "design": "99c2df5b7b060af7225d8a6cddfdbaef34501b9e71c40fb11e556414f3b711a8",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "69e9418332b59e0ef2bae8a8e72317667cf58a856e457fa22b934e6284e48092",
+  "frames": "28badca722a195cba2b5430785abc0b3d6e2354949b038f9a1821a679dc0f1d6",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1852,6 +1852,30 @@
    "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   },
   {
+   "id": "G-stepstone",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Stepstone added to the design as a design game (its palette, logo, texts, how-to-play picture and sample numbers). No reference image moved: the manifest re-recorded the design, map and frames inputs with a one-frame --update-reference (s1-splash light-en, byte-identical), after a full --check showed every other Line Siege reference unchanged except 4 S7 win fa references (base and score, light and dark) that already drifted 156 px on main under Chrome 155 (the underline of the Premium link is drawn shorter); they were left as committed.",
+   "why": "spec 13: its design pass (E24-T01, 2026-10-19), drafted with the proposed defaults while the owner's approval comes back through the lead's combined message; no committed reference moves"
+  },
+  {
+   "id": "G-stepstone-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-stepstone-with-jump-chain",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Jump Chain (both palettes, logos, texts and sample counters). No frame or variant of Line Siege changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
+   "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
+  },
+  {
    "id": "G-toggle-drop",
    "date": "2026-10-19",
    "frames": [],
@@ -1860,11 +1884,11 @@
    "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
   },
   {
-   "id": "G-toggle-drop-with-five-games",
+   "id": "G-toggle-drop-joined",
    "date": "2026-10-25",
    "frames": [],
    "variants": [],
-   "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege and Jump Chain (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege, Jump Chain and Stepstone (two merges of main) (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
    "why": "spec 13: each game's design pass; Toggle Drop's pass was drafted on its own branch and is joined here (lead's helper, 2026-10-25)."
   }
  ]

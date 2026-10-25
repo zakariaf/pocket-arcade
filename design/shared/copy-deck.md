@@ -7,7 +7,7 @@
 | Section | Contents |
 |---|---|
 | `meta` | Languages, direction, autonyms, `numberLocales` (digit tags), the ICU subset, a glossary, `samples` and `sampleOverrides` (values for every placeholder), `renderNotes`, and `screens` (which keys each screen uses). |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`, `mergeSiege`. Each has a name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners and 3 pack names. |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`, `mergeSiege`, `stepstone`. Each has a name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners and 3 pack names. |
 | `licenceEntries` | Example rows for S11d. Component and licence names are not translated. The sound row points to string keys. |
 | `strings` | 288 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`. |
 
@@ -52,6 +52,7 @@ Ordered roughly by how visible they are.
 | Flock Tilt texts | آغل، کج کردن، انگشتتان را بکشید | Pen, tilt and swipe wording. |
 | Snare Snake texts | جانور، حلقه، به دام انداختن، گره خورد، بندها | Critter, loop, snare and tangled wording; is "بند" right for a snake segment? |
 | Merge Siege texts | کاشی، ادغام، درهم کوبیدن، محاصره، تسخیر کردند | Tile, merge, smash, siege and overran wording. |
+| Stepstone texts | قورباغه، سنگ، پرش، غرق می‌شود، هدف | Frog, stone, hop and sink wording; "هدف" for par as in the Shell. |
 | `settings.colour-blind.label` | رنگ‌های مناسب کوررنگی | Natural? |
 | `pause.title`, `result.endless.title`, `result.lose.title` | بازی متوقف شد، دور تمام شد، این بار نشد | Natural? |
 | `premium.error` | خرید انجام نشد. هیچ مبلغی از شما کسر نشد. | Natural? |
@@ -68,6 +69,7 @@ Ordered roughly by how visible they are.
 | Scrap Shove texts | ئاسنی کۆن، پاڵی پێوە بنێیت، پێکدادان، بەر یەکتر بکەون | Scrap, shove and crash wording. |
 | Snare Snake texts | گیانلەبەر، ئەڵقە، گرێی خوارد، کەلێن، بەش | Critter, loop, tangled and gap wording; is "بەش" right for a snake segment? |
 | Merge Siege texts | کاشی، یەک بخە، تێکبشکێنە، گەمارۆ، داگیر کرد | Tile, merge, smash, siege and overran wording. |
+| Stepstone texts | بۆق، بەرد، باز، نوقم دەبێت، ئامانج | Frog, stone, hop and sink wording; "ئامانج" for par as in the Shell. |
 | `settings.hints.label`, `premium.benefit.free-perks` | ئاماژە | Is this the right word for a game hint? |
 | `daily.streak.*`, `stats.best.win-streak` | زنجیرە، ۵ ڕۆژ لەسەر یەک، هێشتا زنجیرەت نییە | Streak wording. |
 | `premium.small-print` | بێ ئابوونە | Is "ئابوونە" right for a subscription? The alternative is "بەشداریکردن". |
