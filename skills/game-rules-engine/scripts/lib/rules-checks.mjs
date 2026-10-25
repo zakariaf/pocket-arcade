@@ -106,17 +106,23 @@ export function checkRuleFiles(repo, gameId, report) {
   }
 }
 
+/** The file a path names as written, or with a .ts/.tsx extension or an index.ts (Metro and Jest resolve all of them). */
+function resolveRule(path, byRel) {
+  const candidates = [path, `${path}.ts`, `${path}.tsx`, `${path}/index.ts`];
+  return candidates.map((candidate) => byRel.get(candidate)).find((hit) => hit !== undefined) ?? null;
+}
+
 /** The rules file a value import names (a relative path or @e07/<id>/rules/...), or null. */
 function importedRule(file, specifier, byRel) {
   const own = /^@e07\/([a-z0-9-]+)\/rules\/(.+)$/.exec(specifier);
-  if (own) return byRel.get(`apps/${own[1]}/src/rules/${own[2]}`) ?? null;
+  if (own) return resolveRule(`apps/${own[1]}/src/rules/${own[2]}`, byRel);
   if (!specifier.startsWith('.')) return null;
   const parts = file.rel.split('/').slice(0, -1);
   for (const part of specifier.split('/')) {
     if (part === '..') parts.pop();
     else if (part !== '.') parts.push(part);
   }
-  return byRel.get(parts.join('/')) ?? null;
+  return resolveRule(parts.join('/'), byRel);
 }
 
 /** Every file reachable from `starts` through value imports, never entering `stop`. */
