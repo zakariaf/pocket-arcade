@@ -26,6 +26,13 @@ const KEY_TURN: readonly (readonly [Direction, number])[] = [
   ['left', 270],
 ];
 
+/** The whole-field washes: their channel, the token they tint with and their strongest alpha. */
+const WASHES: readonly (readonly [string, 'glow' | 'background', number])[] = [
+  ['glow', 'glow', 0.55],
+  ['tired', 'background', 0.5],
+  ['rewind', 'glow', 0.35],
+];
+
 function fieldRect(frame: Frame, grid: Grid): Rect {
   const { cols, rows } = frame.view;
   return { x: grid.x, y: grid.y, width: cols * grid.cell, height: rows * grid.cell };
@@ -76,21 +83,21 @@ function drawPen(canvas: SkCanvas, frame: Frame, grid: Grid): void {
 /** A burst of straw and fleece from the pen when a sheep drops in (full motion only). */
 function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   const pen = indexBox(grid, frame, frame.view.pen);
+  const burst = {
+    x: pen.x + pen.width / 2,
+    y: pen.y + pen.height / 2,
+    count: BURST_COUNT,
+    minSpeed: grid.cell * 1.5,
+    maxSpeed: grid.cell * 4,
+    gravity: grid.cell * 6,
+    lifeMs: 600,
+  };
   for (const sheep of frame.view.sheep) {
-    const burst = fxEntry(frame.fx, 'burst', sheepEntity(sheep.id));
-    if (!isPlaying(burst)) continue;
-    const spec = {
-      seed: sheep.id * 31 + frame.view.pen,
-      x: pen.x + pen.width / 2,
-      y: pen.y + pen.height / 2,
-      count: BURST_COUNT,
-      minSpeed: grid.cell * 1.5,
-      maxSpeed: grid.cell * 4,
-      gravity: grid.cell * 6,
-      lifeMs: 600,
-    };
+    const entry = fxEntry(frame.fx, 'burst', sheepEntity(sheep.id));
+    if (!isPlaying(entry)) continue;
+    const spec = { ...burst, seed: sheep.id * 31 + frame.view.pen };
     for (let i = 0; i < spec.count; i += 1) {
-      const particle = sampleParticle(spec, i, burst.ageMs);
+      const particle = sampleParticle(spec, i, entry.ageMs);
       setPaintColor(frame.kit.fill, frame.colors.color.glow, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, grid.cell * 0.06, frame.kit.fill);
     }
@@ -100,12 +107,7 @@ function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
 /** Whole-field washes: the glow of a cleared field, the dimming when the tilts ran out, the rewind. */
 function drawWashes(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   const field = fieldRect(frame, grid);
-  const washes: readonly (readonly [string, 'glow' | 'background', number])[] = [
-    ['glow', 'glow', 0.55],
-    ['tired', 'background', 0.5],
-    ['rewind', 'glow', 0.35],
-  ];
-  for (const [channel, token, strength] of washes) {
+  for (const [channel, token, strength] of WASHES) {
     const entry = fxEntry(frame.fx, channel, TURN_ENTITY);
     if (!isPlaying(entry)) continue;
     setPaintColor(frame.kit.fill, frame.colors.color[token], (entry.values[0] ?? 0) * strength);
