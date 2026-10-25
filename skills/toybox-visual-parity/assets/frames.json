@@ -79,6 +79,14 @@
         "progressMidParams": { "smashed": 5, "total": 12 },
         "progressFullParams": { "smashed": 12, "total": 12 },
         "loseReasonId": "merge-siege.lose.overrun"
+      },
+      "jumpChain": {
+        "gameStats": ["1,462", "318", "×5"],
+        "progressMid": "7 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "captured": 7, "total": 12 },
+        "progressFullParams": { "captured": 12, "total": 12 },
+        "loseReasonId": "jump-chain.lose.overrun"
       }
     }
   },
@@ -295,6 +303,11 @@
         "enemies-smashed": 1532,
         "tiles-merged": 2876,
         "biggest-tile": 512
+      },
+      "jumpChain": {
+        "pieces-captured": 1462,
+        "ranks-cleared": 318,
+        "longest-chain": 5
       }
     },
     "hints": {
@@ -359,6 +372,11 @@
           "progressMid": { "smashed": 5, "total": 12 },
           "progressFull": { "smashed": 12, "total": 12 },
           "loseReasonId": "merge-siege.lose.overrun"
+        },
+        "jumpChain": {
+          "progressMid": { "captured": 7, "total": 12 },
+          "progressFull": { "captured": 12, "total": 12 },
+          "loseReasonId": "jump-chain.lose.overrun"
         }
       }
     }

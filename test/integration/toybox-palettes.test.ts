@@ -1,6 +1,7 @@
 // test/integration/toybox-palettes.test.ts
 // One `it` per app: every game's palette passes the Toybox palette rules.
 import { PALETTE as FLOCK_TILT } from '@e07/flock-tilt/theme/palette.ts';
+import { PALETTE as JUMP_CHAIN } from '@e07/jump-chain/theme/palette.ts';
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { PALETTE as MERGE_SIEGE } from '@e07/merge-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
@@ -26,6 +27,10 @@ describe('Toybox palettes', () => {
 
   it('keeps Merge Siege readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(MERGE_SIEGE)).toStrictEqual([]);
+  });
+
+  it('keeps Jump Chain readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(JUMP_CHAIN)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including

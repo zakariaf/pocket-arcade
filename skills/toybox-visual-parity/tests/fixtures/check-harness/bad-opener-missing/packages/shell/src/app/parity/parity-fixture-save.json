@@ -211,6 +211,11 @@
       "enemies-smashed": 1532,
       "tiles-merged": 2876,
       "biggest-tile": 512
+    },
+    "jumpChain": {
+      "pieces-captured": 1462,
+      "ranks-cleared": 318,
+      "longest-chain": 5
     }
   },
   "hints": {
@@ -305,6 +310,17 @@
           "total": 12
         },
         "loseReasonId": "merge-siege.lose.overrun"
+      },
+      "jumpChain": {
+        "progressMid": {
+          "captured": 7,
+          "total": 12
+        },
+        "progressFull": {
+          "captured": 12,
+          "total": 12
+        },
+        "loseReasonId": "jump-chain.lose.overrun"
       }
     }
   }

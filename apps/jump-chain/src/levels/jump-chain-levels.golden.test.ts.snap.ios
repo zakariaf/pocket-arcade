@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-10-19 1`] = `
+"seed 92969898 difficulty 45 enemies 8 ranks 3 march every 5
+ 0  . . . .
+ 1   x x x 
+ 2  . . . .
+ 3   x . x 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . "
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
+"seed 2773266798 difficulty 45 enemies 9 ranks 3 march every 5
+ 0  . . . .
+ 1   x x x 
+ 2  . . . .
+ 3   x x x 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . "
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
+"seed 2758795562 difficulty 45 enemies 8 ranks 3 march every 5
+ 0  . . . .
+ 1   x x x 
+ 2  . . . .
+ 3   x . x 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . "
+`;
+
+exports[`level table goldens keeps the frozen board of level 1 1`] = `
+"seed 396855754 difficulty 0 enemies 7 ranks 3 march every 6
+ 0  . . . .
+ 1   x . x 
+ 2  . . . .
+ 3   x . x 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,280,336]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 30 1`] = `
+"seed 544040472 difficulty 32 enemies 7 ranks 3 march every 5
+ 0  . . . .
+ 1   x x . 
+ 2  . . . .
+ 3   x x . 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,280,336]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 31 1`] = `
+"seed 2534362375 difficulty 33 enemies 8 ranks 3 march every 5
+ 0  . . . .
+ 1   x x x 
+ 2  . . . .
+ 3   x . x 
+ 4  . . . .
+ 5   x x x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,380,456]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 60 1`] = `
+"seed 2524325514 difficulty 65 enemies 8 ranks 4 march every 4
+-1   x x x 
+ 0  . . . .
+ 1   . x x 
+ 2  . . . .
+ 3   x x . 
+ 4  . . . .
+ 5   . x . 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,350,420]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 61 1`] = `
+"seed 250167184 difficulty 66 enemies 8 ranks 4 march every 4
+-1   x x . 
+ 0  . . . .
+ 1   . x x 
+ 2  . . . .
+ 3   x x . 
+ 4  . . . .
+ 5   x . x 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,350,420]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 90 1`] = `
+"seed 2544202108 difficulty 99 enemies 11 ranks 6 march every 3
+-5   x x x 
+-4  . . . .
+-3   x x . 
+-2  . . . .
+-1   x . x 
+ 0  . . . .
+ 1   . x x 
+ 2  . . . .
+ 3   x . . 
+ 4  . . . .
+ 5   . x . 
+ 6  . . . .
+ 7   . P . 
+ 8  . . . .
+ 9   . . . 
+{"kind":"score","thresholds":[0,510,612]}"
+`;
