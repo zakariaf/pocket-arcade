@@ -13,12 +13,22 @@ import { boardText, parseBoard } from './board-text.ts';
 import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { parseState } from './merge-siege-persistence.ts';
+import { knobsFor } from './merge-siege-tuning.ts';
 import { outcome } from './outcome.ts';
 
 import type { MergeSiegeState } from './merge-siege-types.ts';
 
 const EMPTY_ROW = '. . . . .';
 const MAX_SWIPES = 400;
+const GOAL = knobsFor(0).goal;
+
+/** Enemies still to smash, as the HUD counts them: on the board, plus those yet to enter. */
+function enemiesLeft(state: MergeSiegeState): number {
+  const onBoard = state.cells.filter((cell) => cell?.kind === 'enemy').length;
+  return onBoard + knobsFor(state.difficulty).goal - state.entered;
+}
+
 const textOf = (rows: readonly string[]): string => boardText(parseBoard(rows));
 
 /** Seeded random play until the run ends (enemies keep coming, so a run of random swipes ends). */
@@ -81,6 +91,22 @@ describe('continueAfterLoss', () => {
     expect(outcome(state).kind).toBe('playing');
   });
 
+  it('sends enemies it drives off back to the wave, so a continue never wins the run', () => {
+    // The whole wave has entered, one enemy is left in the top row and no tile can move: lost.
+    const lost = lostWith(['. . e8 . .', EMPTY_ROW, EMPTY_ROW, EMPTY_ROW, EMPTY_ROW, EMPTY_ROW], {
+      next: null,
+      entered: GOAL,
+      smashed: GOAL - 1,
+    });
+    expect(outcome(lost).kind).toBe('lost');
+    const { state } = continueAfterLoss(lost);
+    expect(outcome(state)).toStrictEqual({ kind: 'playing' });
+    expect(state).toMatchObject({ entered: GOAL - 1, smashed: GOAL - 1 });
+    expect(state.next).not.toBeNull();
+    expect(enemiesLeft(state)).toBe(enemiesLeft(lost));
+    expect(parseState(JSON.parse(JSON.stringify(state)))).toStrictEqual(state);
+  });
+
   it('refuses a second continue in the same run', () => {
     const lost = lostWith([EMPTY_ROW, EMPTY_ROW, EMPTY_ROW, EMPTY_ROW, '2 . . . .', 'e4 . . . .'], {
       hasContinued: true,
@@ -103,6 +129,8 @@ describe('continueAfterLoss', () => {
             if (outcome(end).kind !== 'lost') return;
             const { state } = continueAfterLoss(end);
             expect(outcome(state)).toStrictEqual({ kind: 'playing' });
+            expect(state.smashed).toBe(end.smashed);
+            expect(enemiesLeft(state)).toBe(enemiesLeft(end));
             expect(listMoves(state).length).toBeGreaterThan(0);
           },
         ),

@@ -2,11 +2,14 @@
 // Spec 8.10: "Games may allow one continue per level or run: for example the monsters are pushed
 // back one row". Merge Siege's one continue after a loss: every enemy is pushed back
 // continuePushBack rows, the top row first; an enemy already in the top row is driven off the
-// board, and a tile standing in the way swaps down into the enemy's old cell (no tile is lost). If
+// board and goes back to the wave (it enters again later, drawn anew), so the smashed count and the
+// wave's total stay true and a continue never wins the run; a tile standing in the way swaps down
+// into the enemy's old cell (no tile is lost). If
 // no tile is left, a fresh 2 drops into the middle of the bottom row so the run can go on. Pure,
 // like applyMove; once per run (hasContinued), never on a run that is still playing.
 import { CELL_COUNT, COLS } from './board-cells.ts';
 import { TUNING } from './merge-siege-tuning.ts';
+import { drawNextEnemy } from './next-enemy.ts';
 import { outcome } from './outcome.ts';
 
 import type {
@@ -42,6 +45,16 @@ function pushBackOnce(input: readonly Cell[]): PushBack {
   return { cells, steps, drivenOff };
 }
 
+/** Driven-off enemies go back to the wave: fewer have entered, and one waits to enter again. */
+function rejoinWave(lost: MergeSiegeState, drivenOff: number): MergeSiegeState {
+  if (drivenOff === 0) return lost;
+  const entered = lost.entered - drivenOff;
+  if (lost.next !== null) return { ...lost, entered };
+  const { difficulty, swipes } = lost;
+  const drawn = drawNextEnemy({ rng: lost.rng, difficulty, swipes });
+  return { ...lost, entered, next: drawn.next, rng: drawn.rng };
+}
+
 /** rules.continueRun.apply: a lost run made playable again, with the events that explain it. */
 export function continueAfterLoss(lost: MergeSiegeState): MergeSiegeResult {
   if (lost.hasContinued) throw new RangeError('merge-siege: the run has used its one continue');
@@ -67,7 +80,12 @@ export function continueAfterLoss(lost: MergeSiegeState): MergeSiegeResult {
     events.push({ kind: 'tile-spawned', id: lost.nextId, cell, value: 2 });
   }
   return {
-    state: { ...lost, cells, nextId: lost.nextId + (hasTile ? 0 : 1), hasContinued: true },
+    state: {
+      ...rejoinWave(lost, pushed.drivenOff.length),
+      cells,
+      nextId: lost.nextId + (hasTile ? 0 : 1),
+      hasContinued: true,
+    },
     events,
   };
 }
