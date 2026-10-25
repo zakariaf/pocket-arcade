@@ -16,7 +16,7 @@ export const DEFAULTS = Object.freeze({
   frames: join(ASSETS_DIR, 'frames.json'),
   device: join(ASSETS_DIR, 'device', 'iphone16pro.json'),
   reference: join(ASSETS_DIR, 'reference'),
-  /** The Toybox token file (shared, synced): its color.games are the design games. */
+  /** The shared Toybox token file: its color.games are the design games. */
   tokens: join(ASSETS_DIR, 'toybox-tokens.json'),
 });
 

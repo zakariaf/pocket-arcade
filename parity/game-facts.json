@@ -13,6 +13,18 @@
       "winLine": "score",
       "hasHints": false
     },
+    "scrap-shove": {
+      "designGame": "scrapShove",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
+    "snare-snake": {
+      "designGame": "snareSnake",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
     "merge-siege": {
       "designGame": "mergeSiege",
       "hasMusic": false,

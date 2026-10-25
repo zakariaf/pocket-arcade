@@ -1,2 +1,0 @@
-design game ghostGame has no logo layers
-logos.games.ghostGame
