@@ -55,6 +55,9 @@ export type TrailClearState = {
   readonly rng: RngState;
 };
 
+/** A tile a loop or a continue took off the board: its kind and its quarter turns. */
+export type WipedTile = { readonly kind: TileKind; readonly turns: number };
+
 /** Place the offered tile, turned `turns` quarter turns clockwise, on the cell (col, row). */
 export type TrailClearMove = {
   readonly kind: 'place-tile';
@@ -82,13 +85,20 @@ export type TrailClearEvent =
       readonly points: number;
     }
   | { readonly kind: 'double-closed'; readonly bonus: number }
-  | { readonly kind: 'tiles-wiped'; readonly cells: readonly number[] }
+  | {
+      readonly kind: 'tiles-wiped';
+      readonly cells: readonly number[];
+      /** The tile that leaves each of those cells, in the same order (the board draws it going). */
+      readonly tiles: readonly WipedTile[];
+    }
   | { readonly kind: 'score-added'; readonly points: number; readonly total: number }
   | { readonly kind: 'tile-dealt'; readonly tile: TileKind }
   | {
       readonly kind: 'rows-cleared';
       readonly rows: readonly number[];
       readonly cells: readonly number[];
+      /** The tile that leaves each of those cells, in the same order. */
+      readonly tiles: readonly WipedTile[];
     };
 
 export type TrailClearResult = ApplyResult<TrailClearState, TrailClearEvent>;

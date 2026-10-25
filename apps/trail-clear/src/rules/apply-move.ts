@@ -19,6 +19,7 @@ import type {
   TrailClearMove,
   TrailClearResult,
   TrailClearState,
+  WipedTile,
 } from './trail-clear-types.ts';
 import type { ClosedLoop } from './trails.ts';
 
@@ -51,7 +52,19 @@ export function wipedCells(loops: readonly ClosedLoop[]): number[] {
   return all.filter((cell, index) => all.indexOf(cell) === index).sort((a, b) => a - b);
 }
 
-function scoreEvents(loops: readonly ClosedLoop[], total: number): TrailClearEvent[] {
+/** The tile on each cell, in the order of the cells (every cell holds one). */
+export function tilesOn(cells: readonly (PlacedTile | null)[], at: readonly number[]): WipedTile[] {
+  return at.flatMap((cell) => {
+    const tile = cells[cell];
+    return tile === null || tile === undefined ? [] : [{ kind: tile.kind, turns: tile.turns }];
+  });
+}
+
+function scoreEvents(
+  loops: readonly ClosedLoop[],
+  filled: readonly (PlacedTile | null)[],
+  total: number,
+): TrailClearEvent[] {
   const events: TrailClearEvent[] = loops.map((loop) => ({
     kind: 'loop-closed',
     terrain: loop.terrain,
@@ -64,7 +77,9 @@ function scoreEvents(loops: readonly ClosedLoop[], total: number): TrailClearEve
     events.push({ kind: 'double-closed', bonus: points - single });
   }
   const wiped = wipedCells(loops);
-  if (wiped.length > 0) events.push({ kind: 'tiles-wiped', cells: wiped });
+  if (wiped.length > 0) {
+    events.push({ kind: 'tiles-wiped', cells: wiped, tiles: tilesOn(filled, wiped) });
+  }
   if (points > 0) events.push({ kind: 'score-added', points, total });
   return events;
 }
@@ -83,7 +98,7 @@ export function applyMove(state: TrailClearState, move: TrailClearMove): TrailCl
   const dealt = isBagEmpty ? null : dealTile(cells, knobs, state.rng);
   const events: TrailClearEvent[] = [
     { kind: 'tile-placed', tile, turns: move.turns, cell },
-    ...scoreEvents(loops, score),
+    ...scoreEvents(loops, filled, score),
     ...(dealt === null ? [] : [{ kind: 'tile-dealt' as const, tile: dealt.tile }]),
   ];
   const next: TrailClearState = {

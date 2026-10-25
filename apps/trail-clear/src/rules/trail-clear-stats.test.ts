@@ -14,7 +14,11 @@ const DOUBLE_MOVE: readonly TrailClearEvent[] = [
   { kind: 'loop-closed', terrain: 'road', cells: [2, 7, 8, 12], points: 160 },
   { kind: 'loop-closed', terrain: 'river', cells: [12, 17, 22], points: 90 },
   { kind: 'double-closed', bonus: 250 },
-  { kind: 'tiles-wiped', cells: [2, 7, 8, 12, 17, 22] },
+  {
+    kind: 'tiles-wiped',
+    cells: [2, 7, 8, 12, 17, 22],
+    tiles: [2, 7, 8, 12, 17, 22].map(() => ({ kind: 'twin-bend', turns: 0 })),
+  },
   { kind: 'score-added', points: 500, total: 500 },
   { kind: 'tile-dealt', tile: 'bridge' },
 ];
@@ -22,8 +26,11 @@ const PLAIN_MOVE: readonly TrailClearEvent[] = [
   { kind: 'tile-placed', tile: 'road-bend', turns: 1, cell: 6 },
   { kind: 'tile-dealt', tile: 'road-end' },
 ];
+const ROAD_END = { kind: 'road-end', turns: 0 } as const;
 /** The continue's own events: it clears a row and places nothing. */
-const CONTINUE: readonly TrailClearEvent[] = [{ kind: 'rows-cleared', rows: [0], cells: [1, 3] }];
+const CONTINUE: readonly TrailClearEvent[] = [
+  { kind: 'rows-cleared', rows: [0], cells: [1, 3], tiles: [ROAD_END, ROAD_END] },
+];
 
 type Totals = Readonly<Record<string, number>>;
 

@@ -5,6 +5,7 @@
 // Pure, like applyMove; a second continue in the same run is refused.
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
+import { tilesOn } from './apply-move.ts';
 import { outcome } from './outcome.ts';
 import { hasRoomFor } from './placement.ts';
 import { TUNING } from './trail-clear-tuning.ts';
@@ -44,6 +45,13 @@ export function continueAfterLoss(lost: TrailClearState): TrailClearResult {
   );
   return {
     state: { ...lost, cells, hasContinued: true },
-    events: [{ kind: 'rows-cleared', rows: [...rows].sort((a, b) => a - b), cells: cleared }],
+    events: [
+      {
+        kind: 'rows-cleared',
+        rows: [...rows].sort((a, b) => a - b),
+        cells: cleared,
+        tiles: tilesOn(lost.cells, cleared),
+      },
+    ],
   };
 }

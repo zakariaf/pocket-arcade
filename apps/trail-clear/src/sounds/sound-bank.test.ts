@@ -18,10 +18,26 @@ const EVERY_EVENT: readonly TrailClearEvent[] = [
   { kind: 'loop-closed', terrain: 'road', cells: [7, 12], points: 40 },
   { kind: 'loop-closed', terrain: 'river', cells: [12, 17], points: 40 },
   { kind: 'double-closed', bonus: 80 },
-  { kind: 'tiles-wiped', cells: [7, 12, 17] },
+  {
+    kind: 'tiles-wiped',
+    cells: [7, 12, 17],
+    tiles: [
+      { kind: 'road-end', turns: 2 },
+      { kind: 'ford', turns: 0 },
+      { kind: 'river-end', turns: 0 },
+    ],
+  },
   { kind: 'score-added', points: 160, total: 160 },
   { kind: 'tile-dealt', tile: 'bridge' },
-  { kind: 'rows-cleared', rows: [0], cells: [1, 3] },
+  {
+    kind: 'rows-cleared',
+    rows: [0],
+    cells: [1, 3],
+    tiles: [
+      { kind: 'road-end', turns: 1 },
+      { kind: 'road-end', turns: 3 },
+    ],
+  },
 ];
 
 function peakOf(id: string): number {

@@ -17,10 +17,32 @@ const TURN: readonly TrailClearEvent[] = [
   { kind: 'loop-closed', terrain: 'road', cells: [10, 11, 15], points: 90 },
   { kind: 'loop-closed', terrain: 'river', cells: [15, 20, 21], points: 90 },
   { kind: 'double-closed', bonus: 180 },
-  { kind: 'tiles-wiped', cells: [10, 11, 15, 20, 21] },
+  {
+    kind: 'tiles-wiped',
+    cells: [10, 11, 15, 20, 21],
+    tiles: [
+      { kind: 'road-bend', turns: 1 },
+      { kind: 'ford', turns: 3 },
+      { kind: 'ford', turns: 0 },
+      { kind: 'river-bend', turns: 0 },
+      { kind: 'river-end', turns: 3 },
+    ],
+  },
   { kind: 'score-added', points: 360, total: 940 },
   { kind: 'tile-dealt', tile: 'road-bend' },
 ];
+
+/** The continue clears row 0: a road end, a road straight and a road end. */
+const CLEARED: TrailClearEvent = {
+  kind: 'rows-cleared',
+  rows: [0],
+  cells: [0, 1, 3],
+  tiles: [
+    { kind: 'road-end', turns: 1 },
+    { kind: 'road-straight', turns: 1 },
+    { kind: 'road-end', turns: 3 },
+  ],
+};
 
 describe('buildTimeline', () => {
   it('keeps the busiest turn within the animation budget', () => {
@@ -75,7 +97,7 @@ describe('buildTimeline', () => {
   });
 
   it('plays the continue silently: the cleared rows shrink away', () => {
-    const tracks = buildTimeline([{ kind: 'rows-cleared', rows: [0], cells: [0, 1, 3] }], 'full');
+    const tracks = buildTimeline([CLEARED], 'full');
     expect(tracks.map((track) => [track.channel, track.entityId])).toStrictEqual([
       ['wipe', cellEntity(0)],
       ['wipe', cellEntity(1)],

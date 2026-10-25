@@ -9,7 +9,7 @@ exports[`the rules golden of trail-clear plays seed 1 at difficulty 0 along a fi
 {"kind":"tile-dealt","tile":"ford"}
 {"kind":"tile-placed","tile":"ford","turns":3,"cell":2}
 {"kind":"loop-closed","terrain":"road","cells":[1,2],"points":40}
-{"kind":"tiles-wiped","cells":[1,2]}
+{"kind":"tiles-wiped","cells":[1,2],"tiles":[{"kind":"ford","turns":1},{"kind":"ford","turns":3}]}
 {"kind":"score-added","points":40,"total":40}
 {"kind":"tile-dealt","tile":"road-bend"}
 {"kind":"tile-placed","tile":"road-bend","turns":2,"cell":1}
@@ -18,7 +18,7 @@ exports[`the rules golden of trail-clear plays seed 1 at difficulty 0 along a fi
 {"kind":"tile-dealt","tile":"ford"}
 {"kind":"tile-placed","tile":"ford","turns":2,"cell":11}
 {"kind":"loop-closed","terrain":"road","cells":[11,16],"points":40}
-{"kind":"tiles-wiped","cells":[11,16]}
+{"kind":"tiles-wiped","cells":[11,16],"tiles":[{"kind":"ford","turns":2},{"kind":"ford","turns":0}]}
 {"kind":"score-added","points":40,"total":80}
 {"kind":"tile-dealt","tile":"road-end"}
 {"kind":"tile-placed","tile":"road-end","turns":2,"cell":5}
@@ -29,12 +29,12 @@ exports[`the rules golden of trail-clear plays seed 1 at difficulty 0 along a fi
 {"kind":"tile-dealt","tile":"ford"}
 {"kind":"tile-placed","tile":"ford","turns":1,"cell":3}
 {"kind":"loop-closed","terrain":"river","cells":[2,3],"points":40}
-{"kind":"tiles-wiped","cells":[2,3]}
+{"kind":"tiles-wiped","cells":[2,3],"tiles":[{"kind":"river-end","turns":1},{"kind":"ford","turns":1}]}
 {"kind":"score-added","points":40,"total":120}
 {"kind":"tile-dealt","tile":"ford"}
 {"kind":"tile-placed","tile":"ford","turns":3,"cell":8}
 {"kind":"loop-closed","terrain":"road","cells":[7,8],"points":40}
-{"kind":"tiles-wiped","cells":[7,8]}
+{"kind":"tiles-wiped","cells":[7,8],"tiles":[{"kind":"ford","turns":1},{"kind":"ford","turns":3}]}
 {"kind":"score-added","points":40,"total":160}
 {"kind":"tile-dealt","tile":"road-bend"}
 {"kind":"tile-placed","tile":"road-bend","turns":1,"cell":15}

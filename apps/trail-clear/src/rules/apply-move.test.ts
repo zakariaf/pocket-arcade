@@ -130,7 +130,14 @@ describe('applyMove', () => {
     expect(events.slice(0, 4)).toStrictEqual([
       { kind: 'tile-placed', tile: 'road-end', turns: 3, cell: 13 },
       { kind: 'loop-closed', terrain: 'road', cells: [12, 13], points: 40 },
-      { kind: 'tiles-wiped', cells: [12, 13] },
+      {
+        kind: 'tiles-wiped',
+        cells: [12, 13],
+        tiles: [
+          { kind: 'road-end', turns: 1 },
+          { kind: 'road-end', turns: 3 },
+        ],
+      },
       { kind: 'score-added', points: 40, total: 50 },
     ]);
     expect([state.cells[12], state.cells[13], state.score, state.loopsClosed]).toStrictEqual([
@@ -160,7 +167,22 @@ describe('applyMove', () => {
       stateWith({ 7: ['road-end', 2], 17: ['river-end', 0] }, 'ford'),
       place(0, 2, 2),
     );
-    expect(events).toContainEqual({ kind: 'tiles-wiped', cells: [7, 12, 17] });
+    expect(events.find((event) => event.kind === 'tiles-wiped')?.cells).toStrictEqual([7, 12, 17]);
+  });
+
+  it('names each wiped tile, its kind and turns, in the order of its cells', () => {
+    // The view is the board after the move, so the wipe must say which tiles leave for the board
+    // to draw them shrinking away.
+    const { events } = applyMove(
+      stateWith({ 7: ['road-end', 2], 17: ['river-end', 0] }, 'ford'),
+      place(0, 2, 2),
+    );
+    const wiped = events.find((event) => event.kind === 'tiles-wiped');
+    expect(wiped?.kind === 'tiles-wiped' ? wiped.tiles : null).toStrictEqual([
+      { kind: 'road-end', turns: 2 },
+      { kind: 'ford', turns: 0 },
+      { kind: 'river-end', turns: 0 },
+    ]);
   });
 
   it('deals no tile after the last tile of the bag: the level is won', () => {

@@ -71,11 +71,24 @@ describe('continueAfterLoss', () => {
     expect(outcome(lost).kind).toBe('lost');
     const { state, events } = continueAfterLoss(lost);
     expect(events).toStrictEqual([
-      { kind: 'rows-cleared', rows: [3], cells: [15, 16, 17, 18, 19] },
+      {
+        kind: 'rows-cleared',
+        rows: [3],
+        cells: [15, 16, 17, 18, 19],
+        tiles: Array.from({ length: 5 }, () => ({ kind: 'river-end', turns: 0 })),
+      },
     ]);
     expect(state.cells.slice(15, 20)).toStrictEqual([null, null, null, null, null]);
     expect(state.hasContinued).toBe(true);
     expect(outcome(state).kind).toBe('playing');
+  });
+
+  it('names each cleared tile, its kind and turns, in the order of its cells', () => {
+    const { events } = continueAfterLoss(lostState('bridge'));
+    const cleared = events[0];
+    expect(cleared?.kind === 'rows-cleared' ? cleared.tiles : null).toStrictEqual(
+      Array.from({ length: 5 }, () => ({ kind: 'river-end', turns: 0 })),
+    );
   });
 
   it('keeps the score, the placements and the offered tile', () => {
