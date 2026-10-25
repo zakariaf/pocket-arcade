@@ -9,8 +9,9 @@ import { applyMove } from './apply-move.ts';
 import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
-import { outcome } from './outcome.ts';
+import { LOSE_OUT_OF_MOVES, outcome } from './outcome.ts';
 import { TUNING } from './snare-snake-tuning.ts';
+import { openDirections } from './steering.ts';
 
 import type { SnareSnakeState } from './snare-snake-types.ts';
 
@@ -49,6 +50,15 @@ describe('continueAfterLoss (spec 8.10: one continue per run)', () => {
     expect(result.state.snake).toStrictEqual([at(5, 0), at(4, 0)]);
     expect(result.state.maxMoves).toBe(30 + TUNING.continueMoves);
     expect(outcome(result.state).kind).toBe('playing');
+  });
+
+  it('steps back a snake boxed in by its last allowed move, so the continue can be played', () => {
+    const lastMove = { ...TANGLED, moves: TANGLED.maxMoves };
+    expect(outcome(lastMove)).toStrictEqual({ kind: 'lost', reasonKey: LOSE_OUT_OF_MOVES });
+    const result = continueAfterLoss(lastMove);
+    expect(result.events).toStrictEqual(GOLDEN_TANGLED_EVENTS);
+    expect(outcome(result.state).kind).toBe('playing');
+    expect(openDirections(result.state)).not.toStrictEqual([]);
   });
 
   it('refuses a second continue in the same run', () => {
