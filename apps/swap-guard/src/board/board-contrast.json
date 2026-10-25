@@ -1,0 +1,21 @@
+{
+  "edge": "edge",
+  "text": [["label", "badge"]],
+  "graphics": [
+    ["mark", "threat"],
+    ["edge", "cell"],
+    ["edge", "threat"],
+    ["hint", "cell"],
+    ["hint", "threat"]
+  ],
+  "shapes": [
+    ["threat", "cell"],
+    ["guard", "cell"],
+    ["guard", "threat"],
+    ["enemy", "cell"],
+    ["enemy", "threat"],
+    ["badge", "background"],
+    ["pip", "background"]
+  ],
+  "distinct": [["guard", "enemy", "threat"]]
+}

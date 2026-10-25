@@ -1,0 +1,62 @@
+{
+  "light": {
+    "background": "#EAE4FC",
+    "cell": "#FBF9FF",
+    "threat": "#FFC98A",
+    "mark": "#1D1B3A",
+    "edge": "#1D1B3A",
+    "guard": "#5C9DFF",
+    "crest": "#FFFFFF",
+    "enemy": "#E8546B",
+    "flash": "#FFA94D",
+    "badge": "#FBF9FF",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A",
+    "pip": "#5C9DFF"
+  },
+  "dark": {
+    "background": "#2A1838",
+    "cell": "#3D2552",
+    "threat": "#7A3A1C",
+    "mark": "#FFE3C2",
+    "edge": "#F2E2FF",
+    "guard": "#7FB4FF",
+    "crest": "#FFFFFF",
+    "enemy": "#FF7A8A",
+    "flash": "#FFB463",
+    "badge": "#3D2552",
+    "label": "#FBF2FF",
+    "hint": "#F2E2FF",
+    "pip": "#7FB4FF"
+  },
+  "colorBlindLight": {
+    "background": "#EAE4FC",
+    "cell": "#FBF9FF",
+    "threat": "#F0E442",
+    "mark": "#1D1B3A",
+    "edge": "#1D1B3A",
+    "guard": "#0072B2",
+    "crest": "#FFFFFF",
+    "enemy": "#D55E00",
+    "flash": "#F0E442",
+    "badge": "#FBF9FF",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A",
+    "pip": "#0072B2"
+  },
+  "colorBlindDark": {
+    "background": "#2A1838",
+    "cell": "#3D2552",
+    "threat": "#5A4A00",
+    "mark": "#F0E442",
+    "edge": "#F2E2FF",
+    "guard": "#56B4E9",
+    "crest": "#FFFFFF",
+    "enemy": "#E69F00",
+    "flash": "#F0E442",
+    "badge": "#3D2552",
+    "label": "#FBF2FF",
+    "hint": "#F2E2FF",
+    "pip": "#56B4E9"
+  }
+}

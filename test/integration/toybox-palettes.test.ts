@@ -9,6 +9,7 @@ import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
 import { PALETTE as STEPSTONE } from '@e07/stepstone/theme/palette.ts';
+import { PALETTE as SWAP_GUARD } from '@e07/swap-guard/theme/palette.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
@@ -37,6 +38,10 @@ describe('Toybox palettes', () => {
 
   it('keeps Stepstone readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(STEPSTONE)).toStrictEqual([]);
+  });
+
+  it('keeps Swap Guard readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(SWAP_GUARD)).toStrictEqual([]);
   });
 
   // spec 8.12: the Shell takes each game's own palette; spec 8.11 (O5): every text 4.5:1.

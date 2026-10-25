@@ -217,6 +217,11 @@
       "ranks-cleared": 318,
       "longest-chain": 5
     },
+    "swapGuard": {
+      "enemies-defeated": 1146,
+      "swaps-made": 2318,
+      "double-hits": 87
+    },
     "pokerDrop": {
       "hands-made": 836,
       "big-hands": 97,
@@ -326,6 +331,17 @@
           "total": 12
         },
         "loseReasonId": "jump-chain.lose.overrun"
+      },
+      "swapGuard": {
+        "progressMid": {
+          "defeated": 2,
+          "total": 5
+        },
+        "progressFull": {
+          "defeated": 5,
+          "total": 5
+        },
+        "loseReasonId": "swap-guard.lose.hit"
       },
       "pokerDrop": {
         "progressMid": {
