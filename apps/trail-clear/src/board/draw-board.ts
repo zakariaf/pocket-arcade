@@ -6,7 +6,7 @@ import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import { cellEntity, TURN_ENTITY } from './board-ids.ts';
+import { cellEntity, loopEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawFace, inset, INSET, MIN_VISIBLE, scaled } from './draw-parts.ts';
 import { drawTile } from './draw-tile.ts';
 import { drawChoice, drawGhost, drawHinted, drawTray } from './draw-tray.ts';
@@ -47,10 +47,33 @@ function drawPanel(canvas: SkCanvas, frame: Frame, board: GridRegion): void {
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
 }
 
+/** The glow over a leaving tile is at most this strong, so the tile still shows through it. */
+const GLOW_ALPHA = 0.7;
+
+/** The glow of a closed loop over one of its tiles: not a tween of the tile, so only while it plays. */
+function drawLoopGlow(canvas: SkCanvas, frame: Frame, at: { order: number; rect: Rect }): void {
+  const loop = playingEntry(frame.fx, 'loop', loopEntity(at.order));
+  if (loop === undefined) return;
+  const alpha = GLOW_ALPHA * (1 - (loop.values[0] ?? 0));
+  drawFace(canvas, frame, { rect: inset(at.rect, INSET), token: 'glow', alpha });
+}
+
 /**
- * One cell: an empty slot, or its tile (a placed tile pops in, 'place' track). A wiped tile is no
- * longer in the view: it shrinks away lit from its own 'wipe' track over the empty slot.
+ * A tile the view no longer holds, from its 'wipe' track ([size, loop, n, e, s, w]): the tile
+ * itself (popping in if this move placed it) shrinks away, lit while the loop it closed in plays.
  */
+function drawLeaving(canvas: SkCanvas, frame: Frame, at: { index: number; rect: Rect }): void {
+  const { fx } = frame;
+  const wipe = fxEntry(fx, 'wipe', cellEntity(at.index))?.values ?? [];
+  const pop = fxEntry(fx, 'place', cellEntity(at.index))?.values[0] ?? 1;
+  const size = (wipe[0] ?? 0) * pop;
+  if (size < MIN_VISIBLE || wipe.length < 6) return;
+  const rect = scaled(at.rect, size);
+  drawTile(canvas, frame, { edges: wipe.slice(2), rect });
+  drawLoopGlow(canvas, frame, { order: wipe[1] ?? -1, rect });
+}
+
+/** One cell: an empty slot, or its tile (a placed tile pops in, 'place' track), or a leaving tile. */
 function drawCell(canvas: SkCanvas, frame: Frame, index: number): void {
   const rect = cellOf(frame, index);
   const edges = frame.view.cells[index] ?? [];
@@ -64,10 +87,7 @@ function drawCell(canvas: SkCanvas, frame: Frame, index: number): void {
   const corner = rect.width * 0.12;
   kit.fill.setColor(colors.color.cell);
   canvas.drawRRect({ rect: inset(rect, INSET * 2), rx: corner, ry: corner }, kit.fill);
-  const wipe = fxEntry(fx, 'wipe', cellEntity(index))?.values[0] ?? 0;
-  if (wipe < MIN_VISIBLE) return;
-  const lit = scaled(inset(rect, INSET), wipe);
-  drawFace(canvas, frame, { rect: lit, token: 'glow', alpha: Math.min(1, wipe * 1.5) });
+  drawLeaving(canvas, frame, { index, rect });
 }
 
 /** A double: a ring spreads from the placed cell, then particles (full motion only). */

@@ -5,6 +5,7 @@
 import { timelineEndMs } from '@e07/game-kit/timeline/track.ts';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
 import { create } from '@e07/trail-clear/rules/create.ts';
+import { edgesOf } from '@e07/trail-clear/rules/tiles.ts';
 
 import { cellEntity, slotEntity, TURN_ENTITY } from './board-ids.ts';
 import { TURN_BUDGET_MS, buildTimeline } from './build-timeline.ts';
@@ -76,10 +77,26 @@ describe('buildTimeline', () => {
     expect(wipes.map((track) => track.entityId)).toStrictEqual(
       [10, 11, 15, 20, 21].map(cellEntity),
     );
-    expect(wipes.map((track) => [track.from, track.to])[0]).toStrictEqual([[1], [0]]);
+    expect(wipes.map((track) => [track.from[0], track.to[0]])[0]).toStrictEqual([1, 0]);
     expect(Math.min(...wipes.map((track) => track.startMs))).toBeGreaterThan(
       Math.max(...loops.map((track) => track.startMs)),
     );
+  });
+
+  it('carries in each wipe the tile that leaves and the loop it closed in (none for the continue)', () => {
+    const wipesOf = (events: readonly TrailClearEvent[]): number[][] =>
+      buildTimeline(events, 'full')
+        .filter((track) => track.channel === 'wipe')
+        .map((track) => [...track.from.slice(1)]);
+    const leaving = (event: TrailClearEvent, orders: readonly number[]): number[][] =>
+      event.kind === 'tiles-wiped' || event.kind === 'rows-cleared'
+        ? event.tiles.map((tile, at) => [orders[at] ?? -1, ...edgesOf(tile.kind, tile.turns)])
+        : [];
+    const wiped = TURN.find((event) => event.kind === 'tiles-wiped');
+    if (wiped === undefined) throw new Error('the turn wipes');
+    // Cell 15 sits in both loops: it lights with the first (the road).
+    expect(wipesOf(TURN)).toStrictEqual(leaving(wiped, [0, 0, 0, 1, 1]));
+    expect(wipesOf([CLEARED])).toStrictEqual(leaving(CLEARED, [-1, -1, -1]));
   });
 
   it('bursts the double from the cell the tile was placed on', () => {

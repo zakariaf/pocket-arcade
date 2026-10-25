@@ -207,6 +207,31 @@ describe('drawBoard', () => {
     expect(extra(start, end, 'drawRRect')).toBe(10);
   });
 
+  it('draws each wiped tile itself, its road and river, until it has shrunk away', () => {
+    const tracks = buildTimeline(BUSIEST.events, 'full').filter(
+      (track) => track.channel === 'wipe',
+    );
+    const atStart = drawAt({ atMs: 0, view: BUSIEST_VIEW, tracks }).paths;
+    const atEnd = drawAt({ atMs: 5000, view: BUSIEST_VIEW, tracks }).paths;
+    // The five leaving tiles: a road bend, two fords, a river bend and a river end.
+    expect(atStart.length - atEnd.length).toBeGreaterThanOrEqual(5);
+    expect(drawAt({ atMs: 5000, view: BUSIEST_VIEW, tracks: [] }).paths).toStrictEqual(atEnd);
+  });
+
+  it('lights the wiped tiles of a loop only while that loop plays (by its linear time)', () => {
+    const all = buildTimeline(BUSIEST.events, 'full');
+    const tracks = all.filter((track) => track.channel === 'wipe' || track.channel === 'loop');
+    const wipes = all.filter((track) => track.channel === 'wipe');
+    const loops = all.filter((track) => track.channel === 'loop');
+    const drawn = (atMs: number, played: readonly Track[]): Recorded['calls'] =>
+      drawAt({ atMs, view: BUSIEST_VIEW, tracks: played }).calls;
+    const firstStart = Math.min(...loops.map((track) => track.startMs));
+    const lastEnd = Math.max(...loops.map((track) => track.startMs + track.durationMs));
+    expect(drawn(0, tracks)).toStrictEqual(drawn(0, wipes));
+    expect(drawn(firstStart + 50, tracks)).not.toStrictEqual(drawn(firstStart + 50, wipes));
+    expect(drawn(lastEnd, tracks)).toStrictEqual(drawn(lastEnd, wipes));
+  });
+
   it('grows the dealt tile into its tray slots instead of showing it before the move plays', () => {
     const tracks = buildTimeline(BUSIEST.events, 'full').filter(
       (track) => track.channel === 'tray',
