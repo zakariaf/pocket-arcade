@@ -99,6 +99,9 @@ function withMoreSpears(extra: number): SwapGuardState {
   return { ...START, enemies: [...START.enemies, ...added], enemyCount: 3 + extra };
 }
 
+/** The run LOST's continue made: the board before the losing swap, the continue used. */
+const CONTINUED = continueAfterLoss(LOST).state;
+
 /** Seeded random swaps to the end, with the one continue after a loss: every state on the way. */
 function statesWithContinue(seed: number, difficulty: number, choices: readonly number[]) {
   const states: SwapGuardState[] = [create(seed, difficulty)];
@@ -164,6 +167,12 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
           { id: 2, kind: 'brute', facing: 'up', cell: 0 },
         ],
       },
+    ],
+    // A continue goes back to the board before a losing swap: a swap left and an enemy standing.
+    ['a continued run with no swap left', { ...CONTINUED, swaps: CONTINUED.maxSwaps }],
+    [
+      'a continued run with no enemy standing',
+      { ...CONTINUED, enemies: [], swaps: 2, score: volleyPoints(1) * 3 },
     ],
     ['null', null],
     ['an array', [START]],

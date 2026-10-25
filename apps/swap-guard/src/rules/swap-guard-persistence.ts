@@ -7,6 +7,7 @@ import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { applyMove } from './apply-move.ts';
 import { FACINGS, squaresAround } from './board-grid.ts';
 import { OPENING_ENEMIES } from './create.ts';
+import { outcome } from './outcome.ts';
 import { TUNING, volleyPoints } from './swap-guard-tuning.ts';
 
 import type {
@@ -142,10 +143,15 @@ function isScoreEarned(state: SwapGuardState): boolean {
   );
 }
 
-/** The record agrees: with no swap on record, a start or the board its one continue went back to. */
+/**
+ * The record agrees. With no swap on record the run is a start or the board its one continue went
+ * back to: the board before a losing swap, so still playing (a swap left, an enemy standing).
+ */
 function isRecordOk(state: SwapGuardState): boolean {
   const { lastSwap } = state;
-  if (lastSwap === null) return !state.isHit && (state.swaps === 0 || state.hasContinued);
+  if (lastSwap === null) {
+    return outcome(state).kind === 'playing' && (state.swaps === 0 || state.hasContinued);
+  }
   return isLastSwapOk(state, lastSwap) && isReplayed(state, lastSwap);
 }
 
