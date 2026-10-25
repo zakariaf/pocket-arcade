@@ -29,6 +29,16 @@ function startRecord(): Record<string, unknown> {
   return saved(START) as Record<string, unknown>;
 }
 
+/** The start's front enemy that stands on the board. */
+const FIRST = START.enemies.find((enemy) => enemy.row >= 0) ?? { col: 0, row: 0 };
+
+/** The start record with its enemies changed (the counts stay the start's). */
+function withEnemies(
+  change: (enemies: readonly JumpChainState['enemies'][number][]) => unknown[],
+): Record<string, unknown> {
+  return { ...startRecord(), enemies: change(START.enemies) };
+}
+
 /** Replays a move line from its start: the run a save restores. */
 function replay(start: JumpChainState, moves: readonly JumpChainMove[]): JumpChainState {
   return moves.reduce((state, move) => applyMove(state, move).state, start);
@@ -94,6 +104,20 @@ describe('parseState', () => {
     ],
     ['counts that do not add up', { ...startRecord(), captured: 5 }],
     ['an id at or above nextId', { ...startRecord(), nextId: 0 }],
+    [
+      'two enemies on one square',
+      withEnemies((enemies) =>
+        enemies.map((enemy) => ({ ...enemy, col: FIRST.col, row: FIRST.row })),
+      ),
+    ],
+    ['your piece on an enemy', { ...startRecord(), piece: { col: FIRST.col, row: FIRST.row } }],
+    [
+      'an enemy of a rank not yet made',
+      withEnemies((enemies) =>
+        enemies.map((enemy, index) => (index === 0 ? { ...enemy, rank: START.nextRank } : enemy)),
+      ),
+    ],
+    ['more ranks cleared than made', { ...startRecord(), ranksCleared: START.nextRank + 1 }],
     ['an RNG state of three words', { ...startRecord(), rng: [1, 2, 3] }],
     ['an RNG word above 32 bits', { ...startRecord(), rng: [1, 2, 3, 2 ** 33] }],
   ])('rejects %s', (_name, json) => {

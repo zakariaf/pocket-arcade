@@ -109,16 +109,33 @@ function parseCounts(json: JsonRecord) {
     : null;
 }
 
-/** The enemies agree with the counts: unique ids below nextId, captured + left = total. */
+/**
+ * The run is one legal play can reach: unique enemy ids below nextId, captured + left = total, no
+ * two pieces on one square (enemies or your piece), every enemy of a rank already made, and no
+ * more ranks cleared than made.
+ */
 function isConsistent(
   enemies: readonly Enemy[],
-  counts: { total: number; captured: number; nextId: number },
+  piece: Square,
+  counts: {
+    total: number;
+    captured: number;
+    nextId: number;
+    nextRank: number;
+    ranksCleared: number;
+  },
 ): boolean {
   const ids = enemies.map((enemy) => enemy.id);
+  const squares = [piece, ...enemies].map(
+    (square) => `${String(square.col)},${String(square.row)}`,
+  );
   return (
     new Set(ids).size === ids.length &&
     ids.every((id) => id < counts.nextId) &&
-    counts.captured + enemies.length === counts.total
+    counts.captured + enemies.length === counts.total &&
+    new Set(squares).size === squares.length &&
+    enemies.every((enemy) => enemy.rank < counts.nextRank) &&
+    counts.ranksCleared <= counts.nextRank
   );
 }
 
@@ -131,7 +148,7 @@ export function parseState(json: unknown): JumpChainState | null {
   const rng = parseRng(json['rng']);
   const { hasContinued } = json;
   if (counts === null || piece === null || enemies === null || rng === null) return null;
-  if (typeof hasContinued !== 'boolean' || !isConsistent(enemies, counts)) return null;
+  if (typeof hasContinued !== 'boolean' || !isConsistent(enemies, piece, counts)) return null;
   return {
     difficulty: counts.difficulty,
     piece,
