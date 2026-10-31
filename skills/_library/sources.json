@@ -3571,11 +3571,11 @@
         ]
       },
       "examples/sdk-move-report.md": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "epics/E18-android-port.md",
@@ -3630,7 +3630,7 @@
         ]
       },
       "references/upgrade-policy.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3642,7 +3642,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -4752,7 +4752,7 @@
         ]
       },
       "references/assembling-a-game.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4764,7 +4764,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -5699,7 +5699,7 @@
         ]
       },
       "references/testing-rules.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5711,7 +5711,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -6463,7 +6463,7 @@
     },
     "git-commits-and-reporting": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6479,7 +6479,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6488,7 +6488,7 @@
         ]
       },
       "examples/commit-messages.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6496,12 +6496,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/owner-requests.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6509,7 +6509,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6518,7 +6518,7 @@
         ]
       },
       "examples/release-evidence.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6526,12 +6526,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/slice-evidence.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6539,12 +6539,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/commit-format.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6560,7 +6560,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -6573,7 +6573,7 @@
         ]
       },
       "references/owner-updates.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6585,7 +6585,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6594,7 +6594,7 @@
         ]
       },
       "references/stop-and-ask.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -6610,7 +6610,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6619,7 +6619,7 @@
         ]
       },
       "references/tags-and-releases.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6631,7 +6631,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6653,7 +6653,7 @@
         ]
       },
       "scripts/check-report.mjs": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6661,7 +6661,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -6679,7 +6679,7 @@
         ]
       },
       "templates/commit-message.txt": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6687,12 +6687,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/evidence-release-play.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6700,7 +6700,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6709,7 +6709,7 @@
         ]
       },
       "templates/evidence-release.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6721,12 +6721,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/evidence-slice.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6734,21 +6734,21 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/owner-request.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/release-stop.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6756,7 +6756,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -7297,7 +7297,7 @@
     },
     "ios-release-testflight": {
       "examples/release-messages.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -7305,7 +7305,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -8053,7 +8053,7 @@
         ]
       },
       "references/goldens-and-quality.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -8065,7 +8065,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -8828,16 +8828,16 @@
     },
     "monorepo-bootstrap": {
       "examples/bootstrap-report.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/first-install-and-verify.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8853,12 +8853,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/repo-layout.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8870,12 +8870,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/root-files.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8899,12 +8899,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/toolchain-setup.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8916,7 +8916,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -8930,20 +8930,20 @@
         ]
       },
       "templates/repo/AGENTS.md.tmpl": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/repo/CLAUDE.md.tmpl": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -9737,7 +9737,7 @@
     },
     "new-game-scaffold": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9749,7 +9749,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9758,7 +9758,7 @@
         ]
       },
       "examples/flock-tilt/en.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9770,12 +9770,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/flock-tilt/game.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9787,12 +9787,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/flock-tilt/scaffold-plan.txt": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9804,12 +9804,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/owner-request.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9821,7 +9821,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -9843,7 +9843,7 @@
         ]
       },
       "references/ids-and-names.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9855,7 +9855,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9864,7 +9864,7 @@
         ]
       },
       "references/new-game-checklist.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9876,7 +9876,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9885,7 +9885,7 @@
         ]
       },
       "templates/app/app.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9897,12 +9897,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/dot-gitignore": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9914,12 +9914,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/game.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9931,12 +9931,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/index.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9948,12 +9948,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/metro.config.js": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9965,12 +9965,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/package.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9982,12 +9982,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/ckb.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9999,12 +9999,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/de.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10016,12 +10016,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/en.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10033,12 +10033,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/fa.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10050,12 +10050,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/tsconfig.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10067,7 +10067,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -10325,11 +10325,11 @@
     },
     "pocket-arcade-index": {
       "SKILL.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10338,11 +10338,11 @@
         ]
       },
       "assets/index.json": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10351,11 +10351,11 @@
         ]
       },
       "references/build-orders.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10364,11 +10364,11 @@
         ]
       },
       "references/loading-and-reporting.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -11656,7 +11656,7 @@
         ]
       },
       "templates/gate-question.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -11664,7 +11664,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -14215,7 +14215,7 @@
     },
     "tdd-workflow": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14223,7 +14223,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14249,7 +14249,7 @@
         ]
       },
       "references/build-order.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14257,7 +14257,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14266,7 +14266,7 @@
         ]
       },
       "references/definition-of-done.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14274,7 +14274,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14365,7 +14365,7 @@
         ]
       },
       "templates/slice-plan.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14373,7 +14373,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -19210,7 +19210,7 @@
     },
     "troubleshooting-playbook": {
       "assets/known-failures.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -19282,7 +19282,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -19320,7 +19320,7 @@
         ]
       },
       "references/build-and-simulator.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -19368,12 +19368,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/claude-code-and-skills.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -19381,7 +19381,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -19415,7 +19415,7 @@
         ]
       },
       "references/diagnosing-new-failures.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -19427,7 +19427,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -19453,7 +19453,7 @@
         ]
       },
       "references/open-risks.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -19493,7 +19493,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -19519,7 +19519,7 @@
         ]
       },
       "references/quality-gates-and-git.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -19531,7 +19531,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
