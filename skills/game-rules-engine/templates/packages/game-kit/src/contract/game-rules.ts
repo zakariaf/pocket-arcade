@@ -24,6 +24,12 @@ export type ContinuePolicy<TState, TEvent> =
       readonly kind: 'once';
       readonly descriptionId: MessageId;
       readonly apply: (lost: TState) => ApplyResult<TState, TEvent>;
+      /**
+       * Set when the continue takes the losing move back (the board stands as it was before that
+       * move): the Shell's counters then drop what that move counted, sums and maxima alike
+       * (spec S10: undone moves never count). Absent when the continue keeps every move.
+       */
+      readonly isTakeBack?: true;
     };
 
 /** Spec 10 RULES beyond the engine functions (GameEngine holds the engine functions). Pure. */
