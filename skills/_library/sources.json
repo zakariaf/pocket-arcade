@@ -1925,11 +1925,11 @@
         ]
       },
       "templates/shell/game-host/board-canvas.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-canvas.tsx",
-            "sha256": "b30d706501765a322b4864f32a44bbb4fbd6b709673e10a969ccd0a03832ab05"
+            "sha256": "d5a8f11e600f84e23be6ef8ab171f7a01a9e50fdc3ffdc91df900796060c7298"
           }
         ]
       },
@@ -2095,11 +2095,11 @@
         ]
       },
       "templates/shell/game-host/game-board-host.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "packages/shell/src/game-host/game-board-host.tsx",
-            "sha256": "975ef30945286d0670ebbb9b97d4d8698d4d11bcdf2bda5c081bdb0563890e50"
+            "sha256": "4f8c788f45e38a1d68ebd7b8bcd77084ff75b2d487a789ee697b6a84a0cce5ed"
           }
         ]
       },
@@ -4956,11 +4956,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/create-game-board-host.tsx": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-game-board-host.tsx",
-            "sha256": "85a4fa3d335a4ed1a244d869ad9b5efafb2e276cb349e527bb14472c23741ffc"
+            "sha256": "90822d073cb42ddd436928fd53495438132e7bc5254ba8be6c3bb77a54bcd2f4"
           }
         ]
       },

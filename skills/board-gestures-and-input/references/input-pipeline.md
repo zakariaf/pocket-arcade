@@ -41,7 +41,13 @@ export type InputIntent =
   | { readonly kind: 'tap'; readonly target: BoardTarget; readonly selected: BoardTarget | null }
   | { readonly kind: 'long-press'; readonly target: BoardTarget }
   | { readonly kind: 'swipe'; readonly direction: SwipeDirection; readonly from: BoardTarget | null }
-  | { readonly kind: 'drag-end'; readonly from: BoardTarget; readonly to: BoardTarget | null }
+  | {
+      readonly kind: 'drag-end';
+      readonly from: BoardTarget;
+      readonly to: BoardTarget | null;
+      /** from, each hovered target once per change, then to: filled in by the board host. */
+      readonly path?: readonly BoardTarget[];
+    }
   /** Release vector of an aim drag, in canvas points (Bank Shot). */
   | { readonly kind: 'aim'; readonly dx: number; readonly dy: number };
 
@@ -105,7 +111,7 @@ Callbacks on the UI thread:
 |---|---|---|
 | `none` | nothing (pan disabled) | taps and long presses only |
 | `swipe` | `{ kind: 'swipe', direction, from }` | `classifySwipe({ dx, dy, vx, vy })`: `null` when too short and too slow, or when no axis dominates by 1.2 |
-| `drag` | `{ kind: 'drag-end', from, to }` | only when the drag started on a region; `to` is the hit-test of the lifted release point (`dragLiftPt` above the finger), `null` when it is off every region |
+| `drag` | `{ kind: 'drag-end', from, to }` | only when the drag started on a region; `to` is the hit-test of the lifted release point (`dragLiftPt` above the finger), `null` when it is off every region. The optional `onDragStart` handler is called once at the drag's start, before its hover changes; the board host traces the drag's `path` from it and `onHover` (`drag-path.ts`, game-host-integration) and adds it to the drag-end, so a game whose move is a path (Jump Chain's loop chain that ends on its own square) can tell it from a drop back on the start. The gesture layer itself never sends `path` |
 | `aim` | `{ kind: 'aim', dx, dy }` | the release vector in canvas points; the game normalises and quantises it |
 
 Continuous input for real-time games is not a pan mode: see [stick-input.md](stick-input.md).

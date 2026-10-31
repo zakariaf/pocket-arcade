@@ -59,6 +59,8 @@ export type GameBoardHostProps<TState, TEvent, TView, TToken extends string> = {
   readonly onHover: (target: BoardTarget | null) => void;
   /** A tap outside every region (the host clears its tap-then-tap selection). */
   readonly onMiss?: () => void;
+  /** A drag started (useBoardGestures onDragStart): the host starts tracing its path. */
+  readonly onDragStart?: () => void;
   /** Pause the game and write the local error log (errors never crash the app). */
   readonly onFailure: (message: string) => void;
   /** `(error) => errorLog.record('audio', error)` for non-fatal audio session failures. */
@@ -134,6 +136,7 @@ export function GameBoardHost<TState, TEvent, TView, TToken extends string>(
       onIntent={props.onIntent}
       onHover={props.onHover}
       {...(props.onMiss === undefined ? {} : { onMiss: props.onMiss })}
+      {...(props.onDragStart === undefined ? {} : { onDragStart: props.onDragStart })}
       onDrawError={clock.fail}
       isLayoutProbeOn={props.isLayoutProbeOn === true}
       coach={props.coach}

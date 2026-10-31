@@ -358,9 +358,9 @@ export type BoardHostFactory = <T extends ShellGameTypes>(input: BoardHostInput<
 | `result` | one `{ seq: eventSeq, state, events: lastEvents }` object per `eventSeq` (`createMoveResultSelector`) |
 | `panMode` | `game.engine.panMode` |
 | `highlight` | `useBoardSelection(...).highlight`: `{ selected, hinted }` (below) |
-| `onIntent` | `useBoardSelection(...).onIntent`, which routes taps, then `boardHandlersFor(controller.handle, errorLog).onIntent` |
+| `onIntent` | the drag-path tracer's `finish` (a drag-end gets its `path`), then `useBoardSelection(...).onIntent`, which routes taps, then `boardHandlersFor(controller.handle, errorLog).onIntent` |
 | `onFailure`, `reportError` | pause and `errorLog.record('frame-callback', ...)`; `errorLog.record('audio', ...)` |
-| `onHover` | ignored: hover and drag ghosts are drawn on the UI thread from `frame.fx.pointer` |
+| `onHover`, `onDragStart` | the drag-path tracer (`createDragPathTracer()` in `drag-path.ts`, one per opened run): `onDragStart` starts an empty trace and `onHover` adds each hovered target once per change, so the drag-end carries `path` (from, the hovered targets, to). Hover and drag ghosts are still drawn on the UI thread from `frame.fx.pointer`; the trace is UI state, never a move. `drag-path.test.tsx` proves it, through the gesture probe for a drag that loops back to its start |
 | `isFullscreenAdShowing`, `isFocused` | `useIsFullscreenAdShowing(lifecycle)`, `useIsFocused()` |
 | `colors`, `kit`, `format`, `accessibilityLabel`, `motion`, `isRtl` | the palettes for the theme, the render kit, the number formatter, `board.describe(...)`, `motionOf(useReduceMotion())`, `useDirection() === 'rtl'` |
 | `audio`, `haptics` | the ports given to `createGameBoardHost` |

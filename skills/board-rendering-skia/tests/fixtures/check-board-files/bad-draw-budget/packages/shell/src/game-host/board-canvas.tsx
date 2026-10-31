@@ -38,6 +38,8 @@ export type BoardCanvasProps<TState, TView, TToken extends string> = {
   readonly onHover: (target: BoardTarget | null) => void;
   /** A tap outside every region: the host drops its tap-then-tap selection. */
   readonly onMiss?: () => void;
+  /** A drag started (useBoardGestures onDragStart): the host starts tracing its path. */
+  readonly onDragStart?: () => void;
   /** The clock's fail: it halts the clock and reports the first error of a run once. */
   readonly onDrawError: (message: string) => void;
   /** Test builds with the debug link's boardLayout=1 only: publish game.board-layout for flows. */
@@ -74,6 +76,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
     onIntent: props.onIntent,
     onHover: props.onHover,
     ...(props.onMiss === undefined ? {} : { onMiss: props.onMiss }),
+    ...(props.onDragStart === undefined ? {} : { onDragStart: props.onDragStart }),
   });
   const reportDrawError = (message: string): void => {
     'worklet';

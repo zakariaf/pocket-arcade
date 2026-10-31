@@ -17,6 +17,7 @@ export type BoardGestureProbeProps = {
   readonly onIntent: (intent: InputIntent) => void;
   readonly onHover?: (target: BoardTarget | null) => void;
   readonly onMiss?: () => void;
+  readonly onDragStart?: () => void;
 };
 
 const ignoreHover = (): void => undefined;
@@ -29,6 +30,7 @@ export function BoardGestureProbe(props: BoardGestureProbeProps): React.JSX.Elem
     onIntent: props.onIntent,
     onHover: props.onHover ?? ignoreHover,
     ...(props.onMiss === undefined ? {} : { onMiss: props.onMiss }),
+    ...(props.onDragStart === undefined ? {} : { onDragStart: props.onDragStart }),
   });
   return (
     <GestureDetector gesture={gesture}>

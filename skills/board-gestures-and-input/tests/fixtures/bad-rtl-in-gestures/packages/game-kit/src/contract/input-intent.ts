@@ -19,6 +19,17 @@ export type InputIntent =
       readonly direction: SwipeDirection;
       readonly from: BoardTarget | null;
     }
-  | { readonly kind: 'drag-end'; readonly from: BoardTarget; readonly to: BoardTarget | null }
+  | {
+      readonly kind: 'drag-end';
+      readonly from: BoardTarget;
+      readonly to: BoardTarget | null;
+      /**
+       * The targets the drag aimed at, in order: `from`, each hovered target once per change, then
+       * `to`. The board host traces it from the hover changes (the gesture layer never sends it);
+       * a game whose move is a path (Jump Chain's loop chain back to its own square) reads it,
+       * every other game ignores it.
+       */
+      readonly path?: readonly BoardTarget[];
+    }
   /** Release vector of an aim drag, in canvas points (Bank Shot). */
   | { readonly kind: 'aim'; readonly dx: number; readonly dy: number };
