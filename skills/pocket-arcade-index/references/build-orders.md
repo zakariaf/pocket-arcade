@@ -107,7 +107,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - Copy from `unit-and-component-tests`: `packages/shell/src/testing/render-with-shell*`.
 - Copy from `i18n-strings-and-catalogs`: `packages/shell/src/i18n/i18n-provider.tsx`, `packages/shell/src/i18n/device-locales-context.tsx`, `packages/shell/src/i18n/language-context.tsx`, `packages/shell/src/i18n/t-bridge.tsx`, `packages/shell/src/i18n/t-context.ts`, `packages/shell/src/i18n/t.tsx`, `packages/shell/src/i18n/t.test.tsx`, `test/integration/i18n/**`.
 - Copy from `rtl-and-direction`: `packages/shell/src/app/start-shell.ts`, `packages/shell/src/app/restart-after-audio*`, `packages/shell/src/i18n/direction-context.tsx`, `packages/shell/src/i18n/use-number-formatter*`, `packages/shell/src/game-host/board-direction-view*`.
-- Copy from `settings-and-preferences`: `packages/shell/src/app/connect-audio-settings*`, `packages/shell/src/app/create-shell-haptics*`, `packages/shell/src/app/localized-root*`, `packages/shell/src/config/external-links*`.
+- Copy from `settings-and-preferences`: `packages/shell/src/app/connect-audio-settings*`, `packages/shell/src/app/create-shell-haptics*`, `packages/shell/src/app/localized-root*`, `packages/shell/src/config/external-links*`, `packages/shell/src/game-host/use-hints-during-play*`.
 - Copy from `daily-and-statistics`: `packages/shell/src/stores/**`.
 - Copy from `game-host-integration`: `packages/shell/src/app/**`, `packages/shell/src/game-host/**`, `packages/shell/src/screens/first-run/**`, `packages/shell/src/testing/**`, `apps/line-siege/src/**`, `apps/__GAME_ID__/src/contract.test.ts`, `test/integration/game-host/__GAME_ID__-debug-controls.test.ts` (not `packages/shell/src/app/shell-app.test.tsx`).
   - Its test `packages/shell/src/app/shell-app.test.tsx` comes later: it renders Settings (S11) and Home (S4) through the real providers, so it joins with S11 at step 9; until then create-shell-app.test.tsx covers shell-app.tsx.
@@ -171,7 +171,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
   - Copy from `settings-and-preferences`: `packages/shell/src/stores/settings-resets*`, `packages/shell/src/stores/use-settings-resets*`.
 - **S11**
   - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`, `packages/shell/src/ui/sub-page*`.
-  - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/*`, `packages/shell/src/game-host/use-hints-during-play*`.
+  - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/*`.
   - Copy from `toybox-components`: `packages/shell/src/screens/settings/sound-group*`.
   - Copy from `state-stores`: `packages/shell/src/screens/settings/use-display-settings.ts`.
   - Copy from `game-host-integration`: `packages/shell/src/app/shell-app.test.tsx`.
