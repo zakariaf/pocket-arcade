@@ -1,0 +1,1 @@
+. --today 2026-09-28 --syntax --maestro {dir}/fake/maestro

@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+name: Demo shows its combo counter and level tile 12
+tags: [demo]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=de&digits=local&theme=dark&stars=1:3,2:2&screen=levels&date=2026-12-31'
+      WAIT_FOR: 'levels.level-tile.12'
+# Stars are crop-only parts of the tile button: assert the tile (its label names the stars).
+- assertVisible:
+    id: 'levels.level-tile.12'
+- assertNotVisible:
+    id: 'game.combo-label'

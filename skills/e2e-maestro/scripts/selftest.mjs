@@ -3,14 +3,18 @@
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs
 
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { runSelftest } from './check-lib.mjs';
 
-/** Arguments from the fixture's args.txt (whitespace separated); "." is the fixture folder itself. */
+/**
+ * Arguments from the fixture's args.txt (whitespace separated); "." is the fixture folder itself, and
+ * {dir} stands for its absolute path (an absolute --maestro path, for example).
+ */
 function fixtureArgs(dir) {
   const file = join(dir, 'args.txt');
-  return existsSync(file) ? readFileSync(file, 'utf8').trim().split(/\s+/) : [dir];
+  const absolute = resolve(dir);
+  return existsSync(file) ? readFileSync(file, 'utf8').trim().split(/\s+/).map((arg) => arg.replaceAll('{dir}', absolute)) : [dir];
 }
 
 // check-flows-empty: a repo without flows passes with a SKIP line while shell-slice.json marks a

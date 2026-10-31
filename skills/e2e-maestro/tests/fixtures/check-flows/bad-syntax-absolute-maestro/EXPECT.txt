@@ -1,0 +1,2 @@
+01-first-launch.yaml:1 [maestro-syntax] maestro check-syntax: Unknown command: tapOnn
+1 problems
