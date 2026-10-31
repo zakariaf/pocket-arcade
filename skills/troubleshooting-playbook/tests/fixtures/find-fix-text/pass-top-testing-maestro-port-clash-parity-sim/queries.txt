@@ -1,0 +1,1 @@
+every flow fails at the first wait and the failure screenshot is another simulator's size

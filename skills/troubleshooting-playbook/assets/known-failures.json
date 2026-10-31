@@ -6073,6 +6073,21 @@
       "skill": "e2e-maestro"
     },
     {
+      "id": "testing-maestro-port-clash-parity-sim",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "Every E2E flow fails at its first wait (extendedWaitUntil or assertVisible times out on the first testID), and the failure screenshot Maestro saves is another simulator's size",
+      "cause": "A parity simulator from an earlier capture is still booted and still runs its XCTest driver on the driver port the E2E run uses, so the E2E run's Maestro calls are answered by that driver and every flow waits on the wrong simulator's screen",
+      "fix": "Shut down the parity simulators you created (xcrun simctl shutdown <udid>, never shutdown all) before an E2E run, or give the E2E run a driver port of its own (maestroGlobalArgs with freeDriverPort()); kill a leftover Maestro JVM or xcodebuild driver by its pid; then rerun the flow",
+      "match": [
+        "every (e2e )?flow fails at (its|the) first wait",
+        "screenshot is another simulator'?s size"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
       "id": "testing-e2e-needs-ads-off",
       "area": "testing",
       "topic": "E2E flows",
