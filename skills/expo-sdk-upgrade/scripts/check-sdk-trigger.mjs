@@ -55,7 +55,9 @@ function npmJson(args) {
 function fetchModuleMap(version) {
   const dir = mkdtempSync(join(tmpdir(), 'sdk-trigger-'));
   try {
-    const pack = spawnSync('npm', ['pack', `expo@${version}`, '--pack-destination', dir, '--silent'], { encoding: 'utf8' });
+    // The repo's .npmrc min-release-age=7 refuses a "latest" younger than 7 days (ETARGET), which is
+    // exactly the target this check must judge; reading its map installs nothing, so lift the age here.
+    const pack = spawnSync('npm', ['pack', `expo@${version}`, '--pack-destination', dir, '--silent', '--min-release-age=0'], { encoding: 'utf8' });
     if (pack.status !== 0) fail(`npm pack expo@${version} failed`, 'Check the network, or use --facts.');
     const tgz = readdirSync(dir).find((name) => name.endsWith('.tgz'));
     const untar = spawnSync('tar', ['-xzf', join(dir, tgz), '-C', dir, 'package/bundledNativeModules.json'], { encoding: 'utf8' });
