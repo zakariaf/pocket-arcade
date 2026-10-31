@@ -42,7 +42,7 @@ Per fixed step, for each ball:
 2. Take the earliest hit; move to it (`pos + motion × t`).
 3. Reflect the velocity: `reflect(v, n) = v − 2(v·n)n` (no angles).
 4. Spend the remaining fraction of the step (`remaining × (1 − t)`); repeat at most 4 times per step.
-5. With many balls, use the spatial hash for ball-ball overlap (`circlesOverlap(a, b, radiusSum)` compares squared distances, no `sqrt`).
+5. With many balls, use the spatial hash for ball-ball overlap, and add `circlesOverlap(a, b, radiusSum)` to the kit's `sweep.ts` with that game, test first (it compares squared distances, no `sqrt`; the kit ships no helper no game calls).
 
 `examples/bank-shot/simulate-volley.ts` implements steps 1–4 for an open-bottom box.
 
