@@ -6,7 +6,6 @@ import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { LineSiegeView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
 
@@ -27,15 +26,6 @@ export function inset(rect: Rect, share: number): Rect {
     width: rect.width - 2 * by,
     height: rect.height - 2 * by,
   };
-}
-
-/**
- * An effect that is not a tween of something already visible (a flash, a wave, a burst) draws only
- * once its track has started: before that, a sample holds the track's `from` values, and drawing it
- * would show the effect at full strength at moment 0.
- */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /**

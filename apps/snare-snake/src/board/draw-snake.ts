@@ -1,10 +1,10 @@
 // apps/snare-snake/src/board/draw-snake.ts
 'worklet';
 
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import { inset, isPlaying, rectAt, rectBetween } from './board-geometry.ts';
+import { inset, rectAt, rectBetween } from './board-geometry.ts';
 import { cellEntity, HEAD_ENTITY, TURN_ENTITY } from './board-ids.ts';
 
 import type { BoardToken } from './board-palettes.ts';
@@ -129,8 +129,8 @@ function drawGlow(canvas: SkCanvas, frame: Frame, rect: Rect): void {
  */
 export function drawLoopFlash(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, kit, colors, fx } = frame;
-  const flash = fxEntry(fx, 'loop', TURN_ENTITY);
-  if (!isPlaying(flash)) return;
+  const flash = playingEntry(fx, 'loop', TURN_ENTITY);
+  if (flash === undefined) return;
   setPaintColor(kit.stroke, colors.color.glow, flash.values[0] ?? 0);
   for (let cell = 0; cell < view.cols * view.rows; cell += 1) {
     const isLoop = fxEntry(fx, 'spent', cellEntity(cell)) !== undefined || cell === view.snake[0];

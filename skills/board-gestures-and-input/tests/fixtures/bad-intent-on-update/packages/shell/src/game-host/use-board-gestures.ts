@@ -43,6 +43,12 @@ export type BoardGestureHandlers = {
    * drops its tap-then-tap selection. Never an intent: nothing is sent to the run.
    */
   readonly onMiss?: () => void;
+  /**
+   * A drag (panMode 'drag') started: sent once, before its hover changes and its drag-end. The
+   * host starts its trace of the hovered targets there (the drag's path, InputIntent drag-end
+   * `path`); the gesture layer itself never sends a path.
+   */
+  readonly onDragStart?: () => void;
 };
 
 export type BoardGestures = {
@@ -82,7 +88,7 @@ function makeLongPress({ layout, handlers }: Wiring): LongPressGesture {
 }
 
 function makePan({ layout, pointer, handlers }: Wiring): PanGesture {
-  const { onIntent, onHover, panMode } = handlers;
+  const { onIntent, onHover, onDragStart, panMode } = handlers;
   const dragLiftPt = handlers.dragLiftPt ?? 0;
   return Gesture.Pan()
     .withTestId('board.pan')
@@ -95,6 +101,7 @@ function makePan({ layout, pointer, handlers }: Wiring): PanGesture {
       const aim = liftedPoint(event, dragLiftPt);
       const hover = dragAim(layout.get(), event, { from: dragFrom, liftPt: dragLiftPt });
       pointer.set({ isDown: true, x: aim.x, y: aim.y, hover, dragFrom });
+      if (panMode === 'drag' && onDragStart !== undefined) scheduleOnRN(onDragStart);
     })
     .onUpdate((event) => {
       const previous = pointer.get();

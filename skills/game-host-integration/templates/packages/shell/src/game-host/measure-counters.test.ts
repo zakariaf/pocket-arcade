@@ -5,6 +5,7 @@ import { COUNTER_RULES, COUNTER_START } from '@e07/shell/testing/counter-game.ts
 import { measureCounters, noCounters } from './measure-counters.ts';
 
 import type { CounterSpec } from '@e07/game-kit/contract/stats.ts';
+import type { Counter } from '@e07/shell/testing/counter-game.ts';
 
 const COUNTERS: readonly CounterSpec<string>[] = [
   {
@@ -46,6 +47,55 @@ describe('measureCounters', () => {
     expect(measureCounters(COUNTER_RULES, rescued, COUNTERS)['rescues']).toStrictEqual({
       value: 1,
       aggregate: 'max',
+    });
+  });
+
+  // Spec S10: undone moves never count; a continue that takes the losing move back undoes it.
+  it('drops the counts of the move a take-back continue undid, sums and maxima alike', () => {
+    // One 'added' event per unit of the move, so a move's size shows in a max counter.
+    const rules = {
+      ...COUNTER_RULES,
+      applyMove: (state: Counter, move: number) => ({
+        state: { n: state.n + move },
+        events: Array.from({ length: Math.abs(move) }, () => 'added'),
+      }),
+      continueRun: { ...COUNTER_RULES.continueRun, isTakeBack: true },
+    } as const;
+    const session = {
+      seed: 2,
+      difficulty: 0,
+      log: [
+        { kind: 'move', move: 1 },
+        { kind: 'move', move: -5 },
+        { kind: 'continue' },
+        { kind: 'move', move: 2 },
+      ],
+    } as const;
+    const counters: readonly CounterSpec<string>[] = [
+      ...COUNTERS,
+      {
+        id: 'largest-step',
+        labelId: 'test.stats.largest-step',
+        aggregate: 'max',
+        measure: (events) => events.filter((event) => event === 'added').length,
+      },
+    ];
+    expect(measureCounters(rules, session, counters)).toStrictEqual({
+      moves: { value: 4, aggregate: 'sum' },
+      rescues: { value: 1, aggregate: 'max' },
+      'largest-step': { value: 2, aggregate: 'max' },
+    });
+  });
+
+  it('keeps every move a continue without a take-back leaves standing', () => {
+    const session = {
+      seed: 2,
+      difficulty: 0,
+      log: [{ kind: 'move', move: -5 }, { kind: 'continue' }],
+    } as const;
+    expect(measureCounters(COUNTER_RULES, session, COUNTERS)['moves']).toStrictEqual({
+      value: 2,
+      aggregate: 'sum',
     });
   });
 

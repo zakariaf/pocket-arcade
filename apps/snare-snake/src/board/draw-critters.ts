@@ -2,10 +2,10 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import { isPlaying, rectAt, rectBetween } from './board-geometry.ts';
+import { rectAt, rectBetween } from './board-geometry.ts';
 import { BURST_MS, critterEntity } from './board-ids.ts';
 
 import type { BoardToken } from './board-palettes.ts';
@@ -86,8 +86,8 @@ export function drawCaughtCritters(canvas: SkCanvas, frame: Frame): void {
 export function drawBursts(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, fx, kit, colors } = frame;
   for (let id = 0; id < view.total; id += 1) {
-    const burst = fxEntry(fx, 'burst', critterEntity(id));
-    const rect = isPlaying(burst) ? rectAt(layout, view.cols, burst.values[0] ?? 0) : null;
+    const burst = playingEntry(fx, 'burst', critterEntity(id));
+    const rect = burst === undefined ? null : rectAt(layout, view.cols, burst.values[0] ?? 0);
     if (rect === null || burst === undefined) continue;
     const spec = {
       seed: id + 1,

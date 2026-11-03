@@ -3,12 +3,11 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingAt, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { kindAt } from './board-ids.ts';
-import { isPlaying } from './draw-parts.ts';
 import { lanePoint } from './layout-board.ts';
 
 import type { MonsterKindName } from './board-ids.ts';
@@ -99,8 +98,8 @@ export function drawMonsters(canvas: SkCanvas, frame: Frame): void {
     const body = bodyAt(frame, { lane: monster.lane, row, size });
     if (body === null || size <= 0) continue;
     drawBody(canvas, frame, { kind: monster.kind, body, alpha: 1 });
-    const flash = fxEntry(fx, 'flash', monster.id);
-    if (isPlaying(flash)) {
+    const flash = playingEntry(fx, 'flash', monster.id);
+    if (flash !== undefined) {
       setPaintColor(kit.fill, frame.colors.color.beam, flash.values[0] ?? 0);
       canvas.drawCircle(body.cx, body.cy, body.height / 2, kit.fill);
     }
@@ -128,8 +127,8 @@ export function drawVanishing(canvas: SkCanvas, frame: Frame): void {
 export function drawBursts(canvas: SkCanvas, frame: Frame): void {
   const { kit, colors, fx } = frame;
   for (const key of Object.keys(fx.entries)) {
-    const burst = fx.entries[key];
-    if (!key.startsWith('burst:') || !isPlaying(burst)) continue;
+    const burst = playingAt(fx, key);
+    if (!key.startsWith('burst:') || burst === undefined) continue;
     const [lane = 0, row = 0] = burst.values;
     const body = bodyAt(frame, { lane, row, size: 1 });
     if (body === null) continue;

@@ -49,5 +49,7 @@ export const SCRAP_SHOVE_RULES: GameRules<ScrapShoveState, ScrapShoveMove, Scrap
     kind: 'once',
     descriptionId: 'scrap-shove.continue.step-back',
     apply: continueRun,
+    // The floor stands as before the losing move, so its counts go too (spec S10).
+    isTakeBack: true,
   },
 };

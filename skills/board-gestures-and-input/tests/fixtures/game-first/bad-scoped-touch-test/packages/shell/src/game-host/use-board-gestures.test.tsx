@@ -79,6 +79,49 @@ describe('useBoardGestures', () => {
     });
   });
 
+  it('reports each drag start once, before its hover changes and its intent', async () => {
+    const calls: string[] = [];
+    await render(
+      <BoardGestureProbe
+        layout={LAYOUT}
+        panMode="drag"
+        onIntent={(intent) => calls.push(intent.kind)}
+        onHover={() => calls.push('hover')}
+        onDragStart={() => calls.push('drag-start')}
+      />,
+    );
+    await act(() => {
+      fireGestureHandler(getByGestureTestId('board.pan'), pan(100, 150));
+    });
+    await act(() => {
+      fireGestureHandler(getByGestureTestId('board.pan'), pan(100, 150));
+    });
+    expect(calls).toStrictEqual([
+      'drag-start',
+      'hover',
+      'drag-end',
+      'drag-start',
+      'hover',
+      'drag-end',
+    ]);
+  });
+
+  it('reports no drag start for a swipe', async () => {
+    const onDragStart = jest.fn();
+    await render(
+      <BoardGestureProbe
+        layout={LAYOUT}
+        panMode="swipe"
+        onIntent={jest.fn()}
+        onDragStart={onDragStart}
+      />,
+    );
+    await act(() => {
+      fireGestureHandler(getByGestureTestId('board.pan'), pan(0, 120));
+    });
+    expect(onDragStart).not.toHaveBeenCalled();
+  });
+
   it('turns a swipe into ONE physical direction', async () => {
     const onIntent = jest.fn();
     await render(<BoardGestureProbe layout={LAYOUT} panMode="swipe" onIntent={onIntent} />);
