@@ -4752,7 +4752,7 @@
         ]
       },
       "references/assembling-a-game.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-11-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4764,7 +4764,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -5699,7 +5699,7 @@
         ]
       },
       "references/testing-rules.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-11-03",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5711,7 +5711,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
