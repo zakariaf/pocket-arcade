@@ -34,6 +34,11 @@ const SINGLE: readonly SwapGuardEvent[] = [
   { kind: 'enemies-defeated', enemyIds: [2], cells: [13] },
 ];
 
+/** The continue's own event: the guard swapped back, two knocked-out enemies standing again. */
+const SWAP_BACK: readonly SwapGuardEvent[] = [
+  { kind: 'swap-reversed', from: 6, to: 0, enemyId: 1, restoredIds: [0, 1] },
+];
+
 /** Measures each move of the tutorial's kept line and folds it as the Shell does (sum or max). */
 function countersOfTutorial(): Record<string, number> {
   const { start, steps } = SWAP_GUARD_TEACHING.tutorial;
@@ -86,6 +91,12 @@ describe('SWAP_GUARD_STATS', () => {
       'swaps-made': 4,
       'double-hits': 1,
     });
+  });
+
+  // Spec 8.10 and S10: the continue is a take-back (isTakeBack), so the Shell's run end drops the
+  // swap it undid; its own event must count nothing, or that swap would be taken back twice.
+  it("measures the continue's swap back as nothing", () => {
+    expect(SWAP_GUARD_STATS.counters.map((c) => c.measure(SWAP_BACK))).toStrictEqual([0, 0, 0]);
   });
 
   it('gives the same counters when the kept line is replayed', () => {
