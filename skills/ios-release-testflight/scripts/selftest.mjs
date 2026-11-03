@@ -7,7 +7,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node
 import { dirname, join } from 'node:path';
 
 import { makeTempDir, removeTempDir, runSelftest } from './check-lib.mjs';
-import { ownerPlaceholderProblem, ownerStepsPendingLine, PLACEHOLDERS } from './lib/ship-placeholders.mjs';
+import { GOOGLE_SAMPLE_APP_IDS, notRealAdIdOf, ownerPlaceholderProblem, ownerStepsPendingLine, PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
 // The ship gates refuse these scaffold placeholders by name, each with the owner step that replaces it
 // (owner decision O4, lead decision L14): the pinned list, and the one OWNER STEPS PENDING line.
@@ -21,8 +21,18 @@ const PINNED = [
   { field: 'links.supportEmail', value: 'support@example.com', name: 'the placeholder support address', ownerStep: 'G3', step: "the owner's support address (owner step G3)" },
 ];
 const pendingLine = ownerStepsPendingLine(PLACEHOLDERS.filter((entry) => entry.ownerStep !== null).map((entry) => ownerPlaceholderProblem({ entry, file: 'game.config.ts' })));
-if (JSON.stringify(PLACEHOLDERS) !== JSON.stringify(PINNED) || pendingLine !== 'OWNER STEPS PENDING: G3, G5') {
-  console.log('FAIL scripts/lib/ship-placeholders.mjs [placeholders-pin] PLACEHOLDERS or the OWNER STEPS PENDING line is not the pinned one Fix: Restore the list in _library/shared/scripts/lib/ship-placeholders.mjs (a change needs the owner) and sync.');
+// Not a real AdMob id: a placeholder or any of Google's sample (test) ids, with the platform's owner step.
+const NOT_REAL_PIN = [
+  [notRealAdIdOf('ca-app-pub-3940256099942544/2934735716', 'ios')?.ownerStep, 'G5'],
+  [notRealAdIdOf('ca-app-pub-3940256099942544~3347511713', 'android')?.ownerStep, 'GP5'],
+  [notRealAdIdOf('ca-app-pub-1234567890123456/1111111111', 'android')?.ownerStep, 'GP5'],
+  [notRealAdIdOf('ca-app-pub-7310520968431056/4417703951', 'ios'), null],
+  [GOOGLE_SAMPLE_APP_IDS.ios, 'ca-app-pub-3940256099942544~1458002511'],
+  [GOOGLE_SAMPLE_APP_IDS.android, 'ca-app-pub-3940256099942544~3347511713'],
+];
+const isNotRealPinned = NOT_REAL_PIN.every(([got, want]) => got === want);
+if (JSON.stringify(PLACEHOLDERS) !== JSON.stringify(PINNED) || pendingLine !== 'OWNER STEPS PENDING: G3, G5' || !isNotRealPinned) {
+  console.log('FAIL scripts/lib/ship-placeholders.mjs [placeholders-pin] PLACEHOLDERS, notRealAdIdOf (Google\'s sample ids: G5 iOS, GP5 Android), GOOGLE_SAMPLE_APP_IDS or the OWNER STEPS PENDING line is not the pinned one Fix: Restore the list in _library/shared/scripts/lib/ship-placeholders.mjs (a change needs the owner) and sync.');
   console.log('RESULT: FAIL (1 problems)');
   process.exit(1);
 }
