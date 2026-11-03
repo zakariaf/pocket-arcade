@@ -16,13 +16,12 @@ import {
   drawPiece,
   peekTop,
 } from './draw-parts.ts';
+import { boardRect, drawSquares } from './draw-squares.ts';
 import { PEEK_CELLS } from './layout-board.ts';
 
-import type { BoardToken } from './board-palettes.ts';
 import type { Frame, Point } from './draw-parts.ts';
 import type { EnemyView, TargetView } from './to-view.ts';
-import type { GridRegion, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { Square } from '@e07/jump-chain/rules/jump-chain-types.ts';
+import type { GridRegion } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
 const DOT_RADIUS = 0.12;
@@ -31,51 +30,10 @@ const CAPTURE_RADIUS = 0.44;
 const HINT_RADIUS = 0.46;
 const GHOST_ALPHA = 0.55;
 const BADGE_RADIUS = 0.24;
-const EDGE_WIDTH = 0.04;
 const GLOW_ALPHA = 0.5;
 const BURST_COUNT = 10;
 /** An enemy further up than this (sliding in from a waiting rank) is hidden under the cover. */
 const HIDDEN_ROW = -2;
-
-/** The board's rectangle (rows 0 to the last), mirrored like its squares. */
-function boardRect(frame: Frame, region: GridRegion): Rect {
-  const width = region.cell * frame.view.cols;
-  const x = frame.layout.isMirrored ? frame.layout.width - region.x - width : region.x;
-  return { x, y: region.y, width, height: region.cell * frame.view.rows };
-}
-
-/** A square's rectangle; the waiting row (-1) shows only its lower half, the peek band. */
-function squareRect(frame: Frame, region: GridRegion, square: Square): Rect {
-  const { cell } = region;
-  const x = region.x + square.col * cell;
-  const isPeek = square.row < 0;
-  return {
-    x: frame.layout.isMirrored ? frame.layout.width - x - cell : x,
-    y: isPeek ? region.y - cell * PEEK_CELLS : region.y + square.row * cell,
-    width: cell,
-    height: isPeek ? cell * PEEK_CELLS : cell,
-  };
-}
-
-/** Pieces stand on the dark squares; your side's row is tinted, so the line to defend shows. */
-function squareToken(frame: Frame, square: Square): BoardToken {
-  if (((square.col + square.row) & 1) !== 0) return 'light';
-  return square.row === frame.view.rows - 1 ? 'side' : 'dark';
-}
-
-/** The checkerboard, the waiting row's lower half above it, and an ink edge round the board. */
-function drawSquares(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
-  const { kit, colors, view } = frame;
-  for (let row = -1; row < view.rows; row += 1) {
-    for (let col = 0; col < view.cols; col += 1) {
-      kit.fill.setColor(colors.color[squareToken(frame, { col, row })]);
-      canvas.drawRect(squareRect(frame, region, { col, row }), kit.fill);
-    }
-  }
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setStrokeWidth(Math.max(1, region.cell * EDGE_WIDTH));
-  canvas.drawRect(boardRect(frame, region), kit.stroke);
-}
 
 /** A dot on every square a move ends on: where the piece can go. */
 function drawTargets(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
