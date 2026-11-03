@@ -303,11 +303,39 @@ export function inkBox(img, rect, scale, padPt, distance) {
 const colourGap = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
 
 /**
+ * The most frequent colour (count >= 3) that is neither the mode nor a blend of the background and the
+ * mode: off the line from the background to the mode by more than inkBoxByColour's residual, so the
+ * anti-aliased edge between paper and window never stands in for the glyphs. Null when none is.
+ */
+function secondInkColour(counts, bg, mode) {
+  const d = [mode[0] - bg[0], mode[1] - bg[1], mode[2] - bg[2]];
+  const dd = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+  const maxResidual = Math.max(40, 0.3 * Math.sqrt(dd));
+  let best = null;
+  let bestCount = 2;
+  for (const [key, count] of counts) {
+    if (count <= bestCount) continue;
+    const c = [(key >> 16) & 255, (key >> 8) & 255, key & 255];
+    if (colourGap(c, mode) <= 24) continue;
+    const v = [c[0] - bg[0], c[1] - bg[1], c[2] - bg[2]];
+    const t = dd === 0 ? 0 : (v[0] * d[0] + v[1] * d[1] + v[2] * d[2]) / dd;
+    if (Math.hypot(v[0] - t * d[0], v[1] - t * d[1], v[2] - t * d[2]) <= maxResidual) continue;
+    best = c;
+    bestCount = count;
+  }
+  return best;
+}
+
+/**
  * Candidate text colours of a run in the design image: the owner's computed CSS colour (the layout
  * records colour per element, not per run) when solid pixels of it are inside the run's box, and the
  * most frequent colour among the pixels far from the run's background (at 3x every glyph stroke has
  * solid interior pixels). The gate keeps the candidate that leaves the most glyph ink: a sticker's
  * paper or a badge's border outnumbers the glyphs but touches the window edge and is dropped.
+ * When no CSS colour speaks for the glyphs (a run of no mapped element, or one a scrim dims), the
+ * most frequent colour may be that paper, and the glyphs' own colour joins as a third candidate
+ * (secondInkColour): Scrap Shove's tagline sticker under the S14 scrim measured its paper's islands
+ * inside the letters, and where the app's window ring fell on the paper it found no ink at all.
  * Returns [] for a run with no solid ink.
  */
 export function runTextColours(img, rect, scale, padPt, distance, cssColour = null) {
@@ -344,7 +372,10 @@ export function runTextColours(img, rect, scale, padPt, distance, cssColour = nu
   }
   if (best !== null && bestCount >= 3) {
     const mode = [(best >> 16) & 255, (best >> 8) & 255, best & 255];
+    const hasCss = candidates.length > 0;
     if (!candidates.some((c) => colourGap(c, mode) <= 24)) candidates.push(mode);
+    const second = hasCss ? null : secondInkColour(counts, bg, mode);
+    if (second) candidates.push(second);
   }
   return candidates;
 }

@@ -14,7 +14,9 @@
 //                     real S11 and S4 Premium captures for the text-ink gate: a pushed-in segment's
 //                     corner, a half-point scroll with Rubik 14 inside its role limit (and 1 px past
 //                     it), a tilted sticker moved 2 px (its text moved 4 pt fails), a label in the wrong colour, and the border
-//                     gate skipping the side a group tab draws without a border (a real side still fails)
+//                     gate skipping the side a group tab draws without a border (a real side still fails);
+//                     a real Scrap Shove S14 capture whose tagline sticker sits under the scrim (its
+//                     glyphs measured in their own colour, not the paper's; painted over they fail)
 //   make-sheet        sheets for a failing run and for a scrolled tall capture (a real S11 capture
 //                     at scroll 1170 whose bounds failure is cropped from the window it shows);
 //                     stale report, a report without viewRect, wrong device, missing reference
