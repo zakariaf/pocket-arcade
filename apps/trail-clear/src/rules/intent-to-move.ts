@@ -45,10 +45,14 @@ function candidate(state: TrailClearState, intent: InputIntent): TrailClearMove 
   }
 }
 
+/** True when two moves place the same turn on the same cell (place-tile is the only kind). */
+function isSameMove(a: TrailClearMove, b: TrailClearMove): boolean {
+  return a.turns === b.turns && a.col === b.col && a.row === b.row;
+}
+
 /** Pure: an intent becomes a legal move or nothing. Legality lives here, never in gestures. */
 export function intentToMove(state: TrailClearState, intent: InputIntent): TrailClearMove | null {
   const move = candidate(state, intent);
   if (move === null) return null;
-  const wanted = JSON.stringify(move);
-  return listMoves(state).some((listed) => JSON.stringify(listed) === wanted) ? move : null;
+  return listMoves(state).some((listed) => isSameMove(listed, move)) ? move : null;
 }
