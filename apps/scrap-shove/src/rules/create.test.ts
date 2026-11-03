@@ -3,17 +3,37 @@
 // next to the player steps there or shoves its heap, a tap on the player waits (panMode 'none').
 import fc from 'fast-check';
 
+import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
 import { jsonShapeProblems } from '@e07/game-kit/testing/json-shape.ts';
+import {
+  SCRAP_SHOVE_DAILY_DIFFICULTY,
+  SCRAP_SHOVE_DAILY_SALT,
+  SCRAP_SHOVE_LEVELS,
+} from '@e07/scrap-shove/levels/scrap-shove-levels.ts';
 
 import { applyMove } from './apply-move.ts';
 import { boardText } from './board-text.ts';
-import { FALLBACK_SEED, create, createWithin, firstWinnable, startLayout } from './create.ts';
+import {
+  FALLBACK_SEED,
+  create,
+  createBySearch,
+  createWithin,
+  firstWinnable,
+  startLayout,
+} from './create.ts';
 import { distanceBetween, isSameCell, stepToward } from './floor-squares.ts';
 import { outcome } from './outcome.ts';
 import { TUNING, knobsFor } from './scrap-shove-tuning.ts';
 import { solveFloor } from './solve-floor.ts';
 
 import type { Cell, ScrapShoveState } from './scrap-shove-types.ts';
+import type * as SolveFloorRules from './solve-floor.ts';
+
+// A counting wrapper around the real solver: create() must not run it for a shipped level.
+jest.mock('./solve-floor.ts', () => {
+  const actual: typeof SolveFloorRules = jest.requireActual('./solve-floor.ts');
+  return { ...actual, solveFloor: jest.fn(actual.solveFloor) };
+});
 
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
 const difficultyArb = fc.integer({ min: 0, max: 100 });
@@ -112,6 +132,28 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
   it('gives create() the floor createWithin finds with the tuning budget', () => {
     const budget = { attempts: TUNING.createAttempts, maxNodes: TUNING.createMaxNodes };
     expect(create(39, 0)).toStrictEqual(createWithin(39, 0, budget));
+  });
+
+  describe('shipped levels (spec 8.1 and 15.7: proven when their pack was generated)', () => {
+    const solves = jest.mocked(solveFloor);
+
+    it('hands every shipped level the floor its proven search finds, without the solver', () => {
+      solves.mockClear();
+      const floors = SCRAP_SHOVE_LEVELS.table.map((entry) => create(entry.seed, entry.difficulty));
+      expect(solves).not.toHaveBeenCalled();
+      const searched = SCRAP_SHOVE_LEVELS.table.map((entry) =>
+        createBySearch(entry.seed, entry.difficulty),
+      );
+      expect(floors).toStrictEqual(searched);
+    });
+
+    it('keeps running the solver for the daily and for any seed no pack ships', () => {
+      const seed = dailySeed('2026-11-03', SCRAP_SHOVE_DAILY_SALT);
+      solves.mockClear();
+      const daily = create(seed, SCRAP_SHOVE_DAILY_DIFFICULTY);
+      expect(solves).toHaveBeenCalled();
+      expect(daily).toStrictEqual(createBySearch(seed, SCRAP_SHOVE_DAILY_DIFFICULTY));
+    });
   });
 
   it('clamps difficulties outside 0..100', () => {

@@ -2,7 +2,7 @@
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 import { playBot, randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { applyMove } from '@e07/scrap-shove/rules/apply-move.ts';
-import { create } from '@e07/scrap-shove/rules/create.ts';
+import { createBySearch } from '@e07/scrap-shove/rules/create.ts';
 import { listMoves } from '@e07/scrap-shove/rules/list-moves.ts';
 import { outcome } from '@e07/scrap-shove/rules/outcome.ts';
 
@@ -62,7 +62,8 @@ export const SCRAP_SHOVE_LEVEL_PLAN: LevelPlan<ScrapShoveState, ScrapShoveMove> 
   ],
   levelsPerPack: LEVELS_PER_PACK,
   difficultyFor,
-  create,
+  // The search itself, not create(): create() reads the shipped tries these packs record.
+  create: createBySearch,
   solver: SCRAP_SHOVE_SOLVER,
   maxNodes: 60_000,
   maxTries: 50,
