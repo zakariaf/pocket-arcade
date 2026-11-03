@@ -1,0 +1,2 @@
+apps/demo/src/rules/list-moves.ts:11:ArithmeticOperator:anchor.col - dx
+apps/demo/src/rules/list-moves.ts:99:ArithmeticOperator:anchor.col + dx

@@ -1,2 +1,3 @@
-[allow-unknown] --allow 999 matches no mutant in the report
-(accepted as equivalent with --allow)
+[allow-unknown] --allow apps/demo/src/rules/list-moves.ts:99:ArithmeticOperator:anchor.col + dx matches no mutant in the report
+(accepted as equivalent: apps/demo/src/rules/list-moves.ts:11:ArithmeticOperator:anchor.col - dx)
+1 problems
