@@ -1,0 +1,6 @@
+#!/bin/sh
+# A stand-in for tools/maestro/bin/maestro: check-syntax rejects 01-first-launch.yaml only.
+case "$2" in
+  *01-first-launch.yaml) echo "Unknown command: tapOnn" >&2; exit 1 ;;
+esac
+exit 0

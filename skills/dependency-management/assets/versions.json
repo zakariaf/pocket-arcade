@@ -2,16 +2,16 @@
   "$comment": "The verified Pocket Arcade dependency set. Read by check-deps-policy.mjs and plan-dependency.mjs. heldBack.allowed is a regex on the bare version (without ~ or ^). appOnly: an app dependency that is not a Shell peer. implicitUse: an app-wide package that another package loads, so no code of ours imports it (the unused-dependency rule skips it). companions: packages that must be pinned together with the row, because the row lets them float (a caret dependency or an auto-installed peer): via install = install them in the same command, at the same exact version; via overrides = a root overrides entry at that version. Every app-wide row that the Shell lists as a \"*\" peer also gets a root overrides entry at its version (rule 4). Change a row only in the same commit that changes the repo, after the procedure in references/procedures.md.",
   "sdk": 57,
   "verified": "2026-09-26",
-  "expo": "57.0.30",
+  "expo": "57.0.31",
   "reactNative": "0.86.3",
   "react": "19.2.3",
   "packages": {
     "expo": {
-      "version": "57.0.30",
-      "spec": "~57.0.30",
+      "version": "57.0.31",
+      "spec": "~57.0.31",
       "install": "expo",
       "where": "apps",
-      "why": "SDK 57 line; 57.0.30 (published 2026-10-15) is the newest patch at least 7 days old on 2026-10-24 and its module map carries expo-sqlite ~57.0.4, expo-constants ~57.0.22, expo-splash-screen ~57.0.10 and expo-network ~57.0.2; 57.0.31 (with expo-network ~57.0.3, both published 2026-10-21) is younger (due 2026-10-29), next is 58.0.0 (not latest, so no SDK move is due)",
+      "why": "SDK 57 line; 57.0.31 (published 2026-10-21, due 2026-10-29, moved 2026-10-31) is the newest sdk-57 patch; its module map carries expo-sqlite ~57.0.4, expo-constants ~57.0.22, expo-splash-screen ~57.0.10 and expo-network ~57.0.3, and it pulls @expo/cli ^57.0.32, @expo/config-plugins ~57.0.11 and expo-modules-core ~57.0.24 (all 2026-10-21); npm latest is 58.0.21 (2026-10-28), and check-sdk-trigger.mjs on 2026-10-31 says no SDK move is due before 2026-11-04",
       "native": true
     },
     "react-native": {
@@ -146,8 +146,8 @@
       "native": true
     },
     "expo-network": {
-      "version": "57.0.2",
-      "spec": "~57.0.2",
+      "version": "57.0.3",
+      "spec": "~57.0.3",
       "install": "expo",
       "where": "apps",
       "why": "ConnectivityPort; no HTTP probe",
@@ -321,11 +321,11 @@
       "why": "Expo related ~29.7.0; Jest 30 is not supported by jest-expo 57"
     },
     "jest-expo": {
-      "version": "57.0.5",
-      "spec": "57.0.5",
+      "version": "57.0.6",
+      "spec": "57.0.6",
       "install": "npm",
       "where": "root",
-      "why": "SDK 57 preset (in the Expo map, installed with npm at the root)",
+      "why": "SDK 57 preset (in the Expo map, installed with npm at the root); the map of expo 57.0.30 and 57.0.31 asks ~57.0.6 (published 2026-10-12), moved with expo 57.0.31 on 2026-10-31",
       "companions": [
         {
           "package": "@react-native/jest-preset",

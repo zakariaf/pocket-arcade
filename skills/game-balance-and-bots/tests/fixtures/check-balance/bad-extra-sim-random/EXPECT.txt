@@ -1,0 +1,3 @@
+[sim-determinism]
+test/sims/line-siege/daily-boards.sim.test.ts:7
+Math.random()

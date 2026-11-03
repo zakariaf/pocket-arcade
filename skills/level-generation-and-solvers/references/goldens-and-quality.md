@@ -57,7 +57,7 @@ The snapshot is written next to the test as `<test file>.snap.ios` (jest-expo's 
 ## The daily challenge contract
 
 - Every phone, every app version, same date: same daily level (spec 8.3). So the pieces that decide it never change for a shipped game: `dailySeed` (goldens `2026-09-26`/salt 17 = `2599028541`, `2026-09-27`/salt 17 = `2582250922`), the game's salt, the daily difficulty, and what `create` makes of that seed and difficulty.
-- The daily goldens for existing dates never change. If a rules change would change them, stop and ask the owner; the usual answer is to keep the old generation path for the daily difficulty.
+- The daily goldens for existing dates never change once the game has a release tag (`<game-id>/v*`). Before the first release tag no player has a daily, so a daily may change only in a commit whose `Gate-Change:` trailer names the daily. If a rules change would change a released game's dailies, stop and ask the owner; the usual answer is to keep the old generation path for the daily difficulty.
 - Test the daily with `dailyStart(levels, date)` (seed and difficulty) and pin the boards in the golden file; `check-levels.mjs` requires at least three pinned dates for a game whose daily mode is on and runs the real `dailySeed` against its goldens.
 
 ## The levels contract test

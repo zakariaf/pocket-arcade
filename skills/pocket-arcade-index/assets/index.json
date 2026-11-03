@@ -1111,7 +1111,8 @@
               "packages/shell/src/app/connect-audio-settings*",
               "packages/shell/src/app/create-shell-haptics*",
               "packages/shell/src/app/localized-root*",
-              "packages/shell/src/config/external-links*"
+              "packages/shell/src/config/external-links*",
+              "packages/shell/src/game-host/use-hints-during-play*"
             ]
           },
           {
@@ -1570,8 +1571,7 @@
               {
                 "skill": "settings-and-preferences",
                 "paths": [
-                  "packages/shell/src/screens/settings/*",
-                  "packages/shell/src/game-host/use-hints-during-play*"
+                  "packages/shell/src/screens/settings/*"
                 ]
               },
               {

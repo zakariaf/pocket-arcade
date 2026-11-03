@@ -146,6 +146,8 @@ Most events carry no tag. One event may carry both.
 
 It lives under the root `test/` folder because it writes files with Node APIs (only the root `tsconfig.json` and tooling have Node types). Run it with `npm run test:sim` (all games) or `npx jest test/sims/<game-id> --ci --config jest.sim.config.js` (one game; paths first in every jest command). Keep one sim file under about 60 s. If a game needs more, first run the lookahead in fewer cells or with a smaller beam; the report is one file per game, so do not split a game's grid over two sim files.
 
+Another slow test of the game may sit beside it in `test/sims/<game-id>/`, for example a proof sweep that every daily board of two years is winnable (`daily-boards.sim.test.ts`): it runs with `npm run test:sim`, not on every commit. It plays no bots and writes no report, so `check-balance.mjs` holds it only to the determinism rules (`sim-determinism`); the game still needs its `balance.sim.test.ts` (`sim-missing`), and that file alone must play the harness, write the report and assert the bands (`sim-harness`). It counts in the report's fingerprint like every sim file, so run `npm run test:sim` after adding or changing it.
+
 ## Real-time and simulate-then-replay games
 
 - **Simulate-then-replay** (Bank Shot volleys, Toggle Drop, Poker Drop cascades): the continuous phase runs inside `applyMove`, so these games are turn-based for bots. Use the standard sim unchanged; a shot is one move.

@@ -1,0 +1,2 @@
+# equivalent: the column offset is symmetric on this board (evidence report, 2026-10-31)
+apps/demo/src/rules/list-moves.ts:11:ArithmeticOperator:anchor.col - dx

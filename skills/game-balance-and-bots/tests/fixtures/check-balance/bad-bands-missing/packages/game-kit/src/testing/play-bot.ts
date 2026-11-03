@@ -38,10 +38,18 @@ export function randomPolicy<TState, TMove>(): BotPolicy<TState, TMove> {
   };
 }
 
-/** Plays one game headless. Same seed + same policy = same game, on every machine. */
-export function playBot<TState, TMove, TEvent>(
+/** One move of a bot game and the state it was made from. */
+export type BotStep<TState, TMove> = { readonly state: TState; readonly move: TMove };
+
+/**
+ * The one bot loop: the bot's own RNG seeded from the game's seed (seedRng(seed ^ 0x5bd1e995)),
+ * a move per turn until the game ends, no move is legal or the cap is reached. `onStep` sees each
+ * state with the move made from it (playBotLine); it never changes the game.
+ */
+function runBot<TState, TMove, TEvent>(
   game: BotGame<TState, TMove, TEvent>,
   options: BotOptions<TState, TMove>,
+  onStep: (step: BotStep<TState, TMove>) => void,
 ): BotRun {
   let state = game.create(options.seed, options.difficulty);
   let rng = seedRng(options.seed ^ 0x5bd1e995);
@@ -51,7 +59,32 @@ export function playBot<TState, TMove, TEvent>(
     if (outcome.kind !== 'playing' || moves.length === 0) return { outcome, moves: played };
     const choice = options.policy(state, moves, rng);
     rng = choice.rng;
+    onStep({ state, move: choice.move });
     state = game.applyMove(state, choice.move).state;
   }
   return { outcome: game.outcome(state), moves: options.maxMoves };
+}
+
+/** Plays one game headless. Same seed + same policy = same game, on every machine. */
+export function playBot<TState, TMove, TEvent>(
+  game: BotGame<TState, TMove, TEvent>,
+  options: BotOptions<TState, TMove>,
+): BotRun {
+  return runBot(game, options, () => undefined);
+}
+
+/**
+ * playBot's game with every step it played, in order (the state before each move): tools that
+ * show a bot's line, such as e2e-maestro's print-level-line, read it instead of copying the loop
+ * and its seed rule.
+ */
+export function playBotLine<TState, TMove, TEvent>(
+  game: BotGame<TState, TMove, TEvent>,
+  options: BotOptions<TState, TMove>,
+): BotRun & { readonly line: readonly BotStep<TState, TMove>[] } {
+  const line: BotStep<TState, TMove>[] = [];
+  const run = runBot(game, options, (step) => {
+    line.push(step);
+  });
+  return { ...run, line };
 }

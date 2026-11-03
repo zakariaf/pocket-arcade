@@ -1,0 +1,3 @@
+disabled-test
+pick.test.ts:9
+1 problems

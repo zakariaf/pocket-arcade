@@ -70,9 +70,3 @@ export function sweepCircleSegment(circle: MovingCircle, segment: Segment): Swee
   }
   return best;
 }
-
-/** Overlap test without sqrt: squared distance vs squared radius sum. */
-export function circlesOverlap(a: Vec2, b: Vec2, radiusSum: number): boolean {
-  const d = sub(a, b);
-  return dot(d, d) < radiusSum * radiusSum;
-}
