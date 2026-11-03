@@ -5,7 +5,8 @@
 // Two values are bare, as the design draws them: the win rate is the percentage alone ("62%", from
 // createPercentFormatter, under the label stats.overview.win-rate; never the sentence stats.win-rate,
 // "Win rate 62%"), and a best-of game counter (aggregate 'max') reads as a multiplier ("×6", the
-// Shell text stats.game.best-of-value) once reached, while a running total ('sum'), and a best-of
+// Shell text stats.game.best-of-value) once reached unless the game asks for the plain number
+// (bestOfStyle 'plain': a length, "Longest snake 23"), while a running total ('sum'), and a best-of
 // still at 0, is the plain number. When the Toybox screen templates are in the repo,
 // their stats-cells.ts and stats-snapshot-of.ts do this job; this example shows which summary field
 // feeds which testID and message.
@@ -104,12 +105,14 @@ export type GameCounterMeta = {
   readonly labelId: string;
   /** 'sum' adds every run's value (a running total); 'max' keeps the best run (a best-of). */
   readonly aggregate: 'sum' | 'max';
+  /** How a reached 'max' reads: 'multiplier' (×6, the default) or 'plain' (a length: 23). */
+  readonly bestOfStyle?: 'multiplier' | 'plain';
 };
 
 /**
  * The game's card (3 columns): one cell per counter in game order. A best-of ('max') is a
- * multiplier ("Biggest combo ×6") once reached and the plain 0 before; a running total ('sum') the
- * plain number ("Monsters defeated 42").
+ * multiplier ("Biggest combo ×6") once reached, unless it is a length ('plain': "Longest snake
+ * 23"), and the plain 0 before; a running total ('sum') the plain number ("Monsters defeated 42").
  */
 export function gameCells(
   view: StatsSummary,
@@ -117,11 +120,12 @@ export function gameCells(
 ): readonly SummaryCell[] {
   return counters.map((counter) => {
     const value = view.counters.find((each) => each.id === counter.id)?.value ?? 0;
+    const isMultiplier =
+      counter.aggregate === 'max' && counter.bestOfStyle !== 'plain' && value > 0;
     return {
       testID: `stats.game-card.${counter.id}`,
       labelKey: counter.labelId,
-      value:
-        counter.aggregate === 'max' && value > 0 ? { kind: 'multiplier', value } : count(value),
+      value: isMultiplier ? { kind: 'multiplier', value } : count(value),
     };
   });
 }

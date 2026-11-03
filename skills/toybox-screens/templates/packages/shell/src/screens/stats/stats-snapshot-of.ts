@@ -2,8 +2,9 @@
 // Pure: daily-and-statistics' StatsSummary as the numbers S10 draws. The game's counters keep the
 // game's order and labels (useGameHost().counters: save key and catalog key); the best level score
 // stays null until a level is won, so its row is left out (never "Level 0: 0"). A best-of counter
-// reads as its catalog multiplier (stats.game.best-of-value, the design's ×6), and as the plain 0
-// until it is reached (never "×0").
+// reads as its catalog multiplier (stats.game.best-of-value, the design's ×6) unless it asks for
+// the plain number (bestOfStyle 'plain': a length, the design's Longest snake 23), and as the
+// plain 0 until it is reached (never "×0").
 import type { GameStat, StatsSnapshot, StatsWeekDay } from './stats-model.ts';
 import type { StatsSummary } from './stats-summary.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
@@ -26,10 +27,12 @@ function gameStatsOf(
 ): GameStat[] {
   return counters.map((counter) => {
     const value = summary.counters.find((entry) => entry.id === counter.id)?.value ?? 0;
-    // A reached best-of counter reads as a multiplier (the design's ×6); a running total, and a
-    // best-of nobody reached yet, as the plain number.
-    const isBestOf = counter.aggregate === 'max' && value > 0;
-    const valueText = isBestOf ? text.bestOfText(value) : text.formatNumber(value);
+    // A reached best-of counter reads as a multiplier (the design's ×6) unless it asks for the
+    // plain number (a length: the design's Longest snake 23); a running total, and a best-of
+    // nobody reached yet, as the plain number.
+    const isMultiplier =
+      counter.aggregate === 'max' && counter.bestOfStyle !== 'plain' && value > 0;
+    const valueText = isMultiplier ? text.bestOfText(value) : text.formatNumber(value);
     return { key: counter.id, label: text.labelOf(counter), valueText };
   });
 }

@@ -10,6 +10,11 @@ export type CounterSpec<TEvent> = {
   readonly id: string;
   readonly labelId: MessageId;
   readonly aggregate: 'sum' | 'max';
+  /**
+   * How S10 writes a reached 'max' counter: 'multiplier' (the default, ×6: a combo, a crash)
+   * or 'plain' (23: a length or a size, such as the longest snake).
+   */
+  readonly bestOfStyle?: 'multiplier' | 'plain';
   readonly measure: (events: readonly TEvent[]) => number;
 };
 

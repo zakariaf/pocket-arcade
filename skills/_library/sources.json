@@ -5043,6 +5043,15 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/game-host-counters.test.ts": {
+        "recorded": "2026-11-03",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/game-host-counters.test.ts",
+            "sha256": "c4c74de0aec80c1338eb44082cd47d0d12805efde15a6283f47eabebbcebc756"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/game-host.test.ts": {
         "recorded": "2026-10-18",
         "sources": [
@@ -5065,7 +5074,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/game-host.ts",
-            "sha256": "1e93ce9952e56cbac0c8dfb080b6e24416f84f9ece223270ba2af5e9023e51c6"
+            "sha256": "b4185b24b73b1a7153709972a1ffb3f6c5986b94d9d1f3fd2d5d391faaa89f30"
           }
         ]
       },
