@@ -120,19 +120,27 @@ const UNNAMED: Shown = {
   scale: 1,
 };
 
-/** A piece gone from the view (smashed, merged away, lost), from its track; null if none. */
-function vanishedAt(frame: Frame, key: string): Shown | null {
+/**
+ * A piece gone from the view (smashed, merged away, lost), from its track; null if none. `inView`
+ * holds the ids of the view's pieces.
+ */
+function vanishedAt(frame: Frame, key: string, inView: ReadonlySet<number>): Shown | null {
   if (!key.startsWith(PIECE_KEY)) return null;
   const id = Number(key.slice(PIECE_KEY.length));
-  if (frame.view.pieces.some((piece) => piece.id === id)) return null;
+  if (inView.has(id)) return null;
   const shown = pieceValues(frame.fx.entries[key]?.values ?? [], UNNAMED);
   return shown.value === VALUE_FROM_VIEW || shown.kind === KIND_FROM_VIEW ? null : shown;
 }
 
-/** Pieces gone from the view: their tracks carry where, which number and how faded. */
-function drawVanished(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
-    const piece = vanishedAt(frame, key);
+/**
+ * Pieces gone from the view: their tracks carry where, which number and how faded. `keys` are the
+ * frame's track keys, listed once per frame by drawBoard.
+ */
+function drawVanished(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  if (keys.length === 0) return;
+  const inView = new Set(frame.view.pieces.map((piece) => piece.id));
+  for (const key of keys) {
+    const piece = vanishedAt(frame, key, inView);
     if (piece !== null) drawPiece(canvas, frame, piece);
   }
 }
@@ -147,11 +155,12 @@ function drawNext(canvas: SkCanvas, frame: Frame): void {
 }
 
 /** Particles where an enemy was smashed (full motion only: reduced motion has no burst track). */
-function drawBursts(canvas: SkCanvas, frame: Frame): void {
+function drawBursts(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
   const { kit, colors, fx } = frame;
-  for (const key of Object.keys(fx.entries)) {
+  for (const key of keys) {
+    if (!key.startsWith(BURST_KEY)) continue;
     const burst = playingAt(fx, key);
-    if (!key.startsWith(BURST_KEY) || burst === undefined) continue;
+    if (burst === undefined) continue;
     const [col = 0, row = 0] = burst.values;
     const cell = cellRect(frame.layout, { regionId: 'board', col, row });
     if (cell === null) continue;
@@ -187,14 +196,18 @@ function drawHinted(canvas: SkCanvas, frame: Frame): void {
   }
 }
 
-/** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */
+/**
+ * Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. The layers
+ * that walk a channel's keys share one list of the frame's keys.
+ */
 export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   canvas.drawColor(frame.colors.color.background);
+  const keys = Object.keys(frame.fx.entries);
   drawGround(canvas, frame);
-  drawVanished(canvas, frame);
+  drawVanished(canvas, frame, keys);
   for (const piece of frame.view.pieces)
     drawPiece(canvas, frame, shownOf(piece, fxEntry(frame.fx, 'piece', piece.id)));
   drawNext(canvas, frame);
-  drawBursts(canvas, frame);
+  drawBursts(canvas, frame, keys);
   drawHinted(canvas, frame);
 }
