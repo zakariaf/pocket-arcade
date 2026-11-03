@@ -42,6 +42,8 @@ export const SNARE_SNAKE_STATS: StatsSpec<SnareSnakeEvent> = {
       id: 'longest-snake',
       labelId: 'snare-snake.stats.longest-snake',
       aggregate: 'max',
+      // A length, not a multiplier: S10 writes "23", as the design does (never "×23").
+      bestOfStyle: 'plain',
       measure: longestIn,
     },
   ],

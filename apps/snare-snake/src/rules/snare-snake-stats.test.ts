@@ -51,6 +51,11 @@ describe('SNARE_SNAKE_STATS', () => {
     ]);
   });
 
+  it("asks S10 for the longest snake as a plain length, the design's 23 (never ×23)", () => {
+    const styles = SNARE_SNAKE_STATS.counters.map((counter) => counter.bestOfStyle ?? null);
+    expect(styles).toStrictEqual([null, null, 'plain']);
+  });
+
   it('measures one loop: the critters it snared, one loop, and the snake left after it', () => {
     const measured = SNARE_SNAKE_STATS.counters.map((counter) => counter.measure(LOOP_MOVE));
     expect(measured).toStrictEqual([2, 1, 7]);
