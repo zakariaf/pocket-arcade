@@ -3,8 +3,13 @@ import { solveFloor } from './solve-floor.ts';
 
 import type { ScrapShoveMove, ScrapShoveState } from './scrap-shove-types.ts';
 
-/** Solver nodes a hint may cost on the phone: every shipped floor solves far below it. */
-export const HINT_MAX_NODES = 60_000;
+/**
+ * Positions a hint's search may expand on the phone. Measured in Node over every shipped level and
+ * 30 dailies (6 random walks each, 1,886 positions still in play): every winnable one (1,202) is
+ * solved within 1,507 positions, so no hint is lost at this cap, and a floor far beyond any level
+ * stops here instead of searching up to 60,000 positions.
+ */
+export const HINT_MAX_NODES = 5_000;
 
 /**
  * rules.hints.suggest (spec 8.5: "The game's solver suggests the next good move"): the first move
