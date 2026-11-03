@@ -4964,6 +4964,24 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/create-memo.test.ts": {
+        "recorded": "2026-11-03",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/create-memo.test.ts",
+            "sha256": "763b4ba47195312eee39e96ea15a196e41a6141c6ec6a745001839012c43d488"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/create-memo.ts": {
+        "recorded": "2026-11-03",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/create-memo.ts",
+            "sha256": "b867ab3a903af212c7751ec39a11d99a730e67c57b5214d4226a162c44def614"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/fullscreen-gate.test.ts": {
         "recorded": "2026-10-31",
         "sources": [
@@ -5025,11 +5043,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-11-03",
         "sources": [
           {
             "path": "packages/shell/src/game-host/game-host.ts",
-            "sha256": "6537b063990f9fb3d845b34020b86c08973f17ca7984651c794a314c3dcfa158"
+            "sha256": "1e93ce9952e56cbac0c8dfb080b6e24416f84f9ece223270ba2af5e9023e51c6"
           }
         ]
       },

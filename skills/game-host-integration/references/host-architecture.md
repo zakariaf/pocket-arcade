@@ -65,7 +65,8 @@ This skill's files, each with a test unless marked device-only:
 | File | What it does |
 |---|---|
 | `game-host/shell-game-module.ts` | The Shell binding above |
-| `game-host/game-host.ts` | `createGameHost(game, deps)`: validates the saved run at boot, opens runs, builds controllers, owns the full-screen ad gate, tracks the active run and hands out `debugControls()` |
+| `game-host/game-host.ts` | `createGameHost(game, deps)`: validates the saved run at boot, opens runs, builds controllers, owns the full-screen ad gate, tracks the active run and hands out `debugControls()`; its runs play the module through `withCreateMemo`, the board layer gets the module as passed |
+| `game-host/create-memo.ts` | `withCreateMemo(game)` and `memoizeCreate`: one `create()` per (seed, difficulty) for every run of a host, the 8 most recently asked kept, so the start, the boot check, a resume, a retry and the run end's counters build a board (and prove it winnable) once; safe because `create` is pure and states are never changed in place |
 | `game-host/game-facts.ts` | `musicSoundIdOf(module)` (the id of the one sound in category `music`, or null) and `hasMusicOf(module)` (that id is not null), `isScoreRatedOf(module)` (every level rated by score), `hasHintsOf(module)` (the rules' hint policy is a solver) and `isScoreRule(rule)`: the one rule behind `GameHost.hasMusic`, `GameHost.musicSoundId`, `GameHost.isScoreRated`, the null par and the parity reference variants |
 | `game-host/game-debug-controls.ts` | `createGameDebugControls`: `GameDebugControls` (`playTo`, `openExample`, `applyFixtureHud`, `showFixtureResult`), `EXAMPLE_RUN`, `endStateOf` |
 | `game-host/game-fixture.ts` | Pure: the parity game frames' numbers (`GameFixture`) as a top bar, a `RunSummary` and a view fixture |
