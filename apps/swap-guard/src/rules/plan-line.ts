@@ -4,21 +4,27 @@
 // unproven by the level tables). The simple plan takes any swap that knocks enemies out safely;
 // otherwise it walks over safe empty squares to the square right behind a spear or an archer, whose
 // next two swaps send that enemy into its own strike. planLine shortens that line one swap at a time
-// (a swap, then the simple plan, when that wins sooner). Every step is played through applyMove, so a
-// plan is a real line. It is not always the shortest: the exact par comes from the BFS solver.
-import { applyMove } from './apply-move.ts';
+// (a swap, then the simple plan, when that wins sooner). Every step moves the pieces with applyMove's
+// swapBoard (each position's strikes read once for all its swaps), so a plan is a real line. It is
+// not always the shortest: the exact par comes from the BFS solver.
 import { oppositeOf, squaresAround, stepFrom } from './board-grid.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
 import { strikesOf, struckSquares } from './strikes.ts';
+import { swapBoard } from './swap-board.ts';
 
 import type { SwapGuardMove, SwapGuardState } from './swap-guard-types.ts';
 
+/** The squares the strikes shown on `state` cover: where the next swap's volley lands. */
+function struckOf(state: SwapGuardState): ReadonlySet<number> {
+  return struckSquares(strikesOf(state));
+}
+
 /** The safe swap that knocks out the most enemies (the first in board order on a tie), or null. */
-function knockOutMove(state: SwapGuardState): SwapGuardMove | null {
+function knockOutMove(state: SwapGuardState, struck: ReadonlySet<number>): SwapGuardMove | null {
   let best: { readonly move: SwapGuardMove; readonly count: number } | null = null;
   for (const move of listMoves(state)) {
-    const next = applyMove(state, move).state;
+    const next = swapBoard(state, move.cell, struck);
     const count = state.enemies.length - next.enemies.length;
     const isBetter = !next.isHit && count > 0 && (best === null || count > best.count);
     if (isBetter) best = { move, count };
@@ -30,12 +36,8 @@ function knockOutMove(state: SwapGuardState): SwapGuardMove | null {
 type Reached = { readonly cell: number; readonly firstStep: number };
 
 /** First steps of the shortest walks from the guard over safe empty squares, by target square. */
-function firstSteps(state: SwapGuardState): Map<number, number> {
-  const blocked = new Set([
-    state.guard,
-    ...state.enemies.map((enemy) => enemy.cell),
-    ...struckSquares(strikesOf(state)),
-  ]);
+function firstSteps(state: SwapGuardState, struck: ReadonlySet<number>): Map<number, number> {
+  const blocked = new Set([state.guard, ...state.enemies.map((enemy) => enemy.cell), ...struck]);
   const first = new Map<number, number>();
   let frontier: Reached[] = squaresAround(state.size, state.guard)
     .filter((cell) => !blocked.has(cell))
@@ -59,7 +61,7 @@ function firstSteps(state: SwapGuardState): Map<number, number> {
  * with it; otherwise the first step of the shortest safe walk to such a square (the first one the
  * walk reaches). Null when no enemy can be approached from behind.
  */
-function approachMove(state: SwapGuardState): SwapGuardMove | null {
+function approachMove(state: SwapGuardState, struck: ReadonlySet<number>): SwapGuardMove | null {
   const approachable = state.enemies.filter((enemy) => enemy.kind !== 'brute');
   for (const enemy of approachable) {
     const behind = stepFrom(state.size, enemy.cell, oppositeOf(enemy.facing));
@@ -68,7 +70,7 @@ function approachMove(state: SwapGuardState): SwapGuardMove | null {
   const behinds = new Set(
     approachable.map((enemy) => stepFrom(state.size, enemy.cell, oppositeOf(enemy.facing))),
   );
-  for (const [cell, firstStep] of firstSteps(state)) {
+  for (const [cell, firstStep] of firstSteps(state, struck)) {
     if (behinds.has(cell)) return { kind: 'swap', cell: firstStep };
   }
   return null;
@@ -79,9 +81,10 @@ export function simpleLine(start: SwapGuardState): SwapGuardMove[] | null {
   let state = start;
   const line: SwapGuardMove[] = [];
   while (outcome(state).kind === 'playing') {
-    const move = knockOutMove(state) ?? approachMove(state);
+    const struck = struckOf(state);
+    const move = knockOutMove(state, struck) ?? approachMove(state, struck);
     if (move === null) return null;
-    state = applyMove(state, move).state;
+    state = swapBoard(state, move.cell, struck);
     line.push(move);
   }
   return outcome(state).kind === 'won' ? line : null;
@@ -94,9 +97,10 @@ export function simpleLine(start: SwapGuardState): SwapGuardMove[] | null {
  */
 function improve(state: SwapGuardState, known: readonly SwapGuardMove[]): readonly SwapGuardMove[] {
   let best = known;
+  const struck = struckOf(state);
   const enemyCells = new Set(state.enemies.map((enemy) => enemy.cell));
   for (const move of listMoves(state).filter((swap) => enemyCells.has(swap.cell))) {
-    const next = applyMove(state, move).state;
+    const next = swapBoard(state, move.cell, struck);
     const limit = Math.min(next.maxSwaps, next.swaps + best.length - 2);
     const rest = simpleLine({ ...next, maxSwaps: limit });
     if (rest !== null && rest.length + 1 < best.length) best = [move, ...rest];
@@ -122,7 +126,7 @@ export function planLine(start: SwapGuardState): SwapGuardMove[] | null {
   let known = improve(state, simple);
   for (let move = known.at(0); move !== undefined; move = known.at(0)) {
     line.push(move);
-    state = applyMove(state, move).state;
+    state = swapBoard(state, move.cell, struckOf(state));
     known = improve(state, known.slice(1));
   }
   return line.length <= start.maxSwaps - start.swaps ? line : null;

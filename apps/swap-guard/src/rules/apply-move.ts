@@ -2,6 +2,7 @@
 import { squaresAround } from './board-grid.ts';
 import { outcome } from './outcome.ts';
 import { strikesOf, struckSquares } from './strikes.ts';
+import { swapBoard, swappedEnemies } from './swap-board.ts';
 import { volleyPoints } from './swap-guard-tuning.ts';
 
 import type {
@@ -55,20 +56,13 @@ export function applyMove(state: SwapGuardState, move: SwapGuardMove): SwapGuard
   const struck = struckSquares(strikes);
   const from = state.guard;
   const swapped = state.enemies.find((enemy) => enemy.cell === move.cell);
-  const moved = state.enemies.map((enemy) =>
-    enemy.cell === move.cell ? { ...enemy, cell: from } : enemy,
-  );
-  const defeated = moved.filter((enemy) => struck.has(enemy.cell));
+  const defeated = swappedEnemies(state, move.cell).filter((enemy) => struck.has(enemy.cell));
   const points = volleyPoints(defeated.length);
   const enemyId = swapped === undefined ? null : swapped.id;
   return {
     state: {
-      ...state,
-      guard: move.cell,
-      enemies: moved.filter((enemy) => !struck.has(enemy.cell)),
-      swaps: state.swaps + 1,
+      ...swapBoard(state, move.cell, struck),
       score: state.score + points,
-      isHit: struck.has(move.cell),
       lastSwap: { from, to: move.cell, defeated, points },
     },
     events: volleyEvents({ from, to: move.cell, enemyId }, strikes, defeated),
