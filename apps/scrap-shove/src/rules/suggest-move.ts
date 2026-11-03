@@ -1,4 +1,6 @@
 // apps/scrap-shove/src/rules/suggest-move.ts
+import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
+
 import { advanceFloor } from './apply-move.ts';
 import { outcome } from './outcome.ts';
 import { floorKey, solveFloor } from './solve-floor.ts';
@@ -45,9 +47,10 @@ function lineFrom(start: ScrapShoveState, moves: readonly ScrapShoveMove[]): Hin
 export function suggestMove(state: ScrapShoveState): ScrapShoveMove | null {
   if (outcome(state).kind !== 'playing') return null;
   const onLine = lastLine.keys.indexOf(lineKey(state));
-  if (onLine >= 0) return lastLine.moves[onLine] ?? null;
+  // A line has a move for each of its positions; a floor in play is won by one move at least.
+  if (onLine >= 0) return pickAt(lastLine.moves, onLine);
   const result = solveFloor(state, HINT_MAX_NODES);
   if (result.kind !== 'solved') return null;
   lastLine = lineFrom(state, result.line);
-  return result.line[0] ?? null;
+  return pickAt(result.line, 0);
 }
