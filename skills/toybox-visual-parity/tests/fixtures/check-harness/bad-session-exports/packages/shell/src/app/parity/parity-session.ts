@@ -51,6 +51,18 @@ export function parityBuildNumber(): string | null {
 }
 
 /**
+ * The support address the design draws in S11b's support text and S11c's contact section (the
+ * frames manifest's fixture.emailText). A game's own address, which its G3 step sets, shows
+ * everywhere else.
+ */
+const DESIGN_SUPPORT_EMAIL = 'support@example.com';
+
+/** The design's support address (S11b, S11c); null on a normal launch, where the game's shows. */
+export function paritySupportEmail(): string | null {
+  return active === null ? null : DESIGN_SUPPORT_EMAIL;
+}
+
+/**
  * The state the frame's screen opens on (pause-open, levels-locked-tile-tapped ...); null on a
  * normal launch, in the board probe launch (it opens nothing) and for frames that draw the plain
  * screen. The screen's model hook applies it once, through the handler a player's tap would use.

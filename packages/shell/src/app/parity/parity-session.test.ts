@@ -8,6 +8,7 @@ import {
   parityBuildNumber,
   parityFrameState,
   parityGameFixture,
+  paritySupportEmail,
   startParitySession,
 } from './parity-session.ts';
 
@@ -47,6 +48,13 @@ describe('the parity session', () => {
 
     expect(parityBuildNumber()).toBe('8');
     expect(parityFrameState()).toBe('levels-locked-tile-tapped');
+  });
+
+  it("gives the fixture's support address during a capture and none on a normal launch", () => {
+    expect(paritySupportEmail()).toBeNull();
+    startParitySession(LEVELS_REQUEST);
+
+    expect(paritySupportEmail()).toBe('support@example.com');
   });
 
   it('has no state for a frame that draws the plain screen', () => {

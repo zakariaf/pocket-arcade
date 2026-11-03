@@ -28,7 +28,8 @@ type ApplyResult<TState, TEvent> = { readonly state: TState; readonly events: re
 type UndoPolicy = { kind: 'none' } | { kind: 'unlimited' } | { kind: 'limited'; perLevel: number };
 type ContinuePolicy<TState, TEvent> =
   | { kind: 'none' }
-  | { kind: 'once'; descriptionId: MessageId; apply: (lost: TState) => ApplyResult<TState, TEvent> };
+  | { kind: 'once'; descriptionId: MessageId; apply: (lost: TState) => ApplyResult<TState, TEvent>;
+      isTakeBack?: true };  // set when apply takes the losing move back (Flock Tilt, Scrap Shove, Swap Guard)
 // PersistenceSpec: stateVersion, parseState(json), parseMove(json), migrateState(json, from), savePolicy
 type SavePolicy =
   | { kind: 'after-every-move' }
@@ -68,7 +69,7 @@ All fields are `readonly` in the real file (`game-session-types.ts`). `startGame
 |---|---|---|
 | `apply-move` | only while `playing` | state from `applyMove`, `past` + the previous state, `log` + `{ kind: 'move' }`, `moveCount + 1`, `lastEvents` = events, `eventSeq + 1`, status from the new outcome |
 | `undo` | while `playing`, the last log entry is a move, and the policy allows it (`none`: never; `unlimited`: always; `limited`: `undoCount < perLevel`) | previous state back, `past` and `log` shortened by one, `moveCount - 1`, `undoCount + 1`, `lastEvents` empty, `eventSeq + 1` |
-| `use-continue` | only when `lost`, the policy is `once` and `continuesUsed` is 0 (spec 8.10: one continue per run) | the policy's `apply(state)`, `log` + `{ kind: 'continue' }`, `past` cleared, `continuesUsed = 1` |
+| `use-continue` | only when `lost`, the policy is `once` and `continuesUsed` is 0 (spec 8.10: one continue per run) | the policy's `apply(state)`, `log` + `{ kind: 'continue' }`, `past` cleared, `continuesUsed = 1`; when the policy sets `isTakeBack` (it takes the losing move back), also `moveCount - 1`, never below 0, as `undo` does |
 | `pause` | only from `playing` | `status: 'paused'` |
 | `resume` | only from `paused` | `status: 'playing'` |
 | `use-hint` | always (the host decides whether a hint is allowed and which move it shows) | `hintsUsed + 1` |
@@ -80,6 +81,7 @@ Every refused action returns the same session object, so the store skips the wri
 
 - **Undo keeps states, the save keeps moves.** In memory `past` holds full states for instant undo; the save stores the move `log` plus the current `state` snapshot, and a relaunch rebuilds `past` by replaying the log. A long run stays a few kilobytes on disk.
 - **A continue clears the undo history.** A continue is a one-time rescue, not a way to rewind further.
+- **A take-back continue gives the losing move back to the count.** Its `apply` puts the board back as it stood before the losing move, so that move is undone: `moveCount` drops by one, and the top bar ("Moves 2 / Par 5"), the saved run, S7's moves line and the par stars count only the moves the player kept. Kept as `moveCount + 1`, a perfect game after a continue read one move over par and earned 2 stars (Scrap Shove device pass, 2026-11). A continue that keeps every move (Tap Flip's extra moves, Line Siege's push-back) leaves `moveCount` alone.
 - **The reducer trusts its moves.** It only receives moves the engine produced as legal (`intentToMove` results, which a contract test checks are in `listMoves`). A move while paused or finished is ignored.
 - **Hints are counted here;** the hint move comes from the game's hint policy, and the budget from the progress store (one free hint per day), a rewarded ad, or Premium.
 - **Play time accumulates only while playing,** from frame-clock or AppState deltas the host clamps, so a clock jump never adds hours.
@@ -134,7 +136,7 @@ restoreRun(rules, persistence, saved):
 
 - Property: after any legal move sequence, undoing k moves (within the undo policy) equals the state k moves earlier.
 - Property: replaying the saved log from `create(seed, difficulty)` reproduces the snapshot (`restoreRun(...).hasHistory` is true).
-- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss, restore paused with history, snapshot kept when the replay disagrees (and marked `hasPartialLog`, a full restore never), dropped runs, `shouldWriteRun` for every action and policy, `writeRun` and `createRunWriter` write the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
+- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss (a take-back continue gives its move back to `moveCount`, never below 0), restore paused with history, snapshot kept when the replay disagrees (and marked `hasPartialLog`, a full restore never), dropped runs, `shouldWriteRun` for every action and policy, `writeRun` and `createRunWriter` write the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
 
 ## Files
 

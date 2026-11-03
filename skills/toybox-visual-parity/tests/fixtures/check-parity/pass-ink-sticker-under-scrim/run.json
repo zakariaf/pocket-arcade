@@ -1,0 +1,14 @@
+{
+ "frame": "s14-progress-restored",
+ "variant": null,
+ "theme": "light",
+ "lang": "fa",
+ "game": "scrapShove",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of the Scrap Shove final-pass build (2026-11-03). Home's tilted tagline sticker sits under the dialog's scrim; its run has no owner, so no CSS colour, and the sticker's paper (#834d3b) outnumbers the glyphs (#1d1b3a). The gate must measure the glyphs in their own colour (the most frequent colour off the line from the window's background to the paper), not the paper's islands inside the letters: the app's window ring is the paper, so the paper leaves no ink there.",
+ "reference": {
+  "image": "../reference-scrap-shove/scrapShove/light-fa/s14-progress-restored.png",
+  "layout": "../reference-scrap-shove/scrapShove/light-fa/s14-progress-restored.layout.json"
+ }
+}

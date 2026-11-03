@@ -84,7 +84,7 @@ Spec 8.10: a game may allow ONE continue per level or run (`rules.continueRun: {
 
 When a move loses and the state is `'offered'`, the host does **not** record the loss yet: it saves the run (the loss is pending) and the lose screen shows the offer. Then:
 
-- The player pays and continues: `send({ type: 'continue' })` applies `continueRun.apply(lost)`, clears the undo history (undo cannot cross a continue), and play resumes.
+- The player pays and continues: `send({ type: 'continue' })` applies `continueRun.apply(lost)`, clears the undo history (undo cannot cross a continue), and play resumes. A continue whose policy sets `isTakeBack: true` (Flock Tilt, Scrap Shove, Swap Guard: the board goes back to before the losing move) also takes that move off the move count, as undo does (state-stores' reducer), so the top bar, the saved run, S7's moves line and the par stars count only the kept moves; a continue that keeps every move (Line Siege, Tap Flip) leaves the count alone.
 - The player declines (Try again, Levels, Home on the lose screen): `send({ type: 'finish' })` (or `leave`) records the loss (the run-end update below). `startRun` sends `finish` for you.
 - The app is killed, or the screen is left another way: the pending loss stays saved; Home offers Continue and the lose screen reopens with the offer, as long as someone can still give the continue (below).
 
