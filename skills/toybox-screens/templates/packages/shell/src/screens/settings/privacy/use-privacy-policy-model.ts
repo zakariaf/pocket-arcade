@@ -1,9 +1,10 @@
 // packages/shell/src/screens/settings/privacy/use-privacy-policy-model.ts
 // S11c's model hook: the policy is offline text in the catalogs; the model adds the game's name,
-// the support address and the date of the policy's last change in the Shell's date format
-// (formatDayMonthYear, one run of the player's language).
+// the support address (the design's in a parity capture, test builds) and the date of the policy's
+// last change in the Shell's date format (formatDayMonthYear, one run of the player's language).
 import { useNavigation } from '@react-navigation/native';
 
+import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { useGameExtra } from '@e07/shell/app/use-game-extra.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
@@ -21,9 +22,10 @@ export function usePrivacyPolicyModel(): PrivacyPolicyModel {
   const t = useT();
   const navigation = useNavigation();
   const host = useGameHost();
+  const { links } = useGameExtra();
   return {
     gameName: gameMessageText(t, { id: host.nameId }),
-    emailText: useGameExtra().links.supportEmail,
+    emailText: TEST_ONLY?.paritySupportEmail() ?? links.supportEmail,
     updatedDateText: formatDayMonthYear(PRIVACY_POLICY_UPDATED, t),
     isReducedMotion: useReduceMotion(),
     onBack: () => {

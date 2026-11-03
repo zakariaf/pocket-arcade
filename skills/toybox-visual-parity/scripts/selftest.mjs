@@ -33,7 +33,8 @@
 //   check-harness     the app's test-only parity harness is complete, knows every design frame, loads
 //                     the fixtureSave copy unchanged, types no price, is exported and wired into the
 //                     Shell's startup, stays test-only (tests may import it), and the component specs
-//                     hold the edge widths the references draw
+//                     hold the edge widths the references draw; S11b's and S11c's model hooks take
+//                     the design's support address in a capture (bad-support-email-not-wired)
 //   import-design     the design copy is exactly a fresh import of the mockup
 //   check-testids     the screen testID map against the design (shared fixtures)
 //

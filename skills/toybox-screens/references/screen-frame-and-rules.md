@@ -137,7 +137,7 @@ Every screen is three small pieces (templates show each one):
 | S10 | `use-stats-model.ts` (+ `stats-snapshot-of.ts`) | `useStatsSummary()` with `useGameExtra()` and `useGameHost().counters` (save key and label), `useBannerSlot('stats')`, the reset-statistics dialog, `useLevelPlay()` |
 | S11 | `use-settings-extras.ts` (+ `use-settings-routes.ts`, `use-settings-links.ts`) next to `useSettingsModel(useSettingsContext())` | the premium store's price, `readVersionText()`, navigation, the consent port, Restore, the reset dialogs, Rate and Contact hand-offs; Music rows from `useGameHost().hasMusic` |
 | S11a | `use-settings-language-model.ts` | the settings store, `planLanguageChange`, the restart-to-apply dialog |
-| S11b | `use-about-model.ts` | `useGameHost()`, `readVersionText()`, `useGameExtra().links.supportEmail`, Contact, Back and Licences from S11's `useSettingsRoutes()` |
+| S11b | `use-about-model.ts` | `useGameHost()`, `readVersionText()`, `useGameExtra().links.supportEmail` (the design's in a parity capture: `TEST_ONLY?.paritySupportEmail()`), Contact, Back and Licences from S11's `useSettingsRoutes()` |
 | S11c | `use-privacy-policy-model.ts` | the game name, the support address, the policy's last-change date |
 | S11d | `use-licences-model.ts` | `shellLicenceEntries(t)` then `creditRowsOf(host.credits)`; the licence text hand-off |
 | S12 | `use-premium-model.ts` | the premium store and service (`PremiumScreenDepsProvider`), connectivity |

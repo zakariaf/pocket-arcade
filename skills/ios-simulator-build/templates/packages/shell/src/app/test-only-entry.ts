@@ -32,6 +32,8 @@ export {
   /** @public */
   parityGameFixture,
   /** @public */
+  paritySupportEmail,
+  /** @public */
   startParitySession,
 } from '@e07/shell/app/parity/parity-session.ts';
 export {

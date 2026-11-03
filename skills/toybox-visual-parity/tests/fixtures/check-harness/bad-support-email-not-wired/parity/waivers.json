@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "waivers": [
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.14",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.15",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.16",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.17",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.18",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.19",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.20",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.21",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.22",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.23",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.24",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.25",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.26",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.27",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.28",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.29",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.30",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.pack.2",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.continue-offer",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. A press squash cannot be held after the finger lifts, and bounds never see transforms. A pre-listed design-artefact pair of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "structure",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. A press squash cannot be held after the finger lifts, and bounds never see transforms. A pre-listed design-artefact pair of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    }
+  ]
+}
