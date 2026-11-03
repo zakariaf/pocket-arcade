@@ -2,12 +2,15 @@
 import fc from 'fast-check';
 
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { STEP_MS } from '@e07/game-kit/timeline/fixed-step.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
+import { dropPath } from './drop-path.ts';
 import { listMoves } from './list-moves.ts';
+import { CELL_UNITS, FALL_PER_TICK } from './timed-fall.ts';
 
-import type { ToggleDropState } from './toggle-drop-types.ts';
+import type { ToggleDropEvent, ToggleDropState } from './toggle-drop-types.ts';
 
 const RULES = { listMoves, applyMove };
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
@@ -61,6 +64,42 @@ function stepProblems(states: readonly ToggleDropState[]): string[] {
     }
   }
   return problems;
+}
+
+/** The peg rows a fall crossed ("row:col", "!" for a switch) and where it landed, by its events. */
+function crossed(events: readonly ToggleDropEvent[]): { rows: string[]; landing: number } {
+  const rows = events.flatMap((event) => {
+    if (event.kind === 'ball-passed') return [`${String(event.row)}:${String(event.col)}`];
+    if (event.kind === 'switch-flipped') return [`${String(event.row)}:${String(event.col)}!`];
+    return [];
+  });
+  return { rows, landing: events.find((event) => event.kind === 'ball-landed')?.col ?? -1 };
+}
+
+/** The same for the drop path of a column. */
+function pathOf(state: ToggleDropState, col: number): { rows: string[]; landing: number } {
+  const path = dropPath(state, col);
+  const rows = path.steps.map(
+    (step) => `${String(step.row)}:${String(step.col)}${step.side === null ? '' : '!'}`,
+  );
+  return { rows, landing: path.landing };
+}
+
+/** Problems of one fall: a ball point outside the board, or a move faster than the fall speed. */
+function fallProblems(state: ToggleDropState, events: readonly ToggleDropEvent[]): string[] {
+  const points = events.flatMap((event) => ('x' in event ? [event] : []));
+  return points.flatMap((point, index) => {
+    const before = points[index - 1] ?? point;
+    const reach = FALL_PER_TICK * Math.round((point.atMs - before.atMs) / STEP_MS);
+    const dx = point.x - before.x;
+    const dy = point.y - before.y;
+    const isInside = point.x >= 0 && point.x <= state.cols * CELL_UNITS && point.y >= 0;
+    const isOnBoard = isInside && point.y <= (state.rows + 1) * CELL_UNITS;
+    return [
+      ...(isOnBoard ? [] : [`outside at ${String(index)}`]),
+      ...(dx * dx + dy * dy > 2 * reach * reach ? [`too fast at ${String(index)}`] : []),
+    ];
+  });
 }
 
 describe('applyMove', () => {
@@ -174,6 +213,27 @@ describe('applyMove', () => {
           [],
         );
         expect(events.every((event) => Number.isInteger(event.atMs))).toBe(true);
+      }),
+    );
+  });
+
+  it('crosses each peg row where the drop path says and lands at its end (property)', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        const start = create(seed, difficulty);
+        for (const move of listMoves(start)) {
+          expect(crossed(applyMove(start, move).events)).toStrictEqual(pathOf(start, move.col));
+        }
+      }),
+    );
+  });
+
+  it('keeps the ball inside the board and never speeds it up (property)', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        const start = create(seed, difficulty);
+        const events = listMoves(start).map((move) => applyMove(start, move).events);
+        expect(events.flatMap((fall) => fallProblems(start, fall))).toStrictEqual([]);
       }),
     );
   });
