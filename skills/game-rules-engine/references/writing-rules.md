@@ -92,6 +92,7 @@ In `<game-id>-engine.ts` as `<CONST>_RULES: GameRules<State, Move, Event>`:
 - `id`: kebab-case and permanent (a key in the save document), e.g. `'cells-flipped'`.
 - `labelId`: `'<game-id>.stats.<id>'`, in all four catalogs.
 - `aggregate: 'sum'` (totals) or `'max'` (records such as "Biggest combo").
+- `bestOfStyle` (only with `'max'`): leave it out for a best that counts times or hits (S10 writes "×6"); `'plain'` for a length or a size (S10 writes "23": "Longest snake"). Follow the design's game card.
 - `measure(events)`: a number from one move's events. It must be pure and cheap: the Shell replays the whole kept move line at run end.
 
 ## Step 8: bot and example states

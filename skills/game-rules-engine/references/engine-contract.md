@@ -117,7 +117,7 @@ Every game uses one scale: whole numbers 0..100, the save schema's range. `contr
 ## Persistence, statistics, testing members
 
 - **`PersistenceSpec`**: `stateVersion` (bump when the shape of state or move changes), `parseState(json)` and `parseMove(json)` (validate JSON from disk; return a fresh typed value or `null`: the Shell then drops only the run, or only the undo history), `migrateState(json, fromVersion)` (`null` = cannot), `savePolicy` (`after-every-move` for turn-based games; `save-points` with `wave-end`, `turn-end`, `pause`, `background`, `level-end` for real-time games, never per frame).
-- **`StatsSpec`**: 2 to 4 `CounterSpec { id, labelId, aggregate: 'sum' | 'max', measure(events) }`. `measure` sees one move's events; at run end the Shell replays the kept move line and folds each counter (undone moves never count). Ids are kebab-case and permanent (keys in the save document).
+- **`StatsSpec`**: 2 to 4 `CounterSpec { id, labelId, aggregate: 'sum' | 'max', bestOfStyle?: 'multiplier' | 'plain', measure(events) }`; S10 writes a reached `'max'` as "×6" unless `bestOfStyle` is `'plain'` (a length or a size: "Longest snake 23"). `measure` sees one move's events; at run end the Shell replays the kept move line and folds each counter (undone moves never count). Ids are kebab-case and permanent (keys in the save document).
 - **`TestingSpec`**: `bot: BotPolicy` (`(state, moves, rng) => { move, rng }`, its own seeded RNG, never `Math.random`) and `examples` for `start`, `middle`, `win`, `lose` (screenshots, the debug menu, E2E setup).
 - **`TeachingSpec`** (tutorial steps, 3-5 how-to-play pages) and **`GameTexts`** (four flat ICU catalogs) are types here; their content comes later in the game's build order.
 
