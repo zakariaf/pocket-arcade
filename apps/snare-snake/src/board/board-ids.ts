@@ -15,6 +15,11 @@ export function cellEntity(index: number): number {
   return 1000 + index;
 }
 
+/** The row-major cell index of a cell entity: cellEntity's inverse. */
+export function cellOfEntity(entity: number): number {
+  return entity - 1000;
+}
+
 /** Entity id of a critter by its id (its hop, its catch and its burst). */
 export function critterEntity(id: number): number {
   return 2000 + id;
