@@ -113,6 +113,32 @@ describe('gameSessionReducer boundaries', () => {
     expect(canUndo(UNLIMITED, { ...moved, undoCount: 5 })).toBe(true);
   });
 
+  // spec 8.10 and S5: a take-back continue undoes the losing move, so the top bar, S7 and the
+  // stars count only the moves the player kept; a continue that keeps every move counts them all.
+  it('gives the losing move back to the count when the continue takes it back', () => {
+    const takeBack = {
+      ...RULES,
+      continueRun: { ...RULES.continueRun, isTakeBack: true as const },
+    };
+    const lost = play(takeBack, [1, 1, -9]);
+    expect(lost.moveCount).toBe(3);
+    expect(gameSessionReducer(takeBack, lost, { type: 'use-continue' }).moveCount).toBe(2);
+    expect(
+      gameSessionReducer(RULES, play(RULES, [1, 1, -9]), { type: 'use-continue' }),
+    ).toMatchObject({ moveCount: 3, continuesUsed: 1 });
+  });
+
+  it('keeps the count at zero when a take-back continue rescues a run lost at the start', () => {
+    const lostAtStart = {
+      ...RULES,
+      create: () => ({ n: -1 }),
+      continueRun: { ...RULES.continueRun, isTakeBack: true as const },
+    };
+    const lost = startGameSession(lostAtStart, START);
+    expect(lost.status).toBe('lost');
+    expect(gameSessionReducer(lostAtStart, lost, { type: 'use-continue' }).moveCount).toBe(0);
+  });
+
   it('offers no continue to a run that is still playing or whose game has none', () => {
     const playing = play(RULES, [1]);
     const lost = play(RULES, [-5]);

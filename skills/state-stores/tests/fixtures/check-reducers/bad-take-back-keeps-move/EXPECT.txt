@@ -1,0 +1,2 @@
+[session-take-back]
+the losing move still counted after a take-back continue

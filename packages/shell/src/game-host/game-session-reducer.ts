@@ -93,7 +93,10 @@ function undone<TState, TMove, TEvent>(
   };
 }
 
-/** Spec 8.10: one continue per run, only after a loss; undo cannot cross it. */
+/**
+ * Spec 8.10: one continue per run, only after a loss; undo cannot cross it. A take-back continue
+ * (isTakeBack) undoes the losing move, so that move leaves the count as an undone one does (S5, S7).
+ */
 function continued<TState, TMove, TEvent>(
   rules: SessionRules<TState, TMove, TEvent>,
   session: GameSession<TState, TMove, TEvent>,
@@ -105,7 +108,9 @@ function continued<TState, TMove, TEvent>(
     result: policy.apply(session.state),
     entry: { kind: 'continue' },
   });
-  return { ...next, past: [], continuesUsed: 1 };
+  const moveCount =
+    policy.isTakeBack === true ? Math.max(0, session.moveCount - 1) : session.moveCount;
+  return { ...next, past: [], moveCount, continuesUsed: 1 };
 }
 
 /** Pure; unit- and property-tested. The Shell saves the result before animating it. */

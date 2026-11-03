@@ -1,8 +1,9 @@
 // packages/shell/src/app/parity/parity-session.ts
 // Test builds only (reached through test-only.ts). The parity request of this launch, for the model
-// hooks and hosts that read it after startup: the build number in the version text, the frame state
-// a screen opens on (a dialog, a result, a tapped tile), the frozen-motion switch, the board probe
-// and the design's numbers for the Game frames. A normal launch never starts a session.
+// hooks and hosts that read it after startup: the build number in the version text, the support
+// address of S11b and S11c, the frame state a screen opens on (a dialog, a result, a tapped tile),
+// the frozen-motion switch, the board probe and the design's numbers for the Game frames. A normal
+// launch never starts a session.
 import { PARITY_FIXTURE } from './parity-fixture.ts';
 
 import type { ParityFixture } from './parity-fixture.ts';
@@ -57,6 +58,18 @@ export function endParitySession(): void {
 /** The fixture's build number ("1.0.0 (8)" in S11 and S11b); null on a normal launch. */
 export function parityBuildNumber(): string | null {
   return active === null ? null : PARITY_FIXTURE.buildNumber;
+}
+
+/**
+ * The support address the design draws in S11b's support text and S11c's contact section (the
+ * frames manifest's fixture.emailText). A game's own address, which its G3 step sets, shows
+ * everywhere else.
+ */
+const DESIGN_SUPPORT_EMAIL = 'support@example.com';
+
+/** The design's support address (S11b, S11c); null on a normal launch, where the game's shows. */
+export function paritySupportEmail(): string | null {
+  return active === null ? null : DESIGN_SUPPORT_EMAIL;
 }
 
 /**

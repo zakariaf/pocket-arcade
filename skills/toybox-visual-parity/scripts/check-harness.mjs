@@ -6,7 +6,7 @@
 // test-only-entry.ts and wired into the Shell's startup through TEST_ONLY, the component specs draw
 // the edge widths the references draw, capture output is gitignored, the waiver and sign-off
 // files are well formed, every frame state has its opener in the hook that owns it, the frozen-motion
-// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn once (by
+// switch, the board probe, the design's support address (S11b, S11c) and the consent hold are wired, every launch's nonce marker is drawn once (by
 // the parity root and inside the ModalLayer's layer, never again by the Scrim or Result overlay in it), every ScreenBody draws the scroll offset it reached
 // (parity.scroll.<y>, the measured scroll of a tall capture), and parity/game-facts.json holds each app's facts
 // (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
@@ -61,6 +61,7 @@ const ENTRY_EXPORTS = [
   'isHeldParityStart',
   'ParityFrameRoot',
   'parityBuildNumber',
+  'paritySupportEmail',
   'parityFrameState',
   'isParityMotionFrozen',
   'isParityBoardProbeOn',
@@ -68,7 +69,7 @@ const ENTRY_EXPORTS = [
 ];
 
 /** What parity-session.ts exports for the model hooks and hosts (the session side of the harness). */
-const SESSION_EXPORTS = ['startParitySession', 'parityBuildNumber', 'parityFrameState', 'isParityMotionFrozen', 'isParityBoardProbeOn', 'parityGameFixture'];
+const SESSION_EXPORTS = ['startParitySession', 'parityBuildNumber', 'paritySupportEmail', 'parityFrameState', 'isParityMotionFrozen', 'isParityBoardProbeOn', 'parityGameFixture'];
 
 /**
  * Who opens each frame state: the model hook that owns the state applies parityFrameState() once on
@@ -143,6 +144,8 @@ const PARITY_LAUNCH_LOOKUP = /\brequire(?:Optional)?NativeModule\b[^;]*\(\s*['"]
 const WIRING = [
   { name: 'isParityMotionFrozen', file: 'packages/shell/src/app/use-reduce-motion.ts', pattern: /\bisParityMotionFrozen\s*\(/, screens: null, fix: 'useReduceMotion() returns true while TEST_ONLY?.isParityMotionFrozen() is true (the one frozen-motion switch); the saved setting stays as it is.' },
   { name: 'isParityBoardProbeOn', file: null, pattern: /\bisParityBoardProbeOn\s*\(/, screens: ['S5', 'S6', 'S7'], fix: "The host's isLayoutProbeOn closure (create-shell-parts.ts) is also true while TEST_ONLY?.isParityBoardProbeOn() is, so the probe=board launch renders game.board-layout." },
+  { name: 'paritySupportEmail', file: 'packages/shell/src/screens/settings/about/use-about-model.ts', pattern: /\bparitySupportEmail\s*\(/, screens: ['S11b'], fix: "emailText is TEST_ONLY?.paritySupportEmail() ?? the game's links.supportEmail (toybox-screens' template): S11b draws the design's support@example.com in a capture, whatever address the game's G3 step set." },
+  { name: 'paritySupportEmail', file: 'packages/shell/src/screens/settings/privacy/use-privacy-policy-model.ts', pattern: /\bparitySupportEmail\s*\(/, screens: ['S11c'], fix: "emailText is TEST_ONLY?.paritySupportEmail() ?? the game's links.supportEmail (toybox-screens' template): S11c names the design's support@example.com in a capture, whatever address the game's G3 step set." },
 ];
 
 /**
@@ -531,7 +534,7 @@ run(async () => {
     if (PARITY_LAUNCH_LOOKUP.test(clean)) problem(rel, 0, 'harness-android-launch', 'asks for the ParityLaunch native module outside app/parity/, so a store build could read a parity request', 'Read the launch extra only through app/parity/parity-launch-extra.ts (reached through TEST_ONLY?.readParityRequest()).');
   }
 
-  // 4a. Wiring outside the harness: the frozen-motion switch and the board probe.
+  // 4a. Wiring outside the harness: the frozen-motion switch, the board probe and the support address.
   for (const w of WIRING) {
     const skip = w.screens ? (w.screens.some((id) => !skipFor(id)) ? null : skipFor(w.screens[0])) : sliceSkipReason(slice);
     if (skip) {

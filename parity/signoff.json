@@ -32822,6 +32822,48 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "50d29dbc10eb034e47d608751af73cd7c05009efb4dc1b7545e12133d7f66097",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "2782f20c372e28f09429a74b2cf039ab8c52f1f8a2be1e280ffdbf8f12acfb54",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }

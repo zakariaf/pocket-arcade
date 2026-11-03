@@ -1,0 +1,3 @@
+[harness-not-wired]
+packages/shell/src/screens/settings/privacy/use-privacy-policy-model.ts
+paritySupportEmail

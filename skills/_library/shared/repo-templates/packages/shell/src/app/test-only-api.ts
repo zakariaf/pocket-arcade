@@ -74,6 +74,8 @@ export type TestOnlyApi = {
   readonly ParityFrameRoot: ComponentType<ParityFrameRootProps>;
   /** Model hooks: the fixture's build number (version text) and the frame state to open once. */
   readonly parityBuildNumber: () => string | null;
+  /** S11b and S11c: the design's support address instead of the game's own; null on a normal launch. */
+  readonly paritySupportEmail: () => string | null;
   readonly parityFrameState: () => ParityState | null;
   /**
    * animations=off: every decorative loop and entrance holds still at rest (use-reduce-motion.ts

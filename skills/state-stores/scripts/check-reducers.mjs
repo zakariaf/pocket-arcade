@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // check-reducers.mjs: runs the app's own pure reducers (settings, progress, GameSession) against
 // the rules they must keep, independent of the app's tests: volume clamp, first-run flags, best
-// results kept, one free hint per day, undo limits, one continue after a loss, paused runs ignore
-// moves, no mutation of the input. It imports the TypeScript files directly (Node type stripping).
+// results kept, one free hint per day, undo limits, one continue after a loss (a take-back continue
+// gives the losing move back to the move count), paused runs ignore moves, no mutation of the
+// input. It imports the TypeScript files directly (Node type stripping).
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-reducers.mjs [repo-root]
 
 import { deepStrictEqual, ok, strictEqual } from 'node:assert/strict';
@@ -29,7 +30,7 @@ const SPEC = {
     '',
     'Rules: missing-module, module-load, settings-volume, settings-first-run, progress-best,',
     'progress-free-hint, progress-upsell, session-move, session-undo, session-paused,',
-    'session-continue, session-finished, reducer-mutates.',
+    'session-continue, session-take-back, session-finished, reducer-mutates.',
     '',
     'The repo root is the positional argument (default ".").',
     '',
@@ -253,6 +254,18 @@ const CHECKS = {
         strictEqual(mod.gameSessionReducer(LIMITED, lostAgain, { type: 'use-continue' }), lostAgain, 'a second continue');
         const playing = mod.startGameSession(LIMITED, START);
         strictEqual(mod.gameSessionReducer(LIMITED, playing, { type: 'use-continue' }), playing, 'continue while playing');
+      },
+    },
+    {
+      rule: 'session-take-back', fn: 'gameSessionReducer', name: 'a take-back continue gives the losing move back to the move count',
+      fix: 'use-continue: when the policy sets isTakeBack, moveCount - 1 (never below 0), as undo does; a continue without it keeps moveCount.',
+      run: (mod) => {
+        const takeBack = { ...LIMITED, continueRun: { ...LIMITED.continueRun, isTakeBack: true } };
+        const lost = play(mod, takeBack, [1, 1, -9]);
+        strictEqual(lost.moveCount, 3);
+        strictEqual(mod.gameSessionReducer(takeBack, lost, { type: 'use-continue' }).moveCount, 2, 'the losing move still counted after a take-back continue');
+        const kept = mod.gameSessionReducer(LIMITED, play(mod, LIMITED, [1, 1, -9]), { type: 'use-continue' });
+        strictEqual(kept.moveCount, 3, 'a continue without isTakeBack dropped a move');
       },
     },
     {

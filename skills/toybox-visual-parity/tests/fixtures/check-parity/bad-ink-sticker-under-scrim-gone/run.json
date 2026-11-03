@@ -1,0 +1,14 @@
+{
+ "frame": "s14-progress-restored",
+ "variant": null,
+ "theme": "light",
+ "lang": "fa",
+ "game": "scrapShove",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "Planted: the real capture of pass-ink-sticker-under-scrim with the tagline's glyphs painted over in the sticker's paper colour inside the run's rotated line box (the sticker and its border stay). A real missing ink under the scrim must still fail text-ink.",
+ "reference": {
+  "image": "../reference-scrap-shove/scrapShove/light-fa/s14-progress-restored.png",
+  "layout": "../reference-scrap-shove/scrapShove/light-fa/s14-progress-restored.layout.json"
+ }
+}
