@@ -230,6 +230,10 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
       { ...HIT, lastSwap: { ...HIT.lastSwap, points: 1 } },
     ],
     [
+      'volley points that are not a whole number of points',
+      { ...HIT, lastSwap: { ...HIT.lastSwap, points: '250' } },
+    ],
+    [
       'a knocked-out enemy that still stands',
       { ...HIT, lastSwap: { ...HIT.lastSwap, defeated: [HIT.enemies[0]] } },
     ],

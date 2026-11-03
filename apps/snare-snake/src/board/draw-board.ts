@@ -89,13 +89,17 @@ function drawBadge(canvas: SkCanvas, frame: Frame): void {
   canvas.restore();
 }
 
-/** Paints one frame: cells, what fades, the snake, the critters, the effects, the badge. */
+/**
+ * Paints one frame: cells, what fades, the snake, the critters, the effects, the badge. The fading
+ * segments and the loop flash share one list of the frame's track keys.
+ */
 export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   canvas.drawColor(frame.colors.color.background);
+  const keys = Object.keys(frame.fx.entries);
   drawCells(canvas, frame);
-  drawFadingSegments(canvas, frame);
+  drawFadingSegments(canvas, frame, keys);
   drawSnake(canvas, frame);
-  drawLoopFlash(canvas, frame);
+  drawLoopFlash(canvas, frame, keys);
   drawCritters(canvas, frame);
   drawCaughtCritters(canvas, frame);
   drawBursts(canvas, frame);

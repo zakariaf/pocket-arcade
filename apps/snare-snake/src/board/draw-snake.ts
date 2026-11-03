@@ -5,7 +5,7 @@ import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { inset, rectAt, rectBetween } from './board-geometry.ts';
-import { cellEntity, HEAD_ENTITY, TURN_ENTITY } from './board-ids.ts';
+import { cellEntity, cellOfEntity, HEAD_ENTITY, TURN_ENTITY } from './board-ids.ts';
 
 import type { BoardToken } from './board-palettes.ts';
 import type { SnareSnakeView } from './to-view.ts';
@@ -103,12 +103,28 @@ export function drawSnake(canvas: SkCanvas, frame: Frame): void {
 }
 
 /**
- * Segments that are gone in the final view but still fading: the cell the tail left, the loop's
- * spent segments. At moment 0 they still show (a tween of something visible).
+ * The cells that own a track whose key starts with one of the prefixes, each once, in cell order
+ * (the order the board drew every cell in). `keys` are the frame's track keys.
  */
-export function drawFadingSegments(canvas: SkCanvas, frame: Frame): void {
+function cellsWithTrack(keys: readonly string[], prefixes: readonly string[]): number[] {
+  const cells: number[] = [];
+  for (const key of keys) {
+    const prefix = prefixes.find((start) => key.startsWith(start));
+    if (prefix === undefined) continue;
+    const cell = cellOfEntity(Number(key.slice(prefix.length)));
+    if (!cells.includes(cell)) cells.push(cell);
+  }
+  return cells.sort((a, b) => a - b);
+}
+
+/**
+ * Segments that are gone in the final view but still fading: the cell the tail left, the loop's
+ * spent segments. At moment 0 they still show (a tween of something visible). Only the cells with
+ * a spent or tail track are visited, not every cell of the board.
+ */
+export function drawFadingSegments(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
   const { view, layout, fx } = frame;
-  for (let cell = 0; cell < view.cols * view.rows; cell += 1) {
+  for (const cell of cellsWithTrack(keys, ['spent:', 'tail:'])) {
     const fading = fxEntry(fx, 'spent', cellEntity(cell)) ?? fxEntry(fx, 'tail', cellEntity(cell));
     const alpha = fading?.values[0] ?? 0;
     const rect = alpha > 0 ? rectAt(layout, view.cols, cell) : null;
@@ -127,14 +143,17 @@ function drawGlow(canvas: SkCanvas, frame: Frame, rect: Rect): void {
  * The closed loop lights up while its flash plays: a glow ring around every cell it spent and
  * around the head that closed it, over the snake. An effect: nothing at moment 0.
  */
-export function drawLoopFlash(canvas: SkCanvas, frame: Frame): void {
+export function drawLoopFlash(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
   const { view, layout, kit, colors, fx } = frame;
   const flash = playingEntry(fx, 'loop', TURN_ENTITY);
   if (flash === undefined) return;
   setPaintColor(kit.stroke, colors.color.glow, flash.values[0] ?? 0);
-  for (let cell = 0; cell < view.cols * view.rows; cell += 1) {
-    const isLoop = fxEntry(fx, 'spent', cellEntity(cell)) !== undefined || cell === view.snake[0];
-    const rect = isLoop ? rectAt(layout, view.cols, cell) : null;
+  const spent = cellsWithTrack(keys, ['spent:']);
+  const head = view.snake[0];
+  const loop =
+    head === undefined || spent.includes(head) ? spent : [...spent, head].sort((a, b) => a - b);
+  for (const cell of loop) {
+    const rect = rectAt(layout, view.cols, cell);
     if (rect === null) continue;
     kit.stroke.setStrokeWidth(Math.max(2, rect.width * 0.08));
     drawGlow(canvas, frame, rect);

@@ -39,10 +39,11 @@ function drawBurst(canvas: SkCanvas, frame: Frame, burst: Burst): void {
 }
 
 /** A crash or a crush throws sparks from its square (full motion only: reduced motion has no track). */
-function drawSparks(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
+function drawSparks(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  for (const key of keys) {
+    if (!key.startsWith('spark:')) continue;
     const entry = playingAt(frame.fx, key);
-    if (!key.startsWith('spark:') || entry === undefined) continue;
+    if (entry === undefined) continue;
     const square = squareAt(frame.layout, entry.values[0] ?? 0, entry.values[1] ?? 0);
     if (square === null) continue;
     const seed = Number(key.slice('spark:'.length));
@@ -60,11 +61,12 @@ function drawSparks(canvas: SkCanvas, frame: Frame): void {
 }
 
 /** How many robots one crash scrapped, on a badge at the corner of its square (chosen digits). */
-function drawBadges(canvas: SkCanvas, frame: Frame): void {
+function drawBadges(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
   const font = frame.kit.numberFont;
-  for (const key of Object.keys(frame.fx.entries)) {
+  for (const key of keys) {
+    if (!key.startsWith('badge:')) continue;
     const entry = playingAt(frame.fx, key);
-    if (!key.startsWith('badge:') || entry === undefined) continue;
+    if (entry === undefined) continue;
     const [col = 0, row = 0, count = 0] = entry.values;
     const square = squareAt(frame.layout, col, row);
     if (square === null) continue;
@@ -143,12 +145,15 @@ function drawClearBurst(canvas: SkCanvas, frame: Frame, floor: Rect): void {
   drawBurst(canvas, frame, spec);
 }
 
+/** Where the effects draw: the floor, and the frame's track keys (listed once per frame). */
+export type EffectsArea = { readonly floor: Rect; readonly keys: readonly string[] };
+
 /** Everything drawn over the pieces: sparks, crash badges, the catch, hints and the floor glows. */
-export function drawEffects(canvas: SkCanvas, frame: Frame, floor: Rect): void {
-  drawSparks(canvas, frame);
-  drawBadges(canvas, frame);
+export function drawEffects(canvas: SkCanvas, frame: Frame, area: EffectsArea): void {
+  drawSparks(canvas, frame, area.keys);
+  drawBadges(canvas, frame, area.keys);
   drawCaught(canvas, frame);
   drawHinted(canvas, frame);
-  drawWash(canvas, frame, floor);
-  drawClearBurst(canvas, frame, floor);
+  drawWash(canvas, frame, area.floor);
+  drawClearBurst(canvas, frame, area.floor);
 }

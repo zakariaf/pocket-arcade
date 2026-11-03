@@ -10,6 +10,14 @@ import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
 import { floorKey, solveFloor } from './solve-floor.ts';
 
+import type * as ApplyMoveRules from './apply-move.ts';
+
+// A counting wrapper around the real applyMove: the search plays its positions without it.
+jest.mock('./apply-move.ts', () => {
+  const actual: typeof ApplyMoveRules = jest.requireActual('./apply-move.ts');
+  return { ...actual, applyMove: jest.fn(actual.applyMove) };
+});
+
 const ENGINE = { listMoves, applyMove, outcome };
 
 describe('floorKey', () => {
@@ -31,6 +39,12 @@ describe('floorKey', () => {
 });
 
 describe('solveFloor (spec 8.1: the solver also calculates par)', () => {
+  it('plays its positions with the search apply, never the checked applyMove with its events', () => {
+    jest.mocked(applyMove).mockClear();
+    expect(solveFloor(create(1, 0), 60_000).kind).toBe('solved');
+    expect(jest.mocked(applyMove)).not.toHaveBeenCalled();
+  });
+
   it('finds the one-shove win of a heavy robot lined up behind a heap', () => {
     const result = solveFloor(stateFromText(['.....', '.....', '..h..', '...#.', '....@']), 1000);
     expect(result).toMatchObject({

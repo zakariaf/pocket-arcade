@@ -3,7 +3,7 @@ import fc from 'fast-check';
 
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
 
-import { applyMove } from './apply-move.ts';
+import { advanceFloor, applyMove } from './apply-move.ts';
 import { stateFromText } from './board-text.ts';
 import { create } from './create.ts';
 import { isOnFloor, isSameCell } from './floor-squares.ts';
@@ -192,6 +192,29 @@ describe('applyMove (turn-based: apply the move, then animate its events)', () =
       fc.property(seedArb, difficultyArb, choicesArb, (seed, difficulty, choices) => {
         const last = playedStates(seed, difficulty, choices).at(-1);
         expect(JSON.parse(JSON.stringify(last)) as unknown).toStrictEqual(last);
+      }),
+    );
+  });
+});
+
+describe('advanceFloor (the search apply: no check, no events)', () => {
+  it('reaches the state applyMove reaches, crash, catch and clear included', () => {
+    const lineUp = stateFromText(['.....', '.....', '..h..', '...#.', '....@']);
+    const shove = { kind: 'shove', col: 3, row: 3 } as const;
+    expect(advanceFloor(lineUp, shove)).toStrictEqual(applyMove(lineUp, shove).state);
+    const caught = stateFromText(['...', '.n.', '..@']);
+    expect(advanceFloor(caught, { kind: 'wait' })).toStrictEqual(
+      applyMove(caught, { kind: 'wait' }).state,
+    );
+  });
+
+  it('reaches the state applyMove reaches for every listed move of a played floor', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, choicesArb, (seed, difficulty, choices) => {
+        const state = playedStates(seed, difficulty, choices).at(-1) ?? create(seed, difficulty);
+        for (const move of listMoves(state)) {
+          expect(advanceFloor(state, move)).toStrictEqual(applyMove(state, move).state);
+        }
       }),
     );
   });

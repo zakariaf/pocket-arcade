@@ -16,13 +16,12 @@ import {
   drawPiece,
   peekTop,
 } from './draw-parts.ts';
+import { boardRect, drawSquares } from './draw-squares.ts';
 import { PEEK_CELLS } from './layout-board.ts';
 
-import type { BoardToken } from './board-palettes.ts';
 import type { Frame, Point } from './draw-parts.ts';
 import type { EnemyView, TargetView } from './to-view.ts';
-import type { GridRegion, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { Square } from '@e07/jump-chain/rules/jump-chain-types.ts';
+import type { GridRegion } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
 const DOT_RADIUS = 0.12;
@@ -31,51 +30,10 @@ const CAPTURE_RADIUS = 0.44;
 const HINT_RADIUS = 0.46;
 const GHOST_ALPHA = 0.55;
 const BADGE_RADIUS = 0.24;
-const EDGE_WIDTH = 0.04;
 const GLOW_ALPHA = 0.5;
 const BURST_COUNT = 10;
 /** An enemy further up than this (sliding in from a waiting rank) is hidden under the cover. */
 const HIDDEN_ROW = -2;
-
-/** The board's rectangle (rows 0 to the last), mirrored like its squares. */
-function boardRect(frame: Frame, region: GridRegion): Rect {
-  const width = region.cell * frame.view.cols;
-  const x = frame.layout.isMirrored ? frame.layout.width - region.x - width : region.x;
-  return { x, y: region.y, width, height: region.cell * frame.view.rows };
-}
-
-/** A square's rectangle; the waiting row (-1) shows only its lower half, the peek band. */
-function squareRect(frame: Frame, region: GridRegion, square: Square): Rect {
-  const { cell } = region;
-  const x = region.x + square.col * cell;
-  const isPeek = square.row < 0;
-  return {
-    x: frame.layout.isMirrored ? frame.layout.width - x - cell : x,
-    y: isPeek ? region.y - cell * PEEK_CELLS : region.y + square.row * cell,
-    width: cell,
-    height: isPeek ? cell * PEEK_CELLS : cell,
-  };
-}
-
-/** Pieces stand on the dark squares; your side's row is tinted, so the line to defend shows. */
-function squareToken(frame: Frame, square: Square): BoardToken {
-  if (((square.col + square.row) & 1) !== 0) return 'light';
-  return square.row === frame.view.rows - 1 ? 'side' : 'dark';
-}
-
-/** The checkerboard, the waiting row's lower half above it, and an ink edge round the board. */
-function drawSquares(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
-  const { kit, colors, view } = frame;
-  for (let row = -1; row < view.rows; row += 1) {
-    for (let col = 0; col < view.cols; col += 1) {
-      kit.fill.setColor(colors.color[squareToken(frame, { col, row })]);
-      canvas.drawRect(squareRect(frame, region, { col, row }), kit.fill);
-    }
-  }
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setStrokeWidth(Math.max(1, region.cell * EDGE_WIDTH));
-  canvas.drawRect(boardRect(frame, region), kit.stroke);
-}
 
 /** A dot on every square a move ends on: where the piece can go. */
 function drawTargets(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
@@ -147,9 +105,12 @@ function drawEnemies(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
   }
 }
 
+/** The board and the frame's track keys, listed once per frame by drawBoard. */
+type Keyed = { readonly region: GridRegion; readonly keys: readonly string[] };
+
 /** Jumped enemies are gone from the view: their pop tracks carry the square and the size. */
-function drawPops(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
+function drawPops(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  for (const key of keys) {
     if (!key.startsWith('pop:')) continue;
     const [col = 0, row = 0, size = 0] = frame.fx.entries[key]?.values ?? [];
     const point = centreOf(frame, { col, row });
@@ -158,11 +119,12 @@ function drawPops(canvas: SkCanvas, frame: Frame): void {
 }
 
 /** Particles where an enemy was captured (full motion only: reduced motion has no burst). */
-function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
+function drawBursts(canvas: SkCanvas, frame: Frame, { region, keys }: Keyed): void {
   const { kit, colors, fx } = frame;
-  for (const key of Object.keys(fx.entries)) {
+  for (const key of keys) {
+    if (!key.startsWith('burst:')) continue;
     const burst = playingAt(fx, key);
-    if (!key.startsWith('burst:') || burst === undefined) continue;
+    if (burst === undefined) continue;
     const [col = 0, row = 0] = burst.values;
     const point = centreOf(frame, { col, row });
     if (point === null) continue;
@@ -218,18 +180,22 @@ function drawMarchBadge(canvas: SkCanvas, frame: Frame, region: GridRegion): voi
   drawFittedText(canvas, { text: view.marchInText, rect }, { font, paint: kit.fill });
 }
 
-/** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */
+/**
+ * Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. The layers
+ * that walk a channel's keys share one list of the frame's keys.
+ */
 export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   const { colors, kit, layout, view } = frame;
   canvas.drawColor(colors.color.background);
   const region = boardRegion(frame);
   if (region === null) return;
+  const keys = Object.keys(frame.fx.entries);
   drawSquares(canvas, frame, region);
   drawTargets(canvas, frame, region);
   const target = previewed(frame);
   if (target !== null) drawPath(canvas, frame, target);
   drawEnemies(canvas, frame, region);
-  drawPops(canvas, frame);
+  drawPops(canvas, frame, keys);
   const moving = fxEntry(frame.fx, 'piece', TURN_ENTITY)?.values;
   const piece = centreOf(frame, {
     col: moving?.[0] ?? view.piece.col,
@@ -237,7 +203,7 @@ export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   });
   if (piece !== null) drawPiece(canvas, frame, { point: piece, alpha: 1 });
   if (target !== null) drawCaptures(canvas, frame, target);
-  drawBursts(canvas, frame, region);
+  drawBursts(canvas, frame, { region, keys });
   // Whatever slides in from a waiting rank further up stays hidden above the peek band.
   kit.fill.setColor(colors.color.background);
   canvas.drawRect({ x: 0, y: 0, width: layout.width, height: peekTop(region) }, kit.fill);

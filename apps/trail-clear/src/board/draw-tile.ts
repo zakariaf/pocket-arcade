@@ -8,16 +8,13 @@
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { drawFace, inset, INSET } from './draw-parts.ts';
-import { capCentre, partPath, trailParts } from './tile-parts.ts';
+import { tileLayers } from './tile-parts.ts';
 
 import type { Frame } from './draw-parts.ts';
-import type { TrailPart } from './tile-parts.ts';
+import type { TileLayers } from './tile-parts.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas, SkPaint } from '@shopify/react-native-skia';
 
-const ROAD = 1;
-const RIVER = 2;
-const DASHES = 0;
 /** Width of the road's centre dashes, as a share of the tile (the paths are unit size). */
 const DASH_WIDTH = 0.035;
 const POND_RADIUS = 0.14;
@@ -30,53 +27,40 @@ export type TileLook = {
   readonly alpha?: number;
 };
 
-type Layer = {
-  readonly parts: readonly TrailPart[];
-  /** The terrain whose paths to draw (DASHES for the road's centre line). */
-  readonly terrain: number;
-  readonly paint: SkPaint;
-};
+/** A tile's layers (looked up once per tile) and how faded it is. */
+type Tile = { readonly layers: TileLayers; readonly alpha: number };
 
-/** The stub of a terrain that has a single edge (it ends at a house or a pond), or null. */
-function endOf(parts: readonly TrailPart[]): TrailPart | null {
-  const [only] = parts;
-  return parts.length === 1 && only?.shape === 'stub' ? only : null;
-}
+/** One layer's unit paths, by the kit's names, and the paint they fill or stroke. */
+type Layer = { readonly names: readonly string[]; readonly paint: SkPaint };
 
-/** Each part's unit path of the layer (a missing path is skipped). */
+/** Each unit path of the layer (a missing path is skipped). */
 function drawLayer(canvas: SkCanvas, frame: Frame, layer: Layer): void {
-  for (const part of layer.parts) {
-    const path = frame.kit.paths[partPath(layer.terrain, part)];
+  for (const name of layer.names) {
+    const path = frame.kit.paths[name];
     if (path !== undefined) canvas.drawPath(path, layer.paint);
   }
 }
 
 /** The river: its bands, and a pond where it ends. */
-function drawRiver(canvas: SkCanvas, frame: Frame, look: TileLook): void {
+function drawRiver(canvas: SkCanvas, frame: Frame, tile: Tile): void {
   const { fill } = frame.kit;
-  const parts = trailParts(look.edges, RIVER);
-  setPaintColor(fill, frame.colors.color.river, look.alpha ?? 1);
-  drawLayer(canvas, frame, { parts, terrain: RIVER, paint: fill });
-  const end = endOf(parts);
-  if (end !== null) {
-    const cap = capCentre(end.turn);
-    canvas.drawCircle(cap.x, cap.y, POND_RADIUS, fill);
-  }
+  const { pond } = tile.layers;
+  setPaintColor(fill, frame.colors.color.river, tile.alpha);
+  drawLayer(canvas, frame, { names: tile.layers.river, paint: fill });
+  if (pond !== null) canvas.drawCircle(pond.x, pond.y, POND_RADIUS, fill);
 }
 
 /** The road: its bands, its centre dashes, and a house where it ends. */
-function drawRoad(canvas: SkCanvas, frame: Frame, look: TileLook): void {
+function drawRoad(canvas: SkCanvas, frame: Frame, tile: Tile): void {
   const { fill, stroke, paths } = frame.kit;
   const { color } = frame.colors;
-  const alpha = look.alpha ?? 1;
-  const parts = trailParts(look.edges, ROAD);
+  const { layers, alpha } = tile;
   setPaintColor(fill, color.road, alpha);
-  drawLayer(canvas, frame, { parts, terrain: ROAD, paint: fill });
+  drawLayer(canvas, frame, { names: layers.road, paint: fill });
   setPaintColor(stroke, color.line, alpha);
   stroke.setStrokeWidth(DASH_WIDTH);
-  drawLayer(canvas, frame, { parts, terrain: DASHES, paint: stroke });
-  const end = endOf(parts);
-  const home = end === null ? undefined : paths[`house-${String(end.turn)}`];
+  drawLayer(canvas, frame, { names: layers.dashes, paint: stroke });
+  const home = layers.house === null ? undefined : paths[layers.house];
   if (home !== undefined) {
     setPaintColor(fill, color.house, alpha);
     canvas.drawPath(home, fill);
@@ -86,11 +70,12 @@ function drawRoad(canvas: SkCanvas, frame: Frame, look: TileLook): void {
 /** Pure worklet: the tile on its cell, faded by `alpha`. */
 export function drawTile(canvas: SkCanvas, frame: Frame, look: TileLook): void {
   const face = inset(look.rect, INSET);
-  drawFace(canvas, frame, { rect: face, token: 'grass', alpha: look.alpha ?? 1 });
+  const tile = { layers: tileLayers(look.edges), alpha: look.alpha ?? 1 };
+  drawFace(canvas, frame, { rect: face, token: 'grass', alpha: tile.alpha });
   canvas.save();
   canvas.translate(face.x, face.y);
   canvas.scale(face.width, face.width);
-  drawRiver(canvas, frame, look);
-  drawRoad(canvas, frame, look);
+  drawRiver(canvas, frame, tile);
+  drawRoad(canvas, frame, tile);
   canvas.restore();
 }
