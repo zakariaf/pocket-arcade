@@ -3,7 +3,7 @@
 // The tutorial board is small and fixed: step up next to the front rank, jump it in a chain of
 // two, and when the waiting rank comes down onto the empty board, jump it too and win.
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
-import { create } from '@e07/jump-chain/rules/create.ts';
+import { createLayout } from '@e07/jump-chain/rules/create.ts';
 
 import type { TeachingSpec, TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type {
@@ -11,6 +11,12 @@ import type {
   JumpChainState,
   Square,
 } from '@e07/jump-chain/rules/jump-chain-types.ts';
+
+/**
+ * Seed 1's own level-0 layout, the board create(1, 0) hands out too (the witness wins it; the
+ * teaching test pins that), laid without the witness so loading this module stays cheap.
+ */
+const LEVEL_0 = createLayout(1, 0);
 
 /** A level-0 position with your piece and these enemies, given as [col, row, rank]. */
 function position(
@@ -20,7 +26,7 @@ function position(
   const enemies = enemySquares.map(([col, row, rank], id) => ({ id, rank, col, row }));
   const ranks = new Set(enemies.map((enemy) => enemy.rank)).size;
   return {
-    ...create(1, 0),
+    ...LEVEL_0,
     piece,
     enemies,
     total: enemies.length,

@@ -10,13 +10,16 @@ import de from '@e07/jump-chain/i18n/de.json';
 import en from '@e07/jump-chain/i18n/en.json';
 import fa from '@e07/jump-chain/i18n/fa.json';
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
+import { create, createLayout } from '@e07/jump-chain/rules/create.ts';
 import { intentToMove } from '@e07/jump-chain/rules/intent-to-move.ts';
 import { listMoves } from '@e07/jump-chain/rules/list-moves.ts';
 import { outcome } from '@e07/jump-chain/rules/outcome.ts';
 
 import { JUMP_CHAIN_TEACHING } from './jump-chain-teaching.ts';
 
+import type * as TeachingModule from './jump-chain-teaching.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
+import type * as SolverModule from '@e07/jump-chain/levels/jump-chain-solver.ts';
 import type { JumpChainState } from '@e07/jump-chain/rules/jump-chain-types.ts';
 
 const CATALOGS: readonly Readonly<Record<string, string>>[] = [en, de, fa, ckb];
@@ -54,6 +57,27 @@ function walk(): { state: JumpChainState; index: number }[] {
   });
   return seen;
 }
+
+// Performance budget (cold start): the teaching module is loaded at app start, so it must not run
+// the witness (a full bot game per board) while it loads.
+describe('loading the teaching module', () => {
+  it('runs no witness search', () => {
+    jest.isolateModules(() => {
+      const solver = jest.requireActual<typeof SolverModule>(
+        '@e07/jump-chain/levels/jump-chain-solver.ts',
+      );
+      const solve = jest.spyOn(solver.JUMP_CHAIN_SOLVER, 'solve');
+      const teaching = jest.requireActual<typeof TeachingModule>('./jump-chain-teaching.ts');
+      expect(solve).not.toHaveBeenCalled();
+      expect(teaching.JUMP_CHAIN_TEACHING.tutorial.steps).toHaveLength(3);
+    });
+  });
+
+  it('keeps the tutorial on seed 1’s own layout, the board create(1, 0) hands out too', () => {
+    expect(createLayout(1, 0)).toStrictEqual(create(1, 0));
+    expect(JUMP_CHAIN_TEACHING.tutorial.start.rng).toStrictEqual(createLayout(1, 0).rng);
+  });
+});
 
 describe('JUMP_CHAIN_TEACHING', () => {
   it('scripts three steps, each expecting one legal move, and the scripted moves win', () => {
