@@ -2,14 +2,13 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import {
   degreesOf,
   drawUnitPath,
   inset,
-  isPlaying,
   rectAt,
   rectBetween,
   scaled,
@@ -159,8 +158,8 @@ export function drawGuard(canvas: SkCanvas, frame: Frame): void {
 /** A strike landed on the guard: a ring bursts from it while the hit plays. */
 export function drawGuardHit(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, kit, colors } = frame;
-  const hit = fxEntry(frame.fx, 'hit', GUARD_ENTITY);
-  const rect = isPlaying(hit) ? rectAt(layout, view.size, view.guard) : null;
+  const hit = playingEntry(frame.fx, 'hit', GUARD_ENTITY);
+  const rect = hit === undefined ? null : rectAt(layout, view.size, view.guard);
   if (rect === null || hit === undefined) return;
   const grow = hit.values[0] ?? 0;
   setPaintColor(kit.stroke, colors.color.flash, 1 - grow);
@@ -173,8 +172,8 @@ export function drawGuardHit(canvas: SkCanvas, frame: Frame): void {
 export function drawBursts(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, fx, kit, colors } = frame;
   for (const enemy of view.fallen) {
-    const burst = fxEntry(fx, 'burst', enemyEntity(enemy.id));
-    const rect = isPlaying(burst) ? rectAt(layout, view.size, burst.values[0] ?? 0) : null;
+    const burst = playingEntry(fx, 'burst', enemyEntity(enemy.id));
+    const rect = burst === undefined ? null : rectAt(layout, view.size, burst.values[0] ?? 0);
     if (rect === null || burst === undefined) continue;
     const spec = {
       seed: enemy.id + 1,

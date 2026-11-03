@@ -5,7 +5,6 @@ import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { Facing } from '@e07/swap-guard/rules/swap-guard-types.ts';
 import type { SkCanvas, SkPaint, SkPath } from '@shopify/react-native-skia';
 
@@ -48,11 +47,6 @@ export function scaled(rect: Rect, scale: number): Rect {
     width,
     height,
   };
-}
-
-/** An effect that is not a tween of something visible draws only once its track has started. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /** Degrees that turn a shape drawn pointing up toward a facing (physical: never mirrored). */
