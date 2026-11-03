@@ -1,0 +1,37 @@
+{
+  "first-build": {
+    "difficulty": 0,
+    "cols": 7,
+    "rows": 8,
+    "snake": [24, 17, 10],
+    "critters": [{ "id": 0, "cell": 52 }],
+    "total": 2,
+    "caught": 1,
+    "growth": 0,
+    "moves": 5,
+    "maxMoves": 30,
+    "score": 10,
+    "hasContinued": false,
+    "rng": [1, 2, 3, 4]
+  },
+  "heading-build": {
+    "difficulty": 20,
+    "cols": 7,
+    "rows": 8,
+    "snake": [12, 13, 20, 19, 26, 27, 34, 33, 32, 25],
+    "critters": [
+      { "id": 0, "cell": 24 },
+      { "id": 1, "cell": 31 },
+      { "id": 3, "cell": 53 }
+    ],
+    "total": 4,
+    "caught": 1,
+    "growth": 3,
+    "moves": 12,
+    "maxMoves": 30,
+    "score": 10,
+    "heading": "right",
+    "hasContinued": false,
+    "rng": [4104383275, 1392343209, 3686063501, 2041432075]
+  }
+}
