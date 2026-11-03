@@ -1,0 +1,1 @@
+--ads-mode off --entitlements auto --unsigned --game demo-game

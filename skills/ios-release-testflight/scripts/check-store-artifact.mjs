@@ -2,14 +2,16 @@
 // check-store-artifact.mjs: the store-artifact gate on an exported .ipa (or its unpacked
 // Payload/<App>.app), run before --validate-app and again before the owner is told a build is
 // ready. It proves what players receive: no debug code, no StoreKit test files, no debug
-// entitlement, the right variant, AdMob app ID (never a scaffold placeholder), the app id
+// entitlement, the right variant, AdMob ids (never a scaffold placeholder or, in a live build,
+// Google's sample ids), the app id
 // io.applander.<game>, the App Tracking Transparency text in every app language, version and build
 // number, built by Xcode 26.6, and a complete Shell (no shell-slice.json in the repo it was built
 // from, no NotBuiltScreen route, no placeholder in the bundle).
 // Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-store-artifact.mjs --ipa apps/<game>/build/export/<App>.ipa --variant store --ads live --version 1.0.0 --build 8 --game <game-id> .
 // --unsigned is the keyless release rehearsal only (an archive built with CODE_SIGNING_ALLOWED=NO):
 // it prints REHEARSAL first, reports the signing rule as SKIP and keeps every other rule strict.
-// A scaffold placeholder (owner steps G3 and G5) is reported under owner-placeholder and the line
+// A scaffold placeholder (owner steps G3 and G5), and Google's sample (test) units in a live build (G5),
+// are reported under owner-placeholder and the line
 // before RESULT is 'OWNER STEPS PENDING: G3, G5'; the result stays FAIL in every mode.
 // release-ios.ts never passes it, and a REHEARSAL result is never release evidence.
 import { spawnSync } from 'node:child_process';
@@ -19,12 +21,11 @@ import { join, relative } from 'node:path';
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireDir, run, toPosix, walk } from './check-lib.mjs';
 import { parsePlistXml, plistGet, readPlist } from './lib/plist.mjs';
 import { NOT_BUILT_TESTID, partialShellProblems } from './lib/shell-complete.mjs';
-import { adUnitFields, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
+import { adPlaceholderOf, adUnitFields, bundleIdProblem, finishWithOwnerSteps, GOOGLE_SAMPLE_APP_IDS, isGoogleSampleAdId, notRealAdIdOf, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
-const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 const SENTINEL = 'SHELL_TEST_BUILD_ONLY';
 const ALLOWED = { test: ['off', 'test'], store: ['off', 'live'] };
@@ -55,16 +56,20 @@ const SPEC = {
     ' *constants        EXConstants.bundle/app.config extra.appVariant / extra.adsMode match the release',
     ' *get-task-allow   the app is signed and its entitlements do not grant get-task-allow (a debug entitlement);',
     '                   with --unsigned (rehearsal only) an app without a signature is a SKIP line',
-    ' *ad-app-id        GADApplicationIdentifier: a real ID for live, the Google sample ID otherwise',
+    ' *ad-app-id        GADApplicationIdentifier: a real ID for live (never Google\'s sample, which every non-live',
+    '                   build carries), exactly the Google sample ID otherwise',
     ' *owner-placeholder a scaffold value the owner replaces, by field: the AdMob app id',
-    '                   ca-app-pub-1234567890123456~1234567890 and units /1111111111, /2222222222, /3333333333 (owner',
-    '                   step G5); in store builds the links example.com and support@example.com (owner step G3).',
+    '                   ca-app-pub-1234567890123456~1234567890 and, in a live build, every unit that is not a real',
+    '                   one (the placeholders /1111111111, /2222222222, /3333333333 or Google\'s sample (test) units',
+    '                   ca-app-pub-3940256099942544/..., test ads in a store build) (owner step G5); in store builds',
+    '                   the links example.com and support@example.com (owner step G3).',
     "                   The line before RESULT is then 'OWNER STEPS PENDING: G3, G5' (the steps still pending) and the",
     '                   result stays FAIL, with or without --unsigned: until the owner supplies them these are the only',
     '                   expected FAIL lines. A store/off archive carries no AdMob ids, so a store/off rehearsal',
     '                   (--unsigned) stands in for the store/live build: it reads the AdMob ids from',
-    '                   <repo-root>/apps/<game>/game.config.ts (--game required) and reports their placeholders',
-    '                   there, so it ends with the same OWNER STEPS PENDING line as check-release-setup',
+    '                   <repo-root>/apps/<game>/game.config.ts (--game required) and reports every iOS id there',
+    '                   that is not a real one (a placeholder or Google\'s sample id), so it ends with the same',
+    '                   OWNER STEPS PENDING line as check-release-setup',
     ' *bundle-id        CFBundleIdentifier is io.applander.<game id without hyphens> (owner decision O4), never',
     '                   com.example.*; with --game it is exactly that game\'s id',
     ' *att-string       Info.plist NSUserTrackingUsageDescription and en, de, fa and ckb.lproj/InfoPlist.strings each',
@@ -128,13 +133,13 @@ function checkVariant(ctx) {
     if (extra[key] !== want) problem('EXConstants.bundle/app.config', 'constants', `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, 'Export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole release run.');
   }
   const appId = info.GADApplicationIdentifier;
-  const appIdPlaceholder = ownerPlaceholderOf(appId);
-  const isLive = typeof appId === 'string' && LIVE_APP_ID.test(appId) && appId !== SAMPLE_APP_ID;
+  const appIdPlaceholder = adPlaceholderOf(appId, 'ios');
+  const isLive = typeof appId === 'string' && LIVE_APP_ID.test(appId) && !isGoogleSampleAdId(appId);
   if (appIdPlaceholder !== null) ctx.ownerPlaceholder('Info.plist', appIdPlaceholder, 'Info.plist GADApplicationIdentifier');
-  else if (options.ads === 'live' ? !isLive : appId !== SAMPLE_APP_ID) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is "${appId ?? 'missing'}", expected ${options.ads === 'live' ? "the game's real AdMob app ID" : 'the Google sample ID'}`, 'Live builds take the real ID from game.config.ts (owner step G5); every other build uses the sample ID.');
+  else if (options.ads === 'live' ? !isLive : appId !== GOOGLE_SAMPLE_APP_IDS.ios) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is "${appId ?? 'missing'}", expected ${options.ads === 'live' ? "the game's real AdMob app ID" : 'the Google sample ID'}`, 'Live builds take the real ID from game.config.ts (owner step G5); every other build uses the sample ID.');
   for (const [field, unit] of adUnitFields(extra.adUnits, 'ios')) {
-    const unitPlaceholder = ownerPlaceholderOf(unit);
-    if (unitPlaceholder !== null) ctx.ownerPlaceholder('EXConstants.bundle/app.config', unitPlaceholder, field);
+    const notReal = notRealAdIdOf(unit, 'ios');
+    if (notReal !== null) ctx.ownerPlaceholder('EXConstants.bundle/app.config', notReal, field);
   }
   const idProblem = bundleIdProblem(info.CFBundleIdentifier, options.game ?? null);
   if (idProblem !== null) problem('Info.plist', 'bundle-id', `CFBundleIdentifier ${idProblem}`, 'game.config.ts bundleId is io.applander.<game id without hyphens> (owner decision O4; withShell refuses any other); prebuild with --clean and archive again.');
@@ -155,7 +160,8 @@ function checkShellComplete(ctx, root, report) {
 /**
  * A store/off archive carries no AdMob ids (Google's sample app id, no units), yet the store/live
  * build it rehearses carries the owner's (owner step G5). So a store/off rehearsal reads the ids from
- * game.config.ts and reports each placeholder there: the rehearsal names every owner step still
+ * game.config.ts and reports each iOS id there that is not a real one (a scaffold placeholder or
+ * Google's sample id, notRealAdIdOf): the rehearsal names every owner step still
  * pending, exactly as check-release-setup and check-game-app --stage complete do (D68).
  */
 function checkRehearsalAdIds(ctx, root, report) {
