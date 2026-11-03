@@ -1,4 +1,6 @@
 // apps/toggle-drop/src/rules/apply-move.ts
+import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
+
 import { dropPath, flipPath } from './drop-path.ts';
 import { listMoves } from './list-moves.ts';
 import { fallMark } from './timed-fall.ts';
@@ -28,16 +30,17 @@ function switchIndexes(state: ToggleDropState, path: DropPath): Set<number> {
   return new Set(met.map((step) => step.row * state.cols + step.col));
 }
 
+/** The landing column is a column of the board and every flipped switch a cell of it. */
 function landingOf(state: ToggleDropState, col: number, flipped: Set<number>): Landing {
-  const filled = state.filled[col] ?? 0;
-  const need = state.needs[col] ?? 0;
+  const filled = pickAt(state.filled, col);
+  const need = pickAt(state.needs, col);
   const isInCup = filled < need;
   return {
     col,
     isInCup,
     isCupFilled: isInCup && filled + 1 === need,
     // A switch points away from the side it started on after an odd number of flips.
-    wasRedirected: [...flipped].some((index) => (state.flips[index] ?? 0) % 2 === 1),
+    wasRedirected: [...flipped].some((index) => pickAt(state.flips, index) % 2 === 1),
   };
 }
 
