@@ -2,11 +2,11 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingAt, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
-import { inset, isPlaying, squareAt } from './board-geometry.ts';
+import { inset, squareAt } from './board-geometry.ts';
 import { PLAYER_ENTITY, TURN_ENTITY } from './board-ids.ts';
 
 import type { Frame } from './board-geometry.ts';
@@ -41,8 +41,8 @@ function drawBurst(canvas: SkCanvas, frame: Frame, burst: Burst): void {
 /** A crash or a crush throws sparks from its square (full motion only: reduced motion has no track). */
 function drawSparks(canvas: SkCanvas, frame: Frame): void {
   for (const key of Object.keys(frame.fx.entries)) {
-    const entry = frame.fx.entries[key];
-    if (!key.startsWith('spark:') || !isPlaying(entry)) continue;
+    const entry = playingAt(frame.fx, key);
+    if (!key.startsWith('spark:') || entry === undefined) continue;
     const square = squareAt(frame.layout, entry.values[0] ?? 0, entry.values[1] ?? 0);
     if (square === null) continue;
     const seed = Number(key.slice('spark:'.length));
@@ -63,8 +63,8 @@ function drawSparks(canvas: SkCanvas, frame: Frame): void {
 function drawBadges(canvas: SkCanvas, frame: Frame): void {
   const font = frame.kit.numberFont;
   for (const key of Object.keys(frame.fx.entries)) {
-    const entry = frame.fx.entries[key];
-    if (!key.startsWith('badge:') || !isPlaying(entry)) continue;
+    const entry = playingAt(frame.fx, key);
+    if (!key.startsWith('badge:') || entry === undefined) continue;
     const [col = 0, row = 0, count = 0] = entry.values;
     const square = squareAt(frame.layout, col, row);
     if (square === null) continue;
@@ -89,8 +89,9 @@ function drawCaught(canvas: SkCanvas, frame: Frame): void {
   if (!view.isCaught || square === null || (caught !== undefined && caught.ageMs <= 0)) return;
   const ring = inset(square, 0.02);
   const corner = square.width * 0.16;
-  if (isPlaying(caught)) {
-    setPaintColor(kit.fill, colors.color.danger, (caught.values[0] ?? 0) * 0.5);
+  const flash = playingEntry(frame.fx, 'caught', PLAYER_ENTITY);
+  if (flash !== undefined) {
+    setPaintColor(kit.fill, colors.color.danger, (flash.values[0] ?? 0) * 0.5);
     canvas.drawRRect({ rect: ring, rx: corner, ry: corner }, kit.fill);
   }
   kit.stroke.setColor(colors.color.danger);
@@ -115,10 +116,11 @@ function drawHinted(canvas: SkCanvas, frame: Frame): void {
 /** A glow over the floor: the clear (glow colour) or an undo (a short hint-coloured blink). */
 function drawWash(canvas: SkCanvas, frame: Frame, floor: Rect): void {
   const { kit, colors, fx } = frame;
-  const glow = fxEntry(fx, 'glow', TURN_ENTITY);
-  const revert = fxEntry(fx, 'revert', TURN_ENTITY);
-  const wash = isPlaying(glow) ? { entry: glow, color: colors.color.glow, share: 0.6 } : null;
-  const blink = isPlaying(revert) ? { entry: revert, color: colors.color.hint, share: 0.2 } : null;
+  const glow = playingEntry(fx, 'glow', TURN_ENTITY);
+  const revert = playingEntry(fx, 'revert', TURN_ENTITY);
+  const wash = glow === undefined ? null : { entry: glow, color: colors.color.glow, share: 0.6 };
+  const blink =
+    revert === undefined ? null : { entry: revert, color: colors.color.hint, share: 0.2 };
   const shown = wash ?? blink;
   if (shown === null) return;
   setPaintColor(kit.fill, shown.color, (shown.entry.values[0] ?? 0) * shown.share);
@@ -127,8 +129,8 @@ function drawWash(canvas: SkCanvas, frame: Frame, floor: Rect): void {
 
 /** The floor is clear: particles burst from its centre (full motion only). */
 function drawClearBurst(canvas: SkCanvas, frame: Frame, floor: Rect): void {
-  const burst = fxEntry(frame.fx, 'burst', TURN_ENTITY);
-  if (!isPlaying(burst)) return;
+  const burst = playingEntry(frame.fx, 'burst', TURN_ENTITY);
+  if (burst === undefined) return;
   const spec = {
     seed: 7,
     x: floor.x + floor.width / 2,
