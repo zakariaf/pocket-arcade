@@ -20,7 +20,7 @@
 //                     stale report, a report without viewRect, wrong device, missing reference
 //   check-signoff     the sign-off ledger: every way a frame can look done without being done;
 //                     --draft --from-ledger keeps the recorded differences of the same variant, and
-//                     refuses stale sheets and a broken ledger
+//                     refuses stale sheets, a failing run and a broken ledger
 //   capture-app       still screen, root testID on screen, unchanged during the hierarchy dump
 //                     (a late load is settled and dumped again; a screen that never stops is not)
 //   setup-parity-sim  the dedicated simulator is ready (check mode) and gets ready (apply mode)
