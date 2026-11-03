@@ -1,6 +1,7 @@
 // packages/shell/src/game-host/game-host.ts
 import { createElement } from 'react';
 
+import { withCreateMemo } from '@e07/shell/game-host/create-memo.ts';
 import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
 import { createFullscreenGate } from '@e07/shell/game-host/fullscreen-gate.ts';
 import {
@@ -179,7 +180,10 @@ export type GameHost = {
 type Session<T extends ShellGameTypes> = GameSession<T['state'], T['move'], T['event']>;
 
 type Opener<T extends ShellGameTypes> = {
+  /** The module the runs play: its create is shared per (seed, difficulty) (create-memo.ts). */
   readonly game: ShellGameModule<T>;
+  /** The module as the app passed it: the board layer draws and drives the run with it. */
+  readonly boardGame: ShellGameModule<T>;
   readonly deps: GameHostDeps;
   readonly lifecycle: FullscreenGate;
   readonly runs: RunTracker<T>;
@@ -301,7 +305,7 @@ function openRun<T extends ShellGameTypes>(
   opener: Opener<T>,
   open: SessionOpen,
 ): OpenedSession | null {
-  const { game, deps, lifecycle, runs } = opener;
+  const { game, boardGame, deps, lifecycle, runs } = opener;
   const example = runs.take(open);
   const session =
     example === null ? firstSession(opener, open) : exampleSession(opener, example.state);
@@ -312,24 +316,28 @@ function openRun<T extends ShellGameTypes>(
   if (example !== null && example.endsAs !== null) {
     controller.endWith(endStateOf(game, example.endsAs));
   }
-  const board = deps.createBoardHost({ game, controller, lifecycle });
+  const board = deps.createBoardHost({ game: boardGame, controller, lifecycle });
   return { handle, BoardHost: board, canHint: controller.canHint };
 }
 
 export function createGameHost<T extends ShellGameTypes>(
-  game: ShellGameModule<T>,
+  boardGame: ShellGameModule<T>,
   deps: GameHostDeps,
 ): GameHost {
+  // Every run of this host shares one create() per (seed, difficulty): start, resume, retry and
+  // the run end's counters ask for the same board, and a proven board is proven once.
+  const game = withCreateMemo(boardGame);
   const resume = createResumer(game, deps);
   const lifecycle = createFullscreenGate();
   const runs = createRunTracker<T>();
   const openGame = deps.openGame;
   const controls = createGameDebugControls({ game, runs, ...(openGame ? { openGame } : {}) });
+  const opener = { game, boardGame, deps, lifecycle, runs, resume };
   return {
-    ...factsOf(game),
-    ...teachingOf(game, deps),
+    ...factsOf(boardGame),
+    ...teachingOf(boardGame, deps),
     hasSavedRun: () => deps.save.doc().run !== null,
-    ...countTutorialRuns((open) => openRun({ game, deps, lifecycle, runs, resume }, open)),
+    ...countTutorialRuns((open) => openRun(opener, open)),
     lifecycle,
     debugControls: () => controls,
   };

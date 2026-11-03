@@ -6,6 +6,7 @@ import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 
 import { SIDE_ROW, isDark } from './board-squares.ts';
 import { TUNING, knobsFor, marchEveryFor } from './jump-chain-tuning.ts';
+import { TUTORIAL_START } from './tutorial-board.ts';
 
 import type { Enemy, JumpChainMove, JumpChainState, Square } from './jump-chain-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -128,9 +129,22 @@ function emptyRanks(enemies: readonly Enemy[], nextRank: number): number {
 }
 
 /**
- * The counters legal play keeps: every enemy made took the next id (nextId = total), a level
- * makes only its opening ranks, the march clock runs 1..its pace while the run goes on (0 only
- * after the move that won a level), and each capture and cleared rank scored at least its points.
+ * The ranks a run can have made: the endless run makes new ones as it goes; a level makes only
+ * its opening ranks, and the scripted tutorial (S13), which a kill may interrupt like any run,
+ * only the ranks of its start board (at its difficulty).
+ */
+function isMadeRanks(difficulty: number, nextRank: number): boolean {
+  if (isEndlessDifficulty(difficulty)) return true;
+  const isTutorial =
+    difficulty === TUTORIAL_START.difficulty && nextRank === TUTORIAL_START.nextRank;
+  return isTutorial || nextRank === knobsFor(difficulty).ranks;
+}
+
+/**
+ * The counters legal play keeps: every enemy made took the next id (nextId = total), only the
+ * ranks isMadeRanks allows were made, the march clock runs 1..its pace while the run goes on (0
+ * only after the move that won a level), and each capture and cleared rank scored at least its
+ * points.
  */
 function isCountReachable(enemies: readonly Enemy[], counts: Counts): boolean {
   const isEndless = isEndlessDifficulty(counts.difficulty);
@@ -139,7 +153,7 @@ function isCountReachable(enemies: readonly Enemy[], counts: Counts): boolean {
   const leastScore = TUNING.jumpPoints * counts.captured + TUNING.rankPoints * counts.ranksCleared;
   return (
     counts.nextId === counts.total &&
-    (isEndless || counts.nextRank === knobsFor(counts.difficulty).ranks) &&
+    isMadeRanks(counts.difficulty, counts.nextRank) &&
     counts.marchIn >= (isWon ? 0 : 1) &&
     counts.marchIn <= pace &&
     counts.ranksCleared === emptyRanks(enemies, counts.nextRank) &&

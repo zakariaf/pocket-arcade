@@ -18,26 +18,30 @@ export type DragPathTracer = {
   readonly finish: (intent: InputIntent) => InputIntent;
 };
 
-/** Appends a target unless it is the trace's last one (each change once, never null). */
-function traced(trace: readonly BoardTarget[], target: BoardTarget | null): BoardTarget[] {
-  return target === null || isSameTarget(trace.at(-1) ?? null, target)
-    ? [...trace]
-    : [...trace, target];
+/**
+ * Appends a target to the trace in place unless it is the trace's last one (each change once,
+ * never null), and returns the same array: a hover arrives on every change of the finger's target,
+ * so the trace grows without being copied. Only this tracer holds a trace, and finish hands out a
+ * path of its own, so nothing else sees the array change.
+ */
+export function traceTarget(trace: BoardTarget[], target: BoardTarget | null): BoardTarget[] {
+  if (target !== null && !isSameTarget(trace.at(-1) ?? null, target)) trace.push(target);
+  return trace;
 }
 
 export function createDragPathTracer(): DragPathTracer {
-  let trace: readonly BoardTarget[] = [];
+  let trace: BoardTarget[] = [];
   return {
     start: () => {
       trace = [];
     },
     hover: (target) => {
-      trace = traced(trace, target);
+      traceTarget(trace, target);
     },
     finish: (intent) => {
       if (intent.kind !== 'drag-end') return intent;
-      let path = [intent.from];
-      for (const target of [...trace, intent.to]) path = traced(path, target);
+      const path = [intent.from];
+      for (const target of [...trace, intent.to]) traceTarget(path, target);
       trace = [];
       return { ...intent, path };
     },

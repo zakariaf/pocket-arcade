@@ -23,8 +23,8 @@ const CARD_HEIGHT = 0.94;
  * track (the badge's pop) passes 1 with long before it ends.
  */
 export function hasEnded(fx: FxSample, channel: string, entityId: number): boolean {
-  const linear = fx.linear[trackKey(channel, entityId)];
-  return linear !== undefined && linear >= 1;
+  const entry = fx.entries[trackKey(channel, entityId)];
+  return entry !== undefined && entry.linear >= 1;
 }
 
 /** One sampled value of a track (0 for a value the track does not carry). */

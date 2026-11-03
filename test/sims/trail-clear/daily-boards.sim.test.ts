@@ -4,6 +4,7 @@
 // witness proofs, so it runs with the sims (npm run test:sim), not on every commit.
 import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
 import { addDays } from '@e07/game-kit/dates/date-key.ts';
+import { memoizeCreate } from '@e07/shell/game-host/create-memo.ts';
 import {
   TRAIL_CLEAR_DAILY_DIFFICULTY,
   TRAIL_CLEAR_DAILY_SALT,
@@ -27,14 +28,17 @@ describe('trail-clear daily boards', () => {
     expect(DATES.filter((date) => !isProven(date, create))).toStrictEqual([]);
   });
 
-  it('spends at most createAttempts witness games on each date, none when a run asks again, and is deterministic', () => {
+  // A run asks for its board again (resume, retry, the run end's counters) through the game host's
+  // one create() per seed and difficulty (create-memo.ts), so the repeat ask costs no witness game.
+  it('spends at most createAttempts witness games on each date, none when a run asks again through the host, and is deterministic', () => {
     const budget = { attempts: TUNING.createAttempts, maxNodes: WITNESS_MAX_NODES };
     const overBudget = DATES.filter((date) => {
       const seed = seedOf(date);
+      const shared = memoizeCreate(create);
       const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
-      const first = create(seed, TRAIL_CLEAR_DAILY_DIFFICULTY);
+      const first = shared(seed, TRAIL_CLEAR_DAILY_DIFFICULTY);
       const firstRuns = solve.mock.calls.length;
-      const again = create(seed, TRAIL_CLEAR_DAILY_DIFFICULTY);
+      const again = shared(seed, TRAIL_CLEAR_DAILY_DIFFICULTY);
       const repeatRuns = solve.mock.calls.length - firstRuns;
       solve.mockRestore();
       const fresh = createWithin(seed, TRAIL_CLEAR_DAILY_DIFFICULTY, budget);
