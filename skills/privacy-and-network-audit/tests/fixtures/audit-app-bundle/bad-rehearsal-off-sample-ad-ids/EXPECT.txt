@@ -1,0 +1,5 @@
+REHEARSAL: not a release gate
+apps/demo-game/game.config.ts:10 [owner-placeholder] ads.ids.ios.appId (for the store/live build this store/off rehearsal stands in for) is Google's sample (test) AdMob id ca-app-pub-3940256099942544~1458002511 (owner step G5)
+apps/demo-game/game.config.ts:13 [owner-placeholder] ads.ids.ios.units.interstitial (for the store/live build this store/off rehearsal stands in for) is Google's sample (test) AdMob id ca-app-pub-3940256099942544/4411468910 (owner step G5)
+OWNER STEPS PENDING: G5
+RESULT: FAIL (2 problems)
