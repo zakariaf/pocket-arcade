@@ -11,14 +11,12 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { createReporter, fail, lineOf, maskComments, parseArgs, REPO_SCAN_IGNORES, requireDir, run, walk } from './check-lib.mjs';
-import { ANDROID_AD_IDS_MISSING, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, PLACEHOLDERS } from './lib/ship-placeholders.mjs';
+import { ANDROID_AD_IDS_MISSING, finishWithOwnerSteps, notRealAdIdOf, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 
 const SCRIPT = 'node packages/tooling/src/release-android/release-android.ts';
 const RELEASE_DIR = 'packages/tooling/src/release-android';
 const RELEASE_FILES = ['release-android-plan.ts', 'aab-signing.ts', 'version-code.ts', 'play-credentials.ts', 'play-client.ts'];
 const GITIGNORE = ['*.jks', '*.keystore', 'play-service-account.json'];
-/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts), never in game.config.ts. */
-const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
 const DENY = ['Read(~/.android-keys/**)', 'Read(**/*.jks)', 'Read(**/*.keystore)', 'Read(**/play-service-account.json)'];
 
 const SPEC = {
@@ -122,13 +120,12 @@ async function checkOwnerValues(ctx) {
     if (config.ads?.isEnabled !== true) continue;
     const android = config.ads?.ids?.android ?? null;
     const ids = android === null ? [] : [android.appId, ...Object.values(android.units ?? {})];
-    const placeholder = ids.find((id) => ownerPlaceholderOf(id) !== null);
-    const sample = ids.find((id) => String(id).startsWith(SAMPLE_PUBLISHER));
+    // The first id that is not the owner's: a placeholder, or Google's sample (test) id, which a live
+    // build would serve as test ads that earn nothing (notRealAdIdOf, owner step GP5 on Android).
+    const notReal = ids.map((id) => notRealAdIdOf(id, 'android')).find((entry) => entry !== null) ?? null;
     const at = { where: 'ads.ids.android', file: rel, line: lineAt('android:') };
     if (android === null) ctx.report.problem(ownerPlaceholderProblem({ entry: ANDROID_AD_IDS_MISSING, ...at }));
-    else if (placeholder !== undefined) ctx.report.problem(ownerPlaceholderProblem({ entry: { ...ANDROID_AD_IDS_MISSING, name: PLACEHOLDERS.find((item) => item.matches(placeholder))?.name ?? 'a placeholder', value: placeholder }, ...at }));
-    // A live build with Google's test ids shows test ads and earns nothing: GP5 is still pending.
-    else if (sample !== undefined) ctx.report.problem(ownerPlaceholderProblem({ entry: { ...ANDROID_AD_IDS_MISSING, name: "Google's sample (test) AdMob id", value: sample }, ...at }));
+    else if (notReal !== null) ctx.report.problem(ownerPlaceholderProblem({ entry: notReal, ...at }));
   }
 }
 
