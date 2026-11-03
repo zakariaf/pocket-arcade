@@ -5,7 +5,6 @@ import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 
 /** The rect of a board cell index (fractional col and row work for a slide between two cells). */
 export function rectAt(layout: BoardLayout, cols: number, cell: number): Rect | null {
@@ -34,9 +33,4 @@ export function inset(rect: Rect, share: number): Rect {
     width: rect.width - 2 * by,
     height: rect.height - 2 * by,
   };
-}
-
-/** An effect that is not a tween of something visible draws only once its track has started. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
