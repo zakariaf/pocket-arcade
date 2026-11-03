@@ -3,7 +3,7 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingAt } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { ENEMY_KIND, KIND_FROM_VIEW, NEXT_ENTITY, VALUE_FROM_VIEW } from './board-ids.ts';
@@ -42,11 +42,6 @@ function regionRect(
   if (first === null || last === null) return null;
   const x = Math.min(first.x, last.x);
   return { x, y: first.y, width: cols * first.width, height: last.y + last.height - first.y };
-}
-
-/** An effect that is not a tween of something visible draws only once its track has started. */
-function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /** A filled rounded rectangle with the ink edge. */
@@ -155,8 +150,8 @@ function drawNext(canvas: SkCanvas, frame: Frame): void {
 function drawBursts(canvas: SkCanvas, frame: Frame): void {
   const { kit, colors, fx } = frame;
   for (const key of Object.keys(fx.entries)) {
-    const burst = fx.entries[key];
-    if (!key.startsWith(BURST_KEY) || !isPlaying(burst)) continue;
+    const burst = playingAt(fx, key);
+    if (!key.startsWith(BURST_KEY) || burst === undefined) continue;
     const [col = 0, row = 0] = burst.values;
     const cell = cellRect(frame.layout, { regionId: 'board', col, row });
     if (cell === null) continue;
