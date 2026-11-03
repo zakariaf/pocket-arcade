@@ -124,6 +124,8 @@ The Shell plays the script on the Tutorial route (host-architecture.md, "The Tut
 | engine | `engineContractProblems` on the first level of every pack and a daily-like start: determinism, legality, a valid `panMode`, JSON round trips, the end-state rules |
 | levels | `levelsContractProblems`: the table covers the packs, levels numbered 1..n, packs match `game.config.ts` `levels`, every level solvable at its par |
 | teaching and counters | 3 to 5 pages; 2 to 4 unique kebab-case counter ids |
+| tutorial save | `tutorialSaveProblems` (game-kit `testing/teaching-contract.ts`): the tutorial start and the state after each scripted step pass the game's `parseState` unchanged, as JSON text. The Shell saves the first-launch tutorial after every move like any run, and its boot check drops a run `parseState` refuses, so a reachability check that knows only the tuning's boards loses a tutorial a kill interrupted (Jump Chain's `nextRank` check refused its own tutorial start). Accept the tutorial's states in `parseState`, derived from the tutorial start (keep that start in `rules/`, so the persistence never imports the teaching module) |
+| teaching loads cheaply | in `jest.isolateModules`, spy on `<CONST>_LEVELS.solver.solve`, then load the teaching module: the solver is never asked. The teaching module loads at app start; a `create()` that proves its board runs the solver, so the teaching builds its boards from the game's unproven draw (`drawStart`, `createLayout`) of the same seed, and a teaching test pins that the draw equals `create(seed, difficulty)` |
 | examples | `start` and `middle` play, `win` is won, `lose` is lost, all JSON-safe |
 | save policy | turn-based: `realtime` is `null` and `savePolicy` is `after-every-move` |
 

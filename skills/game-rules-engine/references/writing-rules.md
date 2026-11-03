@@ -77,7 +77,7 @@ In `<game-id>-engine.ts` as `<CONST>_RULES: GameRules<State, Move, Event>`:
 
 `<game-id>-persistence.ts` exports `<CONST>_PERSISTENCE: PersistenceSpec<State, Move>`:
 
-- `parseState(json)` rebuilds a fresh typed object from unknown JSON with explicit checks (whole numbers, array lengths, allowed cell values), returning `null` on anything unexpected. Never cast `json as State`.
+- `parseState(json)` rebuilds a fresh typed object from unknown JSON with explicit checks (whole numbers, array lengths, allowed cell values), returning `null` on anything unexpected. Never cast `json as State`. A reachability check (a board only `create` makes, its opening ranks, its cup count) must also accept the scripted tutorial's states: the Shell saves the tutorial like any run, and a state `parseState` refuses is dropped at the next launch. Derive what the tutorial start allows from that start, kept in `rules/` (`tutorial-board.ts`), never from a copied number; the contract test's `tutorialSaveProblems` proves every tutorial state reads back unchanged.
 - `parseMove(json)` the same for one logged move.
 - `stateVersion: 1` at first; when the state or move shape changes after a release, bump it and make `migrateState(json, fromVersion)` upgrade older runs (or return `null`, which drops only the run in progress; results are kept).
 - `savePolicy: { kind: 'after-every-move' }` for turn-based and simulate-then-replay games.

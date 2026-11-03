@@ -728,7 +728,9 @@ export function checkGameAssembly(repo, id, report) {
   const entry = code(text(repo, files.entry));
   if (entry !== '' && !new RegExp(`import\\s+\\{\\s*startShell\\s*\\}\\s+from\\s+'@e07/shell/app/start-shell\\.ts';\\s+import\\s+\\{\\s*${camel}Game\\s*\\}\\s+from\\s+'\\./src/index\\.ts';\\s+startShell\\(${camel}Game\\);\\s*$`).test(entry)) report.problem({ file: files.entry, line: 1, rule: 'entry', message: `is not the 3-line entry startShell(${camel}Game)`, fix: 'Three statements and nothing else: import startShell, import the module, call startShell(module).' });
   const contract = code(text(repo, files.contract));
-  if (contract !== '' && !(/engineContractProblems\s*\(/.test(contract) && /levelsContractProblems\s*\(/.test(contract))) report.problem({ file: files.contract, line: 1, rule: 'contract-test', message: 'the contract test does not run engineContractProblems and levelsContractProblems on the module', fix: 'Copy templates/apps/__GAME_ID__/src/contract.test.ts: identity, catalogs, engine, levels, teaching, counters, examples.' });
+  const contractChecks = ['engineContractProblems', 'levelsContractProblems', 'tutorialSaveProblems'];
+  const missingChecks = contractChecks.filter((name) => !new RegExp(`${name}\\s*\\(`).test(contract));
+  if (contract !== '' && missingChecks.length > 0) report.problem({ file: files.contract, line: 1, rule: 'contract-test', message: `the contract test does not run ${missingChecks.join(', ')} on the module`, fix: 'Copy templates/apps/__GAME_ID__/src/contract.test.ts: identity, catalogs, engine, levels, the tutorial save and the teaching load, counters, examples.' });
 }
 
 /** The rules' kind of a policy member (continueRun, hints) when it is written as a literal, else null. */

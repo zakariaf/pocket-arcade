@@ -1,0 +1,10 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/contract.test.ts",
+      "find": "tutorialSaveProblems",
+      "with": "tutorialProblems",
+      "all": true
+    }
+  }
+]

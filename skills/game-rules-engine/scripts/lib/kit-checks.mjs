@@ -33,6 +33,7 @@ export const KIT_FILES = {
   'testing/json-shape.ts': ['jsonShapeProblems', 'jsonOf'],
   'testing/engine-contract.ts': ['engineContractProblems', 'EngineContractInput'],
   'testing/contract-intents.ts': ['contractIntentProblems', 'engineMemberProblems'],
+  'testing/teaching-contract.ts': ['tutorialSaveProblems', 'tutorialStates'],
   'geom/board-layout.ts': ['BoardTarget', 'BoardLayout'],
   'geom/classify-swipe.ts': ['SwipeDirection'],
   'timeline/track.ts': ['Track', 'Motion'],
