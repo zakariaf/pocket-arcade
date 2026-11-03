@@ -24541,8 +24541,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 1056,
-      "sheetSha256": "40553b43faa0cb27b726559e2dcb5d3bb0860941451e1fc2a518f1160de765fa",
-      "date": "2026-10-25",
+      "sheetSha256": "7049bdbb984a9c3cde990de3409f3a6a143d9335324e8787cb6bbd2bd1b9112c",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24604,19 +24604,24 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "a8af55b00b8f1469269f3f17f3f4369f742b8deedc9512de1202b2513d206e88",
-      "date": "2026-10-25",
+      "sheetSha256": "898b1c162ef52bc408bbb76d0a9d0a8b129d3b8cf1ca4c91ad91ccf8a8c6dac7",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
         "pictures": "match",
-        "shadows": "n/a",
+        "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -24646,19 +24651,24 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 149,
-      "sheetSha256": "f005b81f04b65fb4772d13bd7b67d9fae8de856128708ae105eb6f3b44b5e448",
-      "date": "2026-10-25",
+      "sheetSha256": "3c7d8d41574c421f6c9b3b5a145cd1dc8d5e1ffa57eb405a132d23e7a609905a",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
         "pictures": "n/a",
-        "shadows": "n/a",
+        "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -28800,6 +28810,1701 @@
       "eyeChecks": {
         "icons": "match",
         "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "e1b93c974cb3d374b4b2374260352d7583e2aa4d5ed6a2eb273081b55c8eb69c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 475,
+      "sheetSha256": "be2b3207d6bf8539177040edcdd2a8e0f7d96ccd75b6c4efe4a5274d643ee306",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 1042,
+      "sheetSha256": "b071c3c6e653f638c49d579f536a09fb3503d52356a99f0c62316976defc43e4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 1110,
+      "sheetSha256": "ad509b510aa260b6270160e4500bc4b23dc1a9757569580a8880f559db9b4183",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "9248ca400c6695d03b8bdbaca2df5f7fe5d00f131962d6151bdf5ace5a3554d4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 473,
+      "sheetSha256": "cfca2235d281811a5e2e1e6206990beb88829fa46284872bbf15e7e0606a6db4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 1048,
+      "sheetSha256": "7bdaeee1911a857f4dad823429988e6db8e8715a785d242ddbf4237fcf60b37d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 1123,
+      "sheetSha256": "286b1c4ff97e988567615b288907d6280427477fb92153a64af6e2bd2880fd4e",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e17502ab1f50e32460e104ec9b296bc933924deffffd4eefdfa8dec7c455aae8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 459,
+      "sheetSha256": "6a70d6636c9863f5ac9a37c8b4dcc8ad33f796e3d780b4947828b3ba94f14d02",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1056,
+      "sheetSha256": "44c63d7f609734272db2f4df8cdbc661957573ad34c00799554ea8b25a9598a5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1086,
+      "sheetSha256": "bc4fcf82a7ce06307eac94b7eb0f74090744716537cd6640d21b5619727dfa1f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "e99680ac6ed7bb955ea96d139fcd763716aa95134ddceb5e72ddb83efe5e4d70",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "43dacd830babc6ea0eeff614e24c19e5293ae304ca51211efe2b8e3f1afcaa06",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 1042,
+      "sheetSha256": "41ef3dc21ff9ea51128c273212b6697896c052cdb42759f414ef6d9189b1f551",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 1110,
+      "sheetSha256": "90ac8483facacbc81b673e8d6fb1e76af53f7da742c725488325c87ec7ed72e6",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "45843fca623a6f4297a2f6a540ba63546cd9f54f5d35582a40ea66b09730ee72",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 475,
+      "sheetSha256": "183563e3043d30a48eaae7db1661a08b1444493270e5ada1ec949c90377a0c8f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 1042,
+      "sheetSha256": "99833f925dd0db3fd5461c39130afa2fba3c90750aba2aa8c8ee76b9f2477c8a",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 1110,
+      "sheetSha256": "dfd167a6ac408e8333983691b7a5d782e97e99caab0f627fd86cc62bb7e1c350",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ebdf493d456e009b1be52e72a49f71de317396f431910eb11c2195ec9f1e5b19",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 473,
+      "sheetSha256": "ae03da510bcc9c43832629a5b59bbb1ba1a66c1a6af7923eaec76f5e885c6733",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 1048,
+      "sheetSha256": "e9d4f9ba5b33be865354a6007385a5e7c626193e3e3b9c7c39a192151b2e6f5d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 1123,
+      "sheetSha256": "2ac12825a3a931f29ee5ea8abf49516fdac47f701e8dc7c350a859b85d5f18b5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "a5ad598a8a60d5f0e160dc18befdd00457dae4f17384a18571908030b502196b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "2f7e25d7dbbffcddb7eb84fbbc14c0adc4ae27afc61b0de294c972aa6a99175b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 1042,
+      "sheetSha256": "b42feaba90b4023d3f67e694fd141fb019157b2599735a81962680adef2384a4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 1110,
+      "sheetSha256": "697acf8958ba21e936152c97e1e020af9c9b3b30fbbaf63ea1a1f9af23f15ee4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "622297bf04c37181a02063f8971a404e9411dd54308f4829156edde011701f91",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "1939792e7aa82d8fc3f90fc7e3ef3db97e160c6b985e9366381837c7bee56aef",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "1cf17cb877c6d1bd1dff756d4cc7891bf32ecff85816bce7229c2eb097a8430d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "aad82d1b4d97211de6043c22289f2a9f204bf2d70b4a9c1d4c8d71b6848266c2",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ff0a4375c4e6519265e3092de7f2768620d50780ba4c12e1e31ba1c7f863e806",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ba2f1afa6a217464e87d75f062656874b70026ffa460068c2eb7e57a076dfc27",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "03d91e1d49a78a25a0a9afd8f96b362c43ba54b53677515d7379f87938963fba",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "53aa07986f8781a72219b293c14e4880c491b936e9dcd024aa95a2f2859b5faa",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "9f6fac56af6047c7a367ec0073ee071443029a41f93933dff3eaeb125d44be62",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "544eeff3b9b57ef676b13e5545bb0d663cb0437c1174e8d2ab6b8173a808743b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "1c8014f11b85d345ef8c57e3735504914e90c268633babc9a474fae65f1d2595",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "version chip about 3 pt narrower than the mockup's 6 px flex gap draws (the .chip design artefact already waived in en, de and ckb) and the facts list ending about 1.3 pt lower (iOS Vazirmatn line snapping): wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "3310b7e6e599e8a74f8e9a895a72924e74e301a97a91b00d1280f0361502a970",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "b3d98b46a4853f8d3b1f4c09efd769f6b9bc96e3d2f4dc521f2e84d4bfb71cb3",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4f1426cbfd8fb0afaa22f243ba528518634d6fce2749ca5a7b36b0c673f2b4bf",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "support card shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the longer address moves the closing word along the second line: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "version chip about 3 pt narrower than the mockup's 6 px flex gap draws (the .chip design artefact already waived in en, de and ckb) and the facts list ending about 1.3 pt lower (iOS Vazirmatn line snapping): wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "3327d014401d54b34a0153f8aeadaa5c5f44d3239f065b167f79306b9c8f6314",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 262,
+      "sheetSha256": "d2deeabe86cf95a41fe0dea6f5057b5d96083b89df9e1869379e4625209a88cd",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "1ca0c407c03c99ff88dff095195a90e19cabf7be338d184cf5b5a55a1cf232dd",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 221,
+      "sheetSha256": "f4db30f456e09db9b53c4d9cd933072a720fda1c2279afee83b476a1a5b657e4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "033ff602fd4f4603f913d311165b845501784d51194187768a8a1d564c9ab395",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 149,
+      "sheetSha256": "5217b213600ed92bf67261a8e87393e9f220170e2382c2e199ac6f294c4fc2eb",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "9942f8d96712af50fa13098313c46b7682ec76059127fd1aa1d9f74f7e0a592d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 234,
+      "sheetSha256": "d03c32feb1942c5caa8c69252c094be62c2140aa4e8db4979297ad09cb974861",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "9d5c3d01cea453bef23885122130bf47fd92ae01d02ec122d9f56635d1eaa051",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 262,
+      "sheetSha256": "82e1b200d2cb04a894dc4e05611f13fcc6289912b29e4e27142a49653b1ff14c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "9bb257316e4faa4eca3abb3f0030fec4a3a1176887d263a285da032dd3c27c66",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 221,
+      "sheetSha256": "168a29671312504dc5b8736ec9f5243a6bc5429098a04359d636a0a962dc60a5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "dc9cea308a924bda2b589cf273f0c9f4272d6bbb34d7aad687756945570b105d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 234,
+      "sheetSha256": "cb354d8792774203808184c07be498f4ce2b70bd73c88ad6a3265c6e6534e619",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "contact section shows the owner's real support address (game.config.ts supportEmail, owner step G3) where the design's fixture shows the placeholder support@example.com; the closing word moves with it: wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "5c39f8c7afda6c2c01ba2fbc2d2a6fda86dcd07831ae7f06bcdf40e6eaac7466",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 402,
+      "sheetSha256": "e8ccd468815f6111e3e3c990ab470c77a7b3a60a7307ca185c4184b551531fd8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 761,
+      "sheetSha256": "18d62e7dbaa9257dc8431d7d0d82e5e8b7376c0c3d44f782c5f317355804a390",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d346d84443b8ce8e77e10cf95e24106f2d45e28ba4c2ec21ce5230add0d2c480",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 392,
+      "sheetSha256": "9762f3adf7ede572913784b97db4f5b0d7d8d22978fc4f6a47a12fd2a321a981",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 660,
+      "sheetSha256": "5fdf28a3b31d9806f84c4ddd988222ba6cc6faa9d1614d55ba3a84035dbaaafe",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "6158af050dfdb585375cb30ccb5019fd6f7b3db4276a27d1b3401419ba6983a4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 392,
+      "sheetSha256": "78158f3ddc47aecc4c213253ea3106571766d828a2a332c95ac2eeeb6a4a6983",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 660,
+      "sheetSha256": "e0ad1ae6ae7c325d1bde92bceb627ca7e601bd58317a4bb442385c3750ca7023",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "d574f5dbd0a5075373726e6cc343ed33120b9605e4cf263798083061c4a2ab49",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "73ef5d5e84fe9d2b345068b9ff0d8b046e702ef5bacef4232428233974384ca5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 761,
+      "sheetSha256": "f04befceaddf1915c9b37ce1f2cfa5906fa5732c58f8f3b70dc5a1a36d3dec7f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "328c077e5ad945470485221c3251746a40fe6bfa3630f72bad74bdd17524a70c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 402,
+      "sheetSha256": "9282d00bb26cb3cbee2c3e24057de27fe9d4b79e788ea6266f619ee7f90c7be7",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 761,
+      "sheetSha256": "77909cf610e1ccd103e675b6a026008b2e68cfd893415d54b4cee2d1dcb9e66c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d7ad24a708e0dc587ccf0c86e8d7121bd7203a31b368176f0e83cabdb3ef072c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 392,
+      "sheetSha256": "4e4207193e0a5cbefd063946cb57cd4d1fb9bb3b92f05f56ac7d308bcf0c2f2a",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 660,
+      "sheetSha256": "b88408b20f9a8f3368a1e2b1c9ea8125780214c5c5d6f1bc335851574da94853",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "10d380e91f7b6569b9af3a48a2da4beb81f584879d40123b1c3aa6a5193ebba3",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "e98d7ab0615a8ebb8e89465f288e61c82547204703f10fd9d145ee8ee646fb42",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 761,
+      "sheetSha256": "f6a2b96092e9649656b29474c1f08e889fae7090f9f93ad2097396ea87af6b49",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
