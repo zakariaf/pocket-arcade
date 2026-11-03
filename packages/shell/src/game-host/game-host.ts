@@ -15,6 +15,7 @@ import {
   isScoreRatedOf,
   musicSoundIdOf,
 } from '@e07/shell/game-host/game-facts.ts';
+import { hostCounterOf } from '@e07/shell/game-host/host-counter.ts';
 import {
   clockSeed,
   createResumer,
@@ -281,7 +282,9 @@ type GameFacts = Omit<GameHost, keyof TeachingFacts | RunMember>;
 /** What screens read about the game: names, art, counters, music, score, hints and packs. */
 function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts {
   const { counters: stats } = game.stats;
-  const counters = stats.map(({ id, labelId, aggregate }) => ({ id, labelId, aggregate }));
+  const counters = stats.map(({ id, labelId, aggregate, bestOfStyle }) =>
+    hostCounterOf({ id, labelId, aggregate, bestOfStyle }),
+  );
   return {
     id: game.identity.id,
     nameId: game.identity.nameId,

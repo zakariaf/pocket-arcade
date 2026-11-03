@@ -76,6 +76,33 @@ describe('statsSnapshotOf', () => {
     expect(snapshot.gameStats.map((stat) => stat.valueText)).toStrictEqual(['best-of:6', 'n0']);
   });
 
+  it("writes a best-of counter that is a length as the plain number (the design's Longest snake 23)", () => {
+    const counters = [
+      {
+        id: 'longest-snake',
+        labelId: 'snare-snake.stats.longest-snake',
+        aggregate: 'max' as const,
+        bestOfStyle: 'plain' as const,
+      },
+      {
+        id: 'biggest-combo',
+        labelId: 'line-siege.stats.biggest-combo',
+        aggregate: 'max' as const,
+        bestOfStyle: 'multiplier' as const,
+      },
+    ];
+    const snapshot = statsSnapshotOf(
+      summaryOf({ counters: { 'longest-snake': 23, 'biggest-combo': 6 } }, [
+        'longest-snake',
+        'biggest-combo',
+      ]),
+      counters,
+      { ...TEXT, bestOfText: (value) => `best-of:${String(value)}` },
+    );
+
+    expect(snapshot.gameStats.map((stat) => stat.valueText)).toStrictEqual(['n23', 'best-of:6']);
+  });
+
   it('leaves out Endless and the best level score until they exist, and names seven days', () => {
     const snapshot = statsSnapshotOf(summaryOf({}), COUNTERS, TEXT);
     expect([snapshot.bestEndless, snapshot.bestLevelScore]).toStrictEqual([null, null]);
