@@ -24238,15 +24238,15 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "3d735fc52d220b056f5b76f3ce6efd5ac1bd463c9602f2692a1833390e34a328",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
-        "icons": "n/a",
+        "icons": "match",
         "pictures": "match",
-        "shadows": "n/a",
+        "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": []
@@ -24259,11 +24259,11 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "e28579756c0f413e93d0ac81a856f9e221f05b842691c5a66c5dc4b57b46bbfd",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -24280,11 +24280,11 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "6ce85fea66444c6cfee07cbb3eff3352da1b9bcea7a9db0fe90b223c7bfd6373",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -24301,7 +24301,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "6682fb44a65145a854ea91dd3065268b3cca638af309f2245d77d7e444dbc79b",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24321,8 +24321,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "04bd524d922ac90da001d885beec455fd65c308af9878eb6739f756476f82c8e",
-      "date": "2026-10-25",
+      "sheetSha256": "0f5a339a4c45f8ba1c46d5e37afa8907ff2124de4fe2ad1b51cbf835f28f4810",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24343,7 +24343,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "abbcaf5b1c788e37bd81b128fa0297d27a7fb45ad1986ab1493360a49c52a3bb",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24363,8 +24363,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4ad317343d55f709ab55fc698e5cd98960bda86c660211269b3e47df3d01f2be",
-      "date": "2026-10-25",
+      "sheetSha256": "17b207b619cd27eb032a752b6ac0df7aaa7c7122dc03e0c95fd79f903db9186c",
+      "date": "2026-11-03",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -24378,7 +24378,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -24395,7 +24395,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "1e47af7991ec30e73626e2484bdfb24d9433eba0dbade89769b2079e61e2dd65",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24416,7 +24416,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "e64b5533b7eb89e05a6c5d1ada12f197159bceb001d9350da10d93f618f502d0",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24437,7 +24437,7 @@
       "lang": "en",
       "scrollY": 374,
       "sheetSha256": "b16905cd72b0d4fa5098e7e709ba02664dae00e541e17430bdae4b7110a56c70",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24458,7 +24458,7 @@
       "lang": "en",
       "scrollY": 741,
       "sheetSha256": "fefc8236aec2a76dec97f01a4da9a9a22fa1b05575e0015ac85735e372425517",
-      "date": "2026-10-25",
+      "date": "2026-11-03",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24466,7 +24466,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": []
@@ -26541,6 +26541,2272 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "9b20c35a8d624052fa9acac9c82c4d621be29122bfb613975fa56442c3a5fbce",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "94bb63d1ff08db3cefdddb7c2e3545495d78bd77f511d07fe214371897a9f419",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "045701a851ecf8f77d50b8ecbf242658a88ff58642891e5ea5b2b0eef6369eb3",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "714ca7e43a5ae33db935e60d9e892c9221f9916add944d2caa63af27e2d9b585",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "15f75bc6185ba887e706bf124cc61ca9f623b524e44a187ef8072da6b4f4bc4b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "8718174278c9a75a1fd978863412d352d60e62b7d60e9e90d2692ddc1c513826",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "eb3f994f977c3c0337f886d57982001cbf714fe5d5c0066fdfc2d937eb7308a9",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "d473b252409c520d940d1414fe42d4b300ce4f45401e2a7413c0cd21eec8ac44",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "572b4b657c6b97a9d08d1bb69ec6d8aa9f45dcbef4e08db3fa710eb492647623",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "42e62a83ca4ae1a44ee216601d7cadc8e1c563be170390065f72d1bb03dc975e",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "df3a29ca24441d712a79f546f24433c6dbdf75f7fa1d4d4de265c59f56d90e09",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "769e0a89afe6a972236425400a2e67155be861f0d3ab3e26388dcfb55038efff",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "806a320a2971e0397989b2401e2eb043d746a0f48711728543fdab3ad3bd70d4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "740c48c14e530288e8c4b4d6eaba529ae50a356496ab0e9ba4039719f12def3d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "63bfc234571eb27fe80dd1d5b0cb10685ebbbabc630e6aa660723c20e116483e",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "161e14f6b654f761be8c39345fde19c3da7d5146452f2ace87ac0bdf3370d345",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "2e0bfa7997e2d1688704a3b0be8bb82798b7d8264b7da08bbe4e31172081f2ad",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f2587f6ea4c81aa45fc684c504ae58a20975f9df43b8cd96743536dcf7de495a",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4a63f8c221e6b9f6c504f9b6953166395f2773d4a659e87dae4b543c12be64e2",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "a9220962712e2df67a73cc135a0f10438c941355fb02f9f2a92409d126c01638",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "c8c19c89bc6c3de55b582f1d65f7db1ed49c48f9794c8b8ce8d88f14420aef74",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0b8af0dd139814f000337fc309d662ac059ce9b52bab8ba97c6a31ce06f72937",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "29755cc25418d4df5572bde7ae3cb139ad708c629ba5cf298c0bf36c1c8e02f0",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "c437ccd5eb397bf2d36973cef75b24cd45d99023e10da9ae473bb900c73329c5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "fbff662d2cbdb1a83488c16da5622e438937cb67c5e2e1c3da48c435c4c55811",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "6562a52650014f40794f70615fa7fdfbed2c2e319d0bb264dc8735424ab09f14",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "f6f0117fe2821702182aa017c88937069fd413a59cff430a63178d38e18d1c79",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "13ddf5073b1d29b44e0e7f14508a8cafa1943cd4a314672b547c83ffd47042c4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3c0de8ab5c69b8d9181ae78eaba20d67efad9c279a9181255a7bbd7576f99b9f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ac715b3d13e44cf08156aa6e3b5edb91bf70555bc144823b5dcf4cfac97369fe",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "58c3294124dbf22b4a93004760d82659283adeadb3230b66b51d55c628bc2b88",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "611cd86e9e1426f7d327e117df303b61fb36f5a46e17eef4e50be1d09a7b490b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ed6740d8070c7b9d67fc4b31b138ba43d302921765ddeb77182ae35ae9bd06ea",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "c2609ab00b94b23f8d9b3da720c5820c52cf0af091925b0b0d90fd164bab891d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b19864276328864b2f884cbe4974344a242022e43c91b1ee5d250061f869d9d1",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c1a83701f0b1db9572ccf4cb9c71af03bd010fe11a9c09fce6a1fbcbc8077f0f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "a71996835cde13432a1e05ee4ebe8b31fadb5e76add53a17db13a1d0e53dccc5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "5740efabd5f2a4b2e691de87987ed2b731c5d0cf111bc103968520908418fef8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b9d1a0704d06ad82caece0fe197a29027ef013bdf3637374e9cb34db1b4e69ca",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d87e372b51a0c9a19691491e99b7017bd959754f8fed7d823328e28e5e839b6b",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "b656e1a1ce82ba851154db86775734c73c7feb2881060d813bbbf4ccd641d8e6",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "dc754803d785ed87fd49ab908d969fc666edd9f878c720c98622f5540dd094f3",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "98d6383c7d62e0a5b64b394d5ac9719112e74b216abef94ba2364d0706bb6d96",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "1bb9473f04aabf231caa2c037d089813d33e3327679a9afe43e39bde7d57b821",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "1a6f6da536f436f50ac5ff46d868a6dc826b7869be4ad8dc467f2665f64ca959",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "0ef5e7ef821ef2d255ae2754b94f1e2942fbe44fb0fc29c6145ee2600485038c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "Premium nudge (result.premium-button) breaks before the isolated price (\"... Entferne die Werbung für / 1,99 €.\") where the mockup breaks the price apart (\"... für 1,99 / €.\"), one underline per line; box, words and crown match: the existing iOS design-artefact waiver in parity/waivers.json (reported to the owner 2026-10-18), applied by the gate",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "630e57509aa751d98f3f1d3ce90c11ab9c4540a5c798fbe9bb700b23f5d98a6d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "Premium nudge (result.premium-button) underline: the app draws a continuous 2 pt bar through the descender of the Sorani letter ڕ where Chrome skips ink and leaves a gap; words and line extents match: the existing iOS platform waiver in parity/waivers.json (reported to the owner 2026-10-18), applied by the gate",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "aea7df77b8f71b53ba183a93cb2df0db708b9a2b734f4462fa89653a4e0401b8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3e4fd8227b190e80141303f8fc843d76a6762c249bba9f21d1a7eae08aa7af88",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "786dc865880395fd1f0054f743a1ff0650f5fc71179f862d6eb392c13f30f65d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "Premium nudge (result.premium-button) breaks before the isolated price (\"... Entferne die Werbung für / 1,99 €.\") where the mockup breaks the price apart (\"... für 1,99 / €.\"), one underline per line; box, words and crown match: the existing iOS design-artefact waiver in parity/waivers.json (reported to the owner 2026-10-18), applied by the gate",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "4806f07e86dd52db03894bd90d8ec3d3d853161b6473f040c4d8031f6f7f1a27",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Robots n / 6\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/scrap-shove.json",
+          "status": "waived"
+        },
+        {
+          "what": "Premium nudge (result.premium-button) underline: the app draws a continuous 2 pt bar through the descender of the Sorani letter ڕ where Chrome skips ink and leaves a gap; words and line extents match: the existing iOS platform waiver in parity/waivers.json (reported to the owner 2026-10-18), applied by the gate",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "d5d2fe9aa7060d5875a41e667879e3fa5b7aba2e23265491a0626a596f45cfc1",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "f79fd2cc73d1f4f2ad94a4425619e0ffb4978811c8ee39f1076d17de81cc1c65",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "66d71ebb5cbb642c6f2c8717d70da00310a8d108f049904ed58a0496eab306a8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8a4fd067490f2b2ed83970fa245aeaf1e3cda665bc2ea25041ab8fa6e5aa92a9",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "8086f73d4bd02098eb15037685ea824e76efa13b241bcdfc05ff9d9cb1d636f2",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ae0498104e62dfae555346121778e99c92c05c185a469e6611efc05649f7aa32",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "147679c6255e194e19cb5c8b09f647377f1401b4ce9b5c98b299b9d5f365eabf",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "9fc5bc0819a7c723bc11e3dfc88e0d35bf181f6983276ec38d04f886c84b7d45",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e32eee45408bff893603c2c14e8ad5a01e26f267c7e58df1efa93a5e7fc1f8fb",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "9bbf4201078df347e3ae980a51dfffcee70052cc545a3409cd727124f76dbbef",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "2f0a0c4a813d99fa6c45a1cfc2748679029d5c49d894022fe2b7e95e983fdaff",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c8aaeb0c6d44f2e64df34a8617bf157ba3e997d20cebc44c250ec837ae248fa8",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "bf9414a7ddadb9f88d49978bdfe452629ccbb824f0d6433812b087256fa3609d",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "6f219be013a2ad620769d5546c96b092b3b76c22df21fcf2f4276d4e31cc1cb7",
+      "date": "2026-11-03",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "bcf5c2c56fa0fc7f9303b53260b02d901f72d5ff01bc9637af92520a6371c916",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "dc4044e96c3a87106d96028bb310707f39b2d7b18171dcfbe92ec433d7fe6043",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "91c5c7179673e43d97eab1c4f143c4c03f551db8482247772b0521045dad44bf",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "cb40db0c8a05e2b0884f2a89046de9c0325bae6b31f492a4c0be1beba9366833",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "6a0533e21f1f050203a7669bc484d445cbba68278c7c1929253e25905bb3a970",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "8f05b68dfed1b6e2e3cf5575e3278b5870f9c00d366fce7e0b64bd15767e81d2",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "2a27032e52cec24d35d7dc7f3ac9bbf34c184c18a0755fbeb7c66e5196a383bb",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1cfdecaced435685cae38fd34cb83609d10253abed5c73bf38d23fd24dd03f37",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 418,
+      "sheetSha256": "48a589996b22c22990913609ed98ff6bc7e0dc9b4dea332b73c08f2a27930de4",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 807,
+      "sheetSha256": "2ff4961a71c376b554abe3a88ecc61b42c97a38f99a7644bc91934310a3d18c3",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ffe9c61fda0a587940a59103fec715e95c013ebe68cfc78a6cfbf8e569857b62",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 407,
+      "sheetSha256": "fffb392920a4f8ce41b07a95ff8c6dc7c861220ce6b3089b2b0c409bbb9575ec",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 774,
+      "sheetSha256": "6ce4f520b3d7cd745084876d87475917cab60e6d6716976f9e430aec91c02032",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "9dd3b92bf4498a22a67cdbc2572b1b6ba8564559ed5007e6692b2e75ca2404f7",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 374,
+      "sheetSha256": "d4b448f3a0b80de601f5deaaeed075ba6c53e3bb9e523e3ba0ada441b6a023cb",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 741,
+      "sheetSha256": "566bf03422f3792edebde4d58f7fb7af3958a5495954f579969589feb448b132",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "807de88a9815ad7fcc8c6a78c6f9680db678bf533520ef45a96a9f3f12d4dd99",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "db946347e57f54f2f803884b05f82933ca78df8a5fc71fa7de85a7ee0894d3db",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 807,
+      "sheetSha256": "46ca3399fb3dcaa499ee5dec5c6e3b1dd0224b87f92e4cddc0f48d97fbfac9d9",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "045bd94d900f2cb770d64720d3acd4bc7eafe6c8a840005c4ae37982ba446683",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 418,
+      "sheetSha256": "42acaaeafa95be7d4f645a024cb34af562d6a15cc117c987f38e9ca9b99e57c5",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 807,
+      "sheetSha256": "a017a4199e59175ba0fc7c71b3e21527a9b948a649ff8a44d6304af245e9e2be",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "7bfcbb3580101c320b5a5574e80c21690531f6b440a917549ebe6cacf60c2a77",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 407,
+      "sheetSha256": "821b4fad3878f1c9dfc7fa9fd2c1d224bb1b623b062f1db3e7bd9ef3072fa89d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 774,
+      "sheetSha256": "2219b371545c152145c4638ef0547753ab287751159e454cb73836a77326087c",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "fa39259b2ac676991e7d8c488ab602988bbabccc007448a99836cef7859c18d6",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "4dd6dba50b9d0a59fc8fc27fa1ddde3cb274c52b7f83ba222564e796d714f7c8",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 807,
+      "sheetSha256": "d6f03d8c7426d5864a3532cd774d713ba4a5721a5ee23944eb5a0224ec92a53d",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ceeb861087db9cee8ff0197877689de3d7560e0bdfe3a61598ec3f8a766f9205",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "5699c4f1a4230512497ed2a3253f25857517402c02679637023eb7e3c54e7e6f",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "0ae7f782e47c4255e2073d0cc5f965d6aef66637d7124a1d63a61f5f11a582ed",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "df81832db79aa378dbc942489cc3ed3fdb71ffeea4f85e9dd7df41d536473603",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "8562d8d34e1cbaa2ddb188a027cc5e4e6e6ea5d1a0553f0c6ac56e36b7619086",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e7487a95ecc055994dfc4a1f699a215a71cd33d25cff7b0d95ccce2ff5c1b179",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "scrapShove",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "82831d24e0308ba949c2dc19c6cd2d468a17627fbb56d029c03e1e97a1ab1914",
+      "date": "2026-11-03",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }
