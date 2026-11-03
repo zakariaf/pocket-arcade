@@ -4,7 +4,11 @@ import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { plannedBuildNumber, reportTranslationsToReview } from './release-preflight.ts';
+import {
+  assertOwnerValues,
+  plannedBuildNumber,
+  reportTranslationsToReview,
+} from './release-preflight.ts';
 import { runReleaseStep } from './release-runner.ts';
 
 jest.mock('node:fs', () => ({ ...jest.requireActual<object>('node:fs'), existsSync: jest.fn() }));
@@ -55,6 +59,49 @@ describe('reportTranslationsToReview', () => {
     reportTranslationsToReview(CONTEXT);
     expect(printed.every((line) => line.includes('Owner step R3 (not blocking)'))).toBe(true);
     expect(printed).toHaveLength(2);
+  });
+});
+
+// Lead decision L14 and spec 8.8: a store/live release stops at step 1 while game.config.ts holds a
+// stand-in for the owner's AdMob ids (G5) or links (G3); a test release keeps Google's test ids.
+describe('assertOwnerValues', () => {
+  const SAMPLE_IDS = {
+    ads: {
+      isEnabled: true,
+      ids: {
+        ios: {
+          appId: 'ca-app-pub-3940256099942544~1458002511',
+          units: {
+            banner: 'ca-app-pub-7310520968431056/4417703951',
+            interstitial: 'ca-app-pub-3940256099942544/4411468910',
+            rewarded: 'ca-app-pub-7310520968431056/2913050594',
+          },
+        },
+      },
+    },
+    links: { privacyPolicy: { host: 'games.applander.io' }, supportEmail: 'support@applander.io' },
+  } as const;
+
+  it("stops a store/live release on Google's sample ids before anything is built", () => {
+    const live = { appVariant: 'store', adsMode: 'live' } as const;
+    expect(() => {
+      assertOwnerValues(SAMPLE_IDS, live, 'apps/line-siege');
+    }).toThrow(
+      new Error(
+        [
+          'apps/line-siege/game.config.ts still holds what the owner replaces, so nothing was built or committed:',
+          "- [owner-placeholder] game.config.ts ads.ids.ios.appId is Google's sample (test) AdMob id ca-app-pub-3940256099942544~1458002511 (owner step G5)",
+          "- [owner-placeholder] game.config.ts ads.ids.ios.units.interstitial is Google's sample (test) AdMob id ca-app-pub-3940256099942544/4411468910 (owner step G5)",
+          'OWNER STEPS PENDING: G5',
+        ].join('\n'),
+      ),
+    );
+  });
+
+  it("lets a test release go on with Google's test ids", () => {
+    expect(() => {
+      assertOwnerValues(SAMPLE_IDS, { appVariant: 'test', adsMode: 'test' }, 'apps/line-siege');
+    }).not.toThrow();
   });
 });
 

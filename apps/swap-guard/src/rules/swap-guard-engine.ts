@@ -48,5 +48,7 @@ export const SWAP_GUARD_RULES: GameRules<SwapGuardState, SwapGuardMove, SwapGuar
     kind: 'once',
     descriptionId: 'swap-guard.continue.swap-back',
     apply: continueAfterLoss,
+    // The board stands as before the losing swap, so its counts go too (spec S10).
+    isTakeBack: true,
   },
 };

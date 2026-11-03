@@ -10,6 +10,7 @@ import de from '@e07/trail-clear/i18n/de.json';
 import en from '@e07/trail-clear/i18n/en.json';
 import fa from '@e07/trail-clear/i18n/fa.json';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
+import { create, drawStart } from '@e07/trail-clear/rules/create.ts';
 import { intentToMove } from '@e07/trail-clear/rules/intent-to-move.ts';
 import { listMoves } from '@e07/trail-clear/rules/list-moves.ts';
 import { outcome } from '@e07/trail-clear/rules/outcome.ts';
@@ -17,6 +18,7 @@ import { parseState } from '@e07/trail-clear/rules/trail-clear-persistence.ts';
 
 import { TRAIL_CLEAR_TEACHING } from './trail-clear-teaching.ts';
 
+import type * as TeachingModule from './trail-clear-teaching.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type {
@@ -24,6 +26,7 @@ import type {
   TrailClearMove,
   TrailClearState,
 } from '@e07/trail-clear/rules/trail-clear-types.ts';
+import type * as WitnessModule from '@e07/trail-clear/rules/trail-clear-witness.ts';
 
 const CATALOGS: readonly Readonly<Record<string, string>>[] = [en, de, fa, ckb];
 const PHONE = { width: 374, height: 660 };
@@ -67,6 +70,26 @@ function movesOf(): TrailClearMove[] {
     return step.expect.move;
   });
 }
+
+// Performance budget (cold start): the teaching module is loaded at app start, so it must not run
+// the witness (a full bot game per board) while it loads.
+describe('loading the teaching module', () => {
+  it('runs no witness search', () => {
+    jest.isolateModules(() => {
+      const witness = jest.requireActual<typeof WitnessModule>(
+        '@e07/trail-clear/rules/trail-clear-witness.ts',
+      );
+      const solve = jest.spyOn(witness.TRAIL_CLEAR_WITNESS, 'solve');
+      const teaching = jest.requireActual<typeof TeachingModule>('./trail-clear-teaching.ts');
+      expect(solve).not.toHaveBeenCalled();
+      expect(teaching.TRAIL_CLEAR_TEACHING.tutorial.steps.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('builds the tutorial on seed 1’s own level-0 board, the one create(1, 0) hands out too', () => {
+    expect(drawStart(1, 0)).toStrictEqual(create(1, 0));
+  });
+});
 
 describe('TRAIL_CLEAR_TEACHING', () => {
   it('scripts four steps, each expecting one legal move, and the scripted moves win', () => {

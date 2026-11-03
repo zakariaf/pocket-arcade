@@ -3,12 +3,19 @@
 // parses is dropped alone (spec 8.14), never a crash.
 import fc from 'fast-check';
 
+import { hashSeed } from '@e07/game-kit/rng/sfc32.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import v1Runs from '@e07/snare-snake/rules/fixtures/save-v1-run-states.json';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
-import { SNARE_SNAKE_PERSISTENCE, parseMove, parseState } from './snare-snake-persistence.ts';
+import {
+  SNARE_SNAKE_PERSISTENCE,
+  migrateState,
+  parseMove,
+  parseState,
+} from './snare-snake-persistence.ts';
 
 import type { SnareSnakeMove, SnareSnakeState } from './snare-snake-types.ts';
 
@@ -58,24 +65,8 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
     expect(parseState(fromJson(START))).toStrictEqual(START);
   });
 
-  it('loads a run saved before the state kept the heading, with the head looking from its neck', () => {
-    // Frozen: a run saved by the first build (no heading field); it must keep loading (N10).
-    const saved = {
-      difficulty: 0,
-      cols: 7,
-      rows: 8,
-      snake: [24, 17, 10],
-      critters: [{ id: 0, cell: 52 }],
-      total: 2,
-      caught: 1,
-      growth: 0,
-      moves: 5,
-      maxMoves: 30,
-      score: 10,
-      hasContinued: false,
-      rng: [1, 2, 3, 4],
-    };
-    expect(parseState(saved)).toStrictEqual({ ...saved, heading: null });
+  it('refuses a state without its heading: only version 1 saved one, and migrateState reads it', () => {
+    expect(parseState(v1Runs['first-build'])).toBeNull();
   });
 
   it('returns every state reached by legal play unchanged (property)', () => {
@@ -146,9 +137,63 @@ describe('parseMove', () => {
   });
 });
 
+/** Golden: fnv1a-32 (hashSeed) of the frozen version-1 runs; they are what old phones hold. */
+const GOLDEN_V1_RUNS_HASH = 4_007_597_916;
+
+/** A state's JSON as the first build wrote it: every field but the heading. */
+function withoutHeading(state: SnareSnakeState): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(fromJson(state) as object).filter(([key]) => key !== 'heading'),
+  );
+}
+
+describe('migrateState (version 1 to 2: the heading is always saved)', () => {
+  it('keeps the frozen version-1 runs unchanged', () => {
+    expect(hashSeed(JSON.stringify(v1Runs))).toBe(GOLDEN_V1_RUNS_HASH);
+  });
+
+  it('upgrades a first-build run with no heading: the head looks from its neck (null)', () => {
+    const saved = v1Runs['first-build'];
+    expect(migrateState(saved, 1)).toStrictEqual({ ...saved, heading: null });
+  });
+
+  it('upgrades a version-1 run that saved its heading, keeping it', () => {
+    const saved = v1Runs['heading-build'];
+    expect(migrateState(saved, 1)).toStrictEqual(saved);
+    expect(migrateState(saved, 1)).toStrictEqual(parseState(saved));
+  });
+
+  it('upgrades both version-1 shapes of every state reached by legal play (property)', () => {
+    fc.assert(
+      fc.property(playArb, ([seed, difficulty, choices]) => {
+        const { states } = played(seed, difficulty, choices);
+        expect(states.map((state) => migrateState(fromJson(state), 1))).toStrictEqual(states);
+        expect(states.map((state) => migrateState(withoutHeading(state), 1))).toStrictEqual(
+          states.map((state) => ({ ...state, heading: null })),
+        );
+      }),
+    );
+  });
+
+  it.each([
+    ['a version-0 run', v1Runs['first-build'], 0],
+    ['a run already at version 2', v1Runs['heading-build'], 2],
+    ['a version-1 run that is not a record', 'garbage', 1],
+    ['a version-1 run with a broken count', { ...v1Runs['first-build'], caught: -1 }, 1],
+    [
+      'a version-1 run with a heading that is no direction',
+      { ...v1Runs['heading-build'], heading: 'up-ish' },
+      1,
+    ],
+  ])('refuses %s', (_name, json, fromVersion) => {
+    expect(migrateState(json, fromVersion)).toBeNull();
+  });
+});
+
 describe('SNARE_SNAKE_PERSISTENCE', () => {
-  it('drops a run saved in an older state version (version 1 has nothing to migrate)', () => {
-    expect(SNARE_SNAKE_PERSISTENCE.stateVersion).toBe(1);
+  it('is at state version 2 and upgrades version-1 runs with migrateState', () => {
+    expect(SNARE_SNAKE_PERSISTENCE.stateVersion).toBe(2);
+    expect(SNARE_SNAKE_PERSISTENCE.migrateState).toBe(migrateState);
     expect(SNARE_SNAKE_PERSISTENCE.migrateState(START, 0)).toBeNull();
   });
 

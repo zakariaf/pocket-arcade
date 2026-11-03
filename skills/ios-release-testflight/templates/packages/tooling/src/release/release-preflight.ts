@@ -1,11 +1,13 @@
 // packages/tooling/src/release/release-preflight.ts
-// Release steps 0-2: what must be true before anything is built or uploaded, the app's identity
-// from the resolved Expo config, the What to Test text (checked here, so an over-long --notes stops
-// the run before anything else), and the build-number bump commit.
+// Release steps 0-2: what must be true before anything is built or uploaded (the owner's AdMob ids
+// and links included, owner steps G5 and G3), the app's identity from the resolved Expo config, the
+// What to Test text (checked here, so an over-long --notes stops the run before anything else), and
+// the build-number bump commit.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { loadAscCredentials } from '@e07/tooling/asc/asc-credentials.ts';
 import { createAscJwt } from '@e07/tooling/asc/asc-jwt.ts';
@@ -20,13 +22,22 @@ import {
   type ReleaseOptions,
 } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep, type ReleaseContext } from '@e07/tooling/release/release-runner.ts';
-import { appIdOf } from '@e07/tooling/release/store-gate.ts';
+import {
+  appIdOf,
+  ownerStepsPendingLine,
+  ownerValueProblems,
+  type OwnerValues,
+} from '@e07/tooling/release/store-gate.ts';
 import {
   missingSheetLine,
   REVIEW_SHEET,
   translationReviewLines,
 } from '@e07/tooling/release/translation-review.ts';
 import { releaseWhatToTest, type BuildHistory } from '@e07/tooling/release/what-to-test.ts';
+
+import type { BuildVariant } from '@e07/shell/config/app-variant.ts';
+
+const GAME_CONFIG = 'game.config.ts';
 
 export type AppIdentity = {
   readonly name: string;
@@ -159,6 +170,34 @@ export type Preflight = {
   readonly whatToTest: string;
 };
 
+/** game.config.ts as Node loads it (type stripping), for the owner's values only. */
+async function readOwnerValues(appDir: string): Promise<OwnerValues> {
+  const file = resolve(appDir, GAME_CONFIG);
+  const loaded = (await import(pathToFileURL(file).href)) as { gameConfig: OwnerValues };
+  return loaded.gameConfig;
+}
+
+/**
+ * Owner steps G5 and G3 before anything is built or committed (lead decision L14): a store/live
+ * release with our placeholders or Google's sample ids stops here with the gate's owner-placeholder
+ * lines and OWNER STEPS PENDING, never later in the expo config or after the build number commit.
+ */
+export function assertOwnerValues(
+  config: OwnerValues,
+  variant: BuildVariant,
+  appDir: string,
+): void {
+  const problems = ownerValueProblems(config, variant);
+  if (problems.length === 0) return;
+  throw new Error(
+    [
+      `${appDir}/game.config.ts still holds what the owner replaces, so nothing was built or committed:`,
+      ...problems.map((problem) => `- ${problem}`),
+      ownerStepsPendingLine(problems) ?? '',
+    ].join('\n'),
+  );
+}
+
 /** A partial Shell (shell-slice.json at the repo root) is a build-time state: it never ships. */
 function assertCompleteShell(): void {
   if (existsSync('shell-slice.json')) {
@@ -175,6 +214,8 @@ export async function preflight(
 ): Promise<Preflight> {
   assertCleanMain();
   assertCompleteShell();
+  // Before the expo config: a live build refuses Google's sample ids there with no owner step.
+  assertOwnerValues(await readOwnerValues(context.appDir), options.variant, context.appDir);
   const ids = readAscIds(context.env);
   const keyFile = assertKeyFile(ids);
   assertKeychainUnlocked();
@@ -219,7 +260,7 @@ function resumedBuildNumber(options: ReleaseOptions, gameConfigSource: string): 
 
 /** The build number this run will use: the next one, or with --resume the stopped run's. */
 export function plannedBuildNumber(options: ReleaseOptions, context: ReleaseContext): number {
-  const source = readFileSync(join(context.appDir, 'game.config.ts'), 'utf8');
+  const source = readFileSync(join(context.appDir, GAME_CONFIG), 'utf8');
   return options.resume === null
     ? bumpBuildNumber(source).next
     : resumedBuildNumber(options, source);
@@ -230,7 +271,7 @@ export function plannedBuildNumber(options: ReleaseOptions, context: ReleaseCont
  * With --resume the committed number of the stopped run is reused (checked, never guessed).
  */
 export function bumpAndCommit(options: ReleaseOptions, context: ReleaseContext): number {
-  const file = join(context.appDir, 'game.config.ts');
+  const file = join(context.appDir, GAME_CONFIG);
   if (options.resume !== null) {
     const reused = resumedBuildNumber(options, readFileSync(file, 'utf8'));
     console.log(`release:ios: resuming (${options.resume}) with build ${String(reused)}`);

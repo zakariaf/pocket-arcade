@@ -1,0 +1,3 @@
+[owner-placeholder] extra.adUnits.android.interstitial is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1033173712 (owner step GP5)
+OWNER STEPS PENDING: GP5
+RESULT: FAIL (1 problems)

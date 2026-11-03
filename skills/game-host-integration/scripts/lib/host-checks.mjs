@@ -19,6 +19,7 @@ export const HOST_FILES = {
   'game-debug-controls.ts': ['createGameDebugControls', 'GameDebugControls', 'EXAMPLE_RUN', 'endStateOf', 'StagedExample', 'DebugRuns'],
   'game-fixture.ts': ['GameFixture', 'FixtureResult', 'fixtureHudOf', 'fixtureSummaryOf', 'fixtureHudViewOf', 'fixtureResultViewOf'],
   'run-tracker.ts': ['createRunTracker', 'RunTracker'],
+  'create-memo.ts': ['withCreateMemo', 'memoizeCreate', 'CREATE_MEMO_SIZE'],
   'session-view-of.ts': ['sessionViewOf', 'ViewFixture', 'ViewExtras', 'ViewDeps'],
   'game-host-context.tsx': ['GameHostProvider', 'useGameHost'],
   'open-session.ts': ['sessionRulesFor', 'entryFor', 'startFor', 'newSession', 'resumeSession', 'createResumer', 'SessionOpen'],
@@ -52,6 +53,7 @@ export const HOST_TESTS = [
   'game-debug-controls.test.ts',
   'game-fixture.test.ts',
   'run-tracker.test.ts',
+  'create-memo.test.ts',
   'session-view-of.test.ts',
   'session-controller.test.ts',
   'board-host-model.test.ts',
@@ -319,6 +321,13 @@ const HOST_WIRING = [
     rule: 'saved-run-validated',
     message: 'createGameHost does not validate the saved run at boot (createResumer(game, deps): resumeSession, then drop only an unreadable run)',
     fix: 'At boot: const resume = createResumer(game, deps) (open-session.ts) checks the saved run and drops only an unreadable one; the stores and the resume state then start from that document.',
+  },
+  {
+    fn: 'createGameHost',
+    pattern: /=\s*withCreateMemo\s*\(/,
+    rule: 'create-memo',
+    message: 'createGameHost opens its runs without one shared create() per (seed, difficulty): start, the boot check, resume, retry and the run end each build the board again (a game that proves its boards pays the proof every time)',
+    fix: 'const game = withCreateMemo(boardGame) (create-memo.ts) first in createGameHost; the resumer, the openers and the controllers use it, the board layer gets the module as passed.',
   },
   {
     fn: 'createGameHost',
@@ -728,7 +737,9 @@ export function checkGameAssembly(repo, id, report) {
   const entry = code(text(repo, files.entry));
   if (entry !== '' && !new RegExp(`import\\s+\\{\\s*startShell\\s*\\}\\s+from\\s+'@e07/shell/app/start-shell\\.ts';\\s+import\\s+\\{\\s*${camel}Game\\s*\\}\\s+from\\s+'\\./src/index\\.ts';\\s+startShell\\(${camel}Game\\);\\s*$`).test(entry)) report.problem({ file: files.entry, line: 1, rule: 'entry', message: `is not the 3-line entry startShell(${camel}Game)`, fix: 'Three statements and nothing else: import startShell, import the module, call startShell(module).' });
   const contract = code(text(repo, files.contract));
-  if (contract !== '' && !(/engineContractProblems\s*\(/.test(contract) && /levelsContractProblems\s*\(/.test(contract))) report.problem({ file: files.contract, line: 1, rule: 'contract-test', message: 'the contract test does not run engineContractProblems and levelsContractProblems on the module', fix: 'Copy templates/apps/__GAME_ID__/src/contract.test.ts: identity, catalogs, engine, levels, teaching, counters, examples.' });
+  const contractChecks = ['engineContractProblems', 'levelsContractProblems', 'tutorialSaveProblems'];
+  const missingChecks = contractChecks.filter((name) => !new RegExp(`${name}\\s*\\(`).test(contract));
+  if (contract !== '' && missingChecks.length > 0) report.problem({ file: files.contract, line: 1, rule: 'contract-test', message: `the contract test does not run ${missingChecks.join(', ')} on the module`, fix: 'Copy templates/apps/__GAME_ID__/src/contract.test.ts: identity, catalogs, engine, levels, the tutorial save and the teaching load, counters, examples.' });
 }
 
 /** The rules' kind of a policy member (continueRun, hints) when it is written as a literal, else null. */

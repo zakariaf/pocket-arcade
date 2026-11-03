@@ -3,7 +3,7 @@
 // The tutorial board is small and fixed: step up next to the front rank, jump it in a chain of
 // two, and when the waiting rank comes down onto the empty board, jump it too and win.
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
-import { create } from '@e07/jump-chain/rules/create.ts';
+import { TUTORIAL_START, tutorialPosition } from '@e07/jump-chain/rules/tutorial-board.ts';
 
 import type { TeachingSpec, TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type {
@@ -11,24 +11,6 @@ import type {
   JumpChainState,
   Square,
 } from '@e07/jump-chain/rules/jump-chain-types.ts';
-
-/** A level-0 position with your piece and these enemies, given as [col, row, rank]. */
-function position(
-  piece: Square,
-  enemySquares: readonly (readonly [number, number, number])[],
-): JumpChainState {
-  const enemies = enemySquares.map(([col, row, rank], id) => ({ id, rank, col, row }));
-  const ranks = new Set(enemies.map((enemy) => enemy.rank)).size;
-  return {
-    ...create(1, 0),
-    piece,
-    enemies,
-    total: enemies.length,
-    nextId: enemies.length,
-    nextRank: ranks,
-    marchIn: 3,
-  };
-}
 
 function board(square: Square): {
   readonly regionId: 'board';
@@ -42,12 +24,6 @@ function drag(from: Square, to: Square): TutorialPointer {
   return { kind: 'drag', from: board(from), to: board(to) };
 }
 
-/** Two enemies of the front rank stacked on the left, one more waiting above the board. */
-const TUTORIAL_START = position({ col: 3, row: 7 }, [
-  [1, 5, 0],
-  [1, 3, 0],
-  [3, -1, 1],
-]);
 const STEP_UP: JumpChainMove = { kind: 'step', to: { col: 2, row: 6 } };
 const CHAIN_OF_TWO: JumpChainMove = {
   kind: 'jump',
@@ -60,14 +36,14 @@ const CHAIN_OF_TWO: JumpChainMove = {
 const JUMP_AGAIN: JumpChainMove = { kind: 'jump', path: [{ col: 4, row: 0 }] };
 const AFTER_STEP = applyMove(TUTORIAL_START, STEP_UP).state;
 /** How to play, page 3: one chain of three captures the whole rank. */
-const WHOLE_RANK = position({ col: 2, row: 6 }, [
+const WHOLE_RANK = tutorialPosition({ col: 2, row: 6 }, [
   [1, 5, 0],
   [1, 3, 0],
   [3, 1, 0],
 ]);
 /** How to play, page 4: the ranks advance next move, and the front enemy is close to your side. */
 const NEAR_SIDE = {
-  ...position({ col: 4, row: 6 }, [
+  ...tutorialPosition({ col: 4, row: 6 }, [
     [1, 7, 0],
     [3, 3, 0],
     [5, 3, 0],

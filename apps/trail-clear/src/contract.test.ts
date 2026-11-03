@@ -3,10 +3,13 @@
 import { levelsContractProblems } from '@e07/game-kit/levels/levels-contract.ts';
 import { engineContractProblems } from '@e07/game-kit/testing/engine-contract.ts';
 import { jsonShapeProblems } from '@e07/game-kit/testing/json-shape.ts';
+import { tutorialSaveProblems } from '@e07/game-kit/testing/teaching-contract.ts';
 import { TRAIL_CLEAR_DAILY_DIFFICULTY } from '@e07/trail-clear/levels/trail-clear-levels.ts';
 
 import { trailClearGame as game } from './index.ts';
 
+import type * as LevelsModule from './levels/trail-clear-levels.ts';
+import type * as TeachingModule from './tutorial/trail-clear-teaching.ts';
 import type { Catalog } from '@e07/game-kit/contract/messages.ts';
 
 /** Must equal game.config.ts `levels` (check-game-app.mjs compares the two as well). */
@@ -90,6 +93,27 @@ describe('trailClearGame', () => {
     const ids = game.stats.counters.map((counter) => counter.id);
     expect(ids.length >= 2 && ids.length <= 4 && ids.every((id) => KEBAB.test(id))).toBe(true);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  // Spec S13, 8.6 and N10: the tutorial is saved after every move like any run, so a kill during
+  // it must bring it back where it was, never drop it as a run the game cannot read.
+  it('reads its tutorial start and every scripted step back from a save unchanged', () => {
+    expect(tutorialSaveProblems(game)).toStrictEqual([]);
+  });
+
+  // Cold start: the teaching module is loaded at app start, so it builds its boards without the
+  // level solver (create() proving a board runs it): the unproven draw, never create().
+  it('loads its teaching without asking the level solver', () => {
+    jest.isolateModules(() => {
+      const levels = jest.requireActual<typeof LevelsModule>('./levels/trail-clear-levels.ts');
+      const { solver } = levels.TRAIL_CLEAR_LEVELS;
+      const solve = solver === null ? null : jest.spyOn(solver, 'solve');
+      const teaching = jest.requireActual<typeof TeachingModule>(
+        './tutorial/trail-clear-teaching.ts',
+      );
+      expect(solve?.mock.calls ?? []).toStrictEqual([]);
+      expect(teaching.TRAIL_CLEAR_TEACHING.tutorial.steps.length).toBeGreaterThan(0);
+    });
   });
 
   it('gives every example state its promised outcome and keeps it JSON-safe', () => {

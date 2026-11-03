@@ -146,8 +146,6 @@
   },
   "release": {
     "sentinel": "SHELL_TEST_BUILD_ONLY",
-    "samplePublisher": "3940256099942544",
-    "sampleAppId": "ca-app-pub-3940256099942544~1458002511",
     "sampleAllowedPackage": "react-native-google-mobile-ads",
     "storekitTest": "StoreKitTest|SKTestSession",
     "debugScreens": "/screens/debug/",

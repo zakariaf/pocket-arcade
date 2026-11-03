@@ -1,9 +1,10 @@
 // ship-placeholders.mjs: the one list of scaffold placeholders a ship gate refuses by name, with the
 // owner step that replaces each one, the owner-placeholder result every gate prints, and the one
 // app id rule (a helper, not an entry point). Shared by ios-release-testflight (check-release-setup,
-// check-store-artifact), privacy-and-network-audit (audit-app-bundle), ios-simulator-build
-// (check-sim-app --variant store) and android-emulator-build (check-emu-app); new-game-scaffold's
-// app-files.mjs re-exports the list for check-game-app --stage complete. Each checker re-exports PLACEHOLDERS and its self-test pins it.
+// check-store-artifact), privacy-and-network-audit (audit-app-bundle, audit-bundle), ios-simulator-build
+// (check-sim-app --variant store), android-emulator-build (check-emu-app) and android-release-play
+// (check-store-aab, check-release-setup-android); new-game-scaffold's app-files.mjs re-exports the
+// list for check-game-app --stage complete. Each checker re-exports PLACEHOLDERS and its self-test pins it.
 //
 // Owner decision O4 (2026-09-30): every app's iOS bundle id and Android package is
 // io.applander.<game id without hyphens>, all lowercase (Line Siege: io.applander.linesiege), and
@@ -13,6 +14,13 @@
 // Privacy answers). A plausible-looking placeholder passes a format check
 // (ca-app-pub-1234567890123456~1234567890 matches ^ca-app-pub-\d{16}~\d{10}$), so the gates compare
 // the values themselves.
+//
+// Not a real AdMob id (notRealAdIdOf, the one definition every gate that reads ad ids uses): a
+// scaffold placeholder above, or any id of Google's sample publisher 3940256099942544 (Google's
+// public test ids). A live build with them shows test ads and earns nothing, so where a gate reads
+// the owner's ids (game.config.ts, a live build's units) a sample id is owner-placeholder too: G5 for
+// the iOS ids, GP5 for the Android ids. Test builds (ADS_MODE test or off) carry Google's sample app id
+// by design and no units; the gates require exactly that id there (GOOGLE_SAMPLE_APP_IDS).
 //
 // The result (lead decision L14, round-5 decision D68): every gate reports every placeholder under
 // the rule owner-placeholder, naming the field, the placeholder and its owner step; the line before
@@ -65,6 +73,78 @@ export const PLACEHOLDERS = Object.freeze([
   entry('links.supportEmail', 'support@example.com', 'the placeholder support address', 'G3', "the owner's support address (owner step G3)", exactly('support@example.com')),
 ]);
 
+/** Google's sample AdMob publisher: every app and unit id under it is one of Google's public test ids. */
+export const GOOGLE_SAMPLE_PUBLISHER = '3940256099942544';
+
+/**
+ * Google's sample app ids (developers.google.com/admob/ios/test-ads, .../android/test-ads): the AdMob
+ * app id every non-live build carries (ads-config.ts GOOGLE_SAMPLE_APP_IDS), never a live build.
+ */
+export const GOOGLE_SAMPLE_APP_IDS = Object.freeze({
+  ios: `ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}~1458002511`,
+  android: `ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}~3347511713`,
+});
+
+/** The owner step that supplies a platform's AdMob app id and units: G5 on iOS, GP5 on Android. */
+export const AD_IDS_OWNER_STEP = Object.freeze({ ios: 'G5', android: 'GP5' });
+
+const GOOGLE_SAMPLE_AD_ID = new RegExp(`^ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}[~/]\\d+$`);
+const GOOGLE_SAMPLE_NAME = "Google's sample (test) AdMob id";
+
+/** Whether a value is one of Google's sample (test) AdMob ids: an app or unit id of the sample publisher. */
+export function isGoogleSampleAdId(value) {
+  return typeof value === 'string' && GOOGLE_SAMPLE_AD_ID.test(value);
+}
+
+function ownerStepOfPlatform(platform) {
+  const step = AD_IDS_OWNER_STEP[platform];
+  if (step === undefined) throw new Error(`AdMob ids belong to ios or android, not ${platform}`);
+  return step;
+}
+
+/**
+ * The scaffold's AdMob placeholder a value is (PLACEHOLDERS, owner step G5), with the platform's
+ * owner step (GP5 for an Android id), or null. Google's sample ids are not in it: see notRealAdIdOf.
+ */
+export function adPlaceholderOf(value, platform = 'ios') {
+  const ownerStep = ownerStepOfPlatform(platform);
+  const placeholder = PLACEHOLDERS.find((item) => item.ownerStep === 'G5' && typeof value === 'string' && item.matches(value)) ?? null;
+  if (placeholder === null || ownerStep === placeholder.ownerStep) return placeholder;
+  return Object.freeze({ ...placeholder, field: placeholder.field.replace('ads.ids.ios.', `ads.ids.${platform}.`), ownerStep, step: OWNER_STEP_TEXT[ownerStep] });
+}
+
+/**
+ * The one answer to "is this AdMob id the owner's?" for every ship gate: an entry when it is not (a
+ * scaffold placeholder, or one of Google's sample ids, which serve test ads and earn nothing), to
+ * report under owner-placeholder with the platform's owner step (G5 iOS, GP5 Android); null for an id
+ * that may be the owner's. Ask it only where the owner's ids belong (game.config.ts, a live build's
+ * units): every test build carries Google's sample app id on purpose.
+ */
+export function notRealAdIdOf(value, platform = 'ios') {
+  const placeholder = adPlaceholderOf(value, platform);
+  if (placeholder !== null || !isGoogleSampleAdId(value)) return placeholder;
+  const ownerStep = ownerStepOfPlatform(platform);
+  return Object.freeze({ field: `ads.ids.${platform}`, value, name: GOOGLE_SAMPLE_NAME, ownerStep, step: OWNER_STEP_TEXT[ownerStep], matches: (text) => text === value });
+}
+
+/**
+ * Every quoted AdMob id in a game.config.ts source: its index (the opening quote), value, platform
+ * (the nearest `ios:` or `android:` key before it; ios when there is none) and game.config.ts field
+ * (ads.ids.<platform>.appId, or .units.<key> for any other key in front of it).
+ */
+export function adIdsInText(text) {
+  const source = String(text ?? '');
+  const found = [];
+  for (const match of source.matchAll(/(?:\b(\w+)\s*:\s*)?(['"`])(ca-app-pub-\d+[~/]\d+)\2/g)) {
+    const [whole, key, quote, value] = match;
+    const index = match.index + whole.lastIndexOf(`${quote}${value}`);
+    const platform = [...source.slice(0, index).matchAll(/\b(ios|android)\s*:/g)].at(-1)?.[1] ?? 'ios';
+    const field = key === undefined ? `ads.ids.${platform}` : key === 'appId' ? `ads.ids.${platform}.appId` : `ads.ids.${platform}.units.${key}`;
+    found.push({ index, value, platform, field });
+  }
+  return found;
+}
+
 /** The pre-O4 scaffold's bundle id prefix: never shipped, and not an owner step (the agent fixes it). */
 export const LEGACY_BUNDLE_PREFIX = 'com.example.';
 
@@ -97,7 +177,7 @@ export function ownerPlaceholderOf(value) {
 
 /**
  * The live AdMob units a built app's expo.extra.adUnits holds for one platform ('ios' or 'android'),
- * as [field, value] pairs for ownerPlaceholderOf. withShell writes them per platform,
+ * as [field, value] pairs for notRealAdIdOf(value, platform). withShell writes them per platform,
  * { ios: { banner, interstitial, rewarded }, android: { ... } | null } (ads-config.ts adUnitsExtra),
  * so a gate reads only the entry of the platform its artefact is for (field extra.adUnits.<platform>.<slot>);
  * the flat { banner, interstitial, rewarded } of earlier builds is read as it is (field extra.adUnits.<slot>).
@@ -117,14 +197,20 @@ export function placeholderName(value) {
 }
 
 /**
- * Every owner placeholder inside a source file (game.config.ts), with its index and entry, and every
+ * Every owner placeholder inside a source file (game.config.ts), with its index and entry: the links
+ * (G3), every AdMob id that is not a real one (notRealAdIdOf: a scaffold placeholder or Google's sample
+ * id, G5 under `ios:`, GP5 under `android:`, the entry's field from the key in front of it), and every
  * quoted com.example.* id (entry ownerStep null).
  */
 export function placeholdersInText(text) {
   const found = [];
-  for (const item of PLACEHOLDERS.filter((candidate) => candidate.ownerStep !== null)) {
+  for (const item of PLACEHOLDERS.filter((candidate) => candidate.ownerStep === 'G3')) {
     const quoted = new RegExp(`['"\`]${item.value.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}['"\`]`, 'g');
     for (const match of text.matchAll(quoted)) found.push({ index: match.index, value: item.value, name: item.name, entry: item });
+  }
+  for (const id of adIdsInText(text)) {
+    const entry = notRealAdIdOf(id.value, id.platform);
+    if (entry !== null) found.push({ index: id.index, value: id.value, name: entry.name, entry: Object.freeze({ ...entry, field: id.field }) });
   }
   const legacy = PLACEHOLDERS[0];
   for (const match of text.matchAll(/['"`](com\.example\.[\w.]*)['"`]/g)) found.push({ index: match.index, value: match[1], name: legacy.name, entry: legacy });
@@ -142,7 +228,7 @@ export function ownerPlaceholderProblem({ entry: item, where = item.field, file,
     line,
     rule: OWNER_PLACEHOLDER_RULE,
     message: `${where} is ${item.name} ${item.value} (owner step ${item.ownerStep})`,
-    fix: `Waits for ${OWNER_STEP_TEXT[item.ownerStep]}; never type a stand-in. Until the owner supplies it this gate ends FAIL with this line and the OWNER STEPS PENDING line, by design.`,
+    fix: `Waits for ${OWNER_STEP_TEXT[item.ownerStep]}; never type a stand-in${isGoogleSampleAdId(item.value) ? " (Google's sample ids serve test ads and earn nothing; test builds get them from ADS_MODE test, never from game.config.ts)" : ''}. Until the owner supplies it this gate ends FAIL with this line and the OWNER STEPS PENDING line, by design.`,
   };
 }
 

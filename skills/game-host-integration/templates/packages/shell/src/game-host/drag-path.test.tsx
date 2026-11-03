@@ -5,7 +5,7 @@ import { State } from 'react-native-gesture-handler';
 import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-handler/jest-utils';
 
 import { BoardGestureProbe } from './board-gesture-probe.tsx';
-import { createDragPathTracer } from './drag-path.ts';
+import { createDragPathTracer, traceTarget } from './drag-path.ts';
 
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
@@ -53,6 +53,18 @@ describe('createDragPathTracer', () => {
     expect(tracer.finish(intent)).toStrictEqual({ ...intent, path: [cell(0, 0), cell(1, 0)] });
   });
 
+  it('keeps a finished path when the next drag traces', () => {
+    const tracer = createDragPathTracer();
+    tracer.start();
+    tracer.hover(cell(1, 0));
+    const intent: InputIntent = { kind: 'drag-end', from: cell(0, 0), to: null };
+    const ended = tracer.finish(intent);
+    tracer.start();
+    tracer.hover(cell(5, 5));
+    tracer.hover(cell(6, 6));
+    expect(ended).toStrictEqual({ ...intent, path: [cell(0, 0), cell(1, 0)] });
+  });
+
   it('passes every other intent through unchanged', () => {
     const tracer = createDragPathTracer();
     tracer.start();
@@ -96,5 +108,21 @@ describe('createDragPathTracer', () => {
         path: [start, cell(4, 2), cell(2, 0), cell(0, 2), start],
       },
     ]);
+  });
+});
+
+describe('traceTarget', () => {
+  // A hover runs on every change of the finger's target: the trace grows in place, never copied.
+  it('appends a new target to the same array', () => {
+    const trace = [cell(0, 0)];
+    expect(traceTarget(trace, cell(1, 0))).toBe(trace);
+    expect(trace).toStrictEqual([cell(0, 0), cell(1, 0)]);
+  });
+
+  it('returns the same array unchanged for its last target or for no target', () => {
+    const trace = [cell(0, 0), cell(1, 0)];
+    expect(traceTarget(trace, cell(1, 0))).toBe(trace);
+    expect(traceTarget(trace, null)).toBe(trace);
+    expect(trace).toStrictEqual([cell(0, 0), cell(1, 0)]);
   });
 });

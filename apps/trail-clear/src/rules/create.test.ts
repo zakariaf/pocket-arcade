@@ -151,12 +151,13 @@ describe('create proves every level board it hands out (spec 8.1: no level is im
     },
   );
 
-  it('asks the witness once for a seed and difficulty that start, resume and the run end all create', () => {
+  it('keeps nothing between calls: the same seed and difficulty is proven again, to the same board', () => {
+    // The game host shares one create() per run (start, resume, run end); create itself stays pure.
     const first = create(LOST_FIRST_SEED, 30);
     const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
     expect(create(LOST_FIRST_SEED, 30)).toStrictEqual(first);
     expect(create(LOST_FIRST_SEED, 30.4)).toStrictEqual(first);
-    expect(solve).not.toHaveBeenCalled();
+    expect(solve).toHaveBeenCalled();
     solve.mockRestore();
   });
 
