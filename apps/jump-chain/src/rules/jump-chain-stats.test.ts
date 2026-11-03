@@ -50,15 +50,31 @@ function run(seed: number, choices: readonly number[]) {
 }
 
 describe('JUMP_CHAIN_STATS', () => {
-  it('measures one move: pieces captured, the chain and the ranks cleared', () => {
+  it('measures one move: pieces captured, the ranks cleared and the chain', () => {
     const measured = JUMP_CHAIN_STATS.counters.map((counter) => [
       counter.id,
       counter.measure(CHAIN_MOVE),
     ]);
     expect(measured).toStrictEqual([
       ['pieces-captured', 3],
-      ['longest-chain', 3],
       ['ranks-cleared', 1],
+      ['longest-chain', 3],
+    ]);
+  });
+
+  // Spec S10: the game card draws the game's counters in the game's order. The Toybox design draws
+  // Jump Chain's card as "Pieces captured 1462", "Ranks cleared 318", "Longest chain ×5": the two
+  // totals as plain numbers, then the longest chain as the Shell's best-of multiplier.
+  it('lists its counters in the S10 design order, the longest chain last as its ×5', () => {
+    const cards = JUMP_CHAIN_STATS.counters.map((counter) => [
+      counter.id,
+      counter.aggregate,
+      counter.bestOfStyle ?? 'multiplier',
+    ]);
+    expect(cards).toStrictEqual([
+      ['pieces-captured', 'sum', 'multiplier'],
+      ['ranks-cleared', 'sum', 'multiplier'],
+      ['longest-chain', 'max', 'multiplier'],
     ]);
   });
 
