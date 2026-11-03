@@ -32,14 +32,26 @@ export function neighbourOf(cell: number, step: readonly [number, number]): numb
   return isInside ? cellAt(col, row) : null;
 }
 
-/** Every cell, nearest the wall the swipe pushes toward first (2048's order). */
-export function slideOrder(direction: SwipeDirection): readonly number[] {
+function orderOf(direction: SwipeDirection): readonly number[] {
   const [dx, dy] = STEP[direction];
   const cols = Array.from({ length: COLS }, (_, col) => col);
   const rows = Array.from({ length: ROWS }, (_, row) => row);
   if (dx > 0) cols.reverse();
   if (dy > 0) rows.reverse();
   return rows.flatMap((row) => cols.map((col) => cellAt(col, row)));
+}
+
+/** The four orders, built once: every swipe, listed or applied, walks one of them. */
+const SLIDE_ORDERS: Readonly<Record<SwipeDirection, readonly number[]>> = {
+  up: orderOf('up'),
+  down: orderOf('down'),
+  left: orderOf('left'),
+  right: orderOf('right'),
+};
+
+/** Every cell, nearest the wall the swipe pushes toward first (2048's order). */
+export function slideOrder(direction: SwipeDirection): readonly number[] {
+  return SLIDE_ORDERS[direction];
 }
 
 /** The cells holding no piece, in board order. */
