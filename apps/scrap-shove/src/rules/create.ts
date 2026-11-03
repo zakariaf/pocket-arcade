@@ -15,7 +15,7 @@ import type { Floor, ScrapShoveState } from './scrap-shove-types.ts';
 export type LayoutBudget = { readonly attempts: number; readonly maxNodes: number };
 
 /** The player on one of the four centre squares, picked by the seed; no robot or heap yet. */
-export function startLayout(seed: number): Layout {
+function startLayout(seed: number): Layout {
   const centre = TUNING.side / 2 - 1;
   const col = nextInt(seedRng(seed), 2);
   const row = nextInt(col.state, 2);
@@ -56,10 +56,19 @@ function stateOf(floor: Floor): ScrapShoveState {
   };
 }
 
-/** The layout of the seed's stream on its `tries`-th try, unproven (a shipped level's own try). */
+/** The layout of a stream on its `tries`-th try: each try lays robots and heaps again. */
 function layoutOnTry(start: Layout, knobs: DifficultyKnobs, tries: number): Layout {
   const laid = layFloor(start, knobs);
   return tries <= 1 ? laid : layoutOnTry({ floor: start.floor, rng: laid.rng }, knobs, tries - 1);
+}
+
+/**
+ * The floor of the seed's stream on its `tries`-th try at this difficulty, unproven: what
+ * create()'s search would test on that try, and a shipped level's own floor on its proven try.
+ */
+export function floorOnTry(seed: number, difficulty: number, tries: number): ScrapShoveState {
+  const knobs = knobsFor(clampDifficulty(difficulty));
+  return stateOf(layoutOnTry(startLayout(seed), knobs, tries).floor);
 }
 
 /** A layout search's result: the floor found, and whether the solver proved it winnable. */
@@ -77,18 +86,6 @@ function searchLayouts(start: Layout, knobs: DifficultyKnobs, budget: LayoutBudg
   if (isProven || budget.attempts <= 1) return { state, isProven };
   const next = { floor: start.floor, rng: laid.rng };
   return searchLayouts(next, knobs, { ...budget, attempts: budget.attempts - 1 });
-}
-
-/**
- * The first layout of the seed's stream proven winnable within the budget, or the last one tried
- * (then unproven: create() never hands that one out, it takes the fallback floor instead).
- */
-export function firstWinnable(
-  start: Layout,
-  knobs: DifficultyKnobs,
-  budget: LayoutBudget,
-): ScrapShoveState {
-  return searchLayouts(start, knobs, budget).state;
 }
 
 /**
@@ -133,6 +130,5 @@ export function createBySearch(seed: number, difficulty: number): ScrapShoveStat
 export function create(seed: number, difficulty: number): ScrapShoveState {
   const level = clampDifficulty(difficulty);
   const tries = shippedTry(seed, level);
-  if (tries === null) return createBySearch(seed, level);
-  return stateOf(layoutOnTry(startLayout(seed), knobsFor(level), tries).floor);
+  return tries === null ? createBySearch(seed, level) : floorOnTry(seed, level, tries);
 }

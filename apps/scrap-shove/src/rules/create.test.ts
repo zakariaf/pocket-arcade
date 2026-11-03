@@ -13,14 +13,7 @@ import {
 
 import { applyMove } from './apply-move.ts';
 import { boardText } from './board-text.ts';
-import {
-  FALLBACK_SEED,
-  create,
-  createBySearch,
-  createWithin,
-  firstWinnable,
-  startLayout,
-} from './create.ts';
+import { FALLBACK_SEED, create, createBySearch, createWithin, floorOnTry } from './create.ts';
 import { distanceBetween, isSameCell, stepToward } from './floor-squares.ts';
 import { outcome } from './outcome.ts';
 import { TUNING, knobsFor } from './scrap-shove-tuning.ts';
@@ -99,21 +92,21 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
   });
 
   it('tries the next layout of the seed stream when the first cannot be won', () => {
-    const first = firstWinnable(startLayout(39), knobsFor(0), { attempts: 1, maxNodes: 60_000 });
+    const first = floorOnTry(39, 0, 1);
     expect(solveFloor(first, 60_000).kind).toBe('unsolvable');
     expect(create(39, 0)).not.toStrictEqual(first);
     expect(create(39, 0).player).toStrictEqual(first.player);
   });
 
-  it('keeps the last layout tried when none is proven within the budget', () => {
-    const third = firstWinnable(startLayout(1), knobsFor(0), { attempts: 3, maxNodes: 0 });
+  it('lays out a new floor from the seed stream on each try', () => {
+    const third = floorOnTry(1, 0, 3);
     expect(third).not.toStrictEqual(create(1, 0));
     expect(third.robots).toHaveLength(5);
   });
 
   it('hands out only proven floors: with no layout proven within the budget it gives the proven fallback (spec 8.1)', () => {
     // Seed 48: with a budget no layout can meet, its 20th layout cannot be won at all.
-    const lastTried = firstWinnable(startLayout(48), knobsFor(0), { attempts: 20, maxNodes: 0 });
+    const lastTried = floorOnTry(48, 0, 20);
     expect(solveFloor(lastTried, TUNING.createMaxNodes).kind).toBe('unsolvable');
     const forced = createWithin(48, 0, { attempts: 20, maxNodes: 0 });
     expect(solveFloor(forced, TUNING.createMaxNodes).kind).toBe('solved');
@@ -122,9 +115,7 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
   });
 
   it('proves the fallback floor of every difficulty row winnable with the create budget', () => {
-    const fallbacks = [0, 25, 50, 75].map((difficulty) =>
-      firstWinnable(startLayout(FALLBACK_SEED), knobsFor(difficulty), { attempts: 1, maxNodes: 0 }),
-    );
+    const fallbacks = [0, 25, 50, 75].map((difficulty) => floorOnTry(FALLBACK_SEED, difficulty, 1));
     const kinds = fallbacks.map((state) => solveFloor(state, TUNING.createMaxNodes).kind);
     expect(kinds).toStrictEqual(['solved', 'solved', 'solved', 'solved']);
   });
