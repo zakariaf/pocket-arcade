@@ -24,10 +24,11 @@ const SPEC = {
     '  sim-config           jest.sim.config.js (node env, test/**/*.sim.test.ts), the test:sim script, sims kept out of npm test',
     '  harness-missing      the game-kit bot harness, its tests and the tooling report writer (with its test) exist',
     '  harness-outdated     the report writer fingerprints the sim\'s import closure (exports fingerprintFiles)',
-    '  sim-missing          every game (apps/<id>/src/rules or src/sim) has test/sims/<id>/*.sim.test.ts',
+    '  sim-missing          every game (apps/<id>/src/rules or src/sim) has test/sims/<id>/balance.sim.test.ts',
     '  sim-location         a *.sim.test.ts that needs Node APIs lives under test/sims/, not in apps/ or packages/',
     '  sim-determinism      sims and bot hooks use no Math.random, Date, performance.now, retries, skips or focus',
-    '  sim-harness          each sim plays through the game-kit harness, writes the report and asserts bandProblems',
+    '  sim-harness          the balance sim plays through the game-kit harness, writes the report and asserts bandProblems',
+    '                       (another sim there, such as a slow proof sweep, keeps only the determinism rules)',
     '  bot-missing          apps/<id>/src/testing/ declares the game\'s BotPolicy (testing.bot) or, real-time, its CommandPolicy',
     '  fingerprint-scope    game code in rules/, levels/, sim/ and testing/ imports only from those folders and game-kit',
     '                       (anything else could change the bots\' numbers without making the report stale)',
@@ -76,6 +77,8 @@ const HARNESS = [
   'packages/tooling/src/sims/write-sim-report.test.ts',
 ];
 const WRITER = 'packages/tooling/src/sims/write-sim-report.ts';
+/** The one sim per game that plays the bots, writes reports/sim/<id>.json and asserts the bands. */
+const BALANCE_SIM = 'balance.sim.test.ts';
 const NONDETERMINISM = [
   [/\bMath\.random\s*\(/, 'Math.random()'],
   [/\bDate\.now\s*\(/, 'Date.now()'],
@@ -154,23 +157,23 @@ function checkDeterminism(report, rel, source) {
 function checkSims(root, game, report) {
   const dir = `test/sims/${game}`;
   const sims = listDir(root, dir, (entry) => entry.isFile() && entry.name.endsWith('.sim.test.ts'));
-  if (sims.length === 0) {
-    report.problem({ file: `${dir}/balance.sim.test.ts`, line: 0, rule: 'sim-missing', message: `${game} has no bot simulation`, fix: 'Copy templates/test/sims/__GAME_ID__/balance.sim.test.ts and replace the placeholders.' });
+  // Every sim stays deterministic. Only balance.sim.test.ts is the bot simulation: another sim
+  // beside it (a slow proof sweep that runs with npm run test:sim) plays no bots and writes no report.
+  for (const name of sims) checkDeterminism(report, `${dir}/${name}`, readFileSync(join(root, dir, name), 'utf8'));
+  const rel = `${dir}/${BALANCE_SIM}`;
+  if (!sims.includes(BALANCE_SIM)) {
+    const others = sims.length > 0 ? ` (${sims.join(', ')} plays no bots)` : '';
+    report.problem({ file: rel, line: 0, rule: 'sim-missing', message: `${game} has no bot simulation${others}`, fix: 'Copy templates/test/sims/__GAME_ID__/balance.sim.test.ts and replace the placeholders.' });
     return;
   }
-  for (const name of sims) {
-    const rel = `${dir}/${name}`;
-    const source = readFileSync(join(root, rel), 'utf8');
-    checkDeterminism(report, rel, source);
-    const code = maskComments(source);
-    const needs = [
-      [/from\s+['"]@e07\/game-kit\/testing\//, 'does not play through the game-kit harness (traceBot/playBot)'],
-      [/\bwriteSimReport\s*\(/, 'does not write reports/sim/<id>.json (writeSimReport)'],
-      [/\bbandProblems\s*\(/, 'does not assert bandProblems(report, bands)'],
-    ];
-    for (const [pattern, message] of needs) {
-      if (!pattern.test(code)) report.problem({ file: rel, line: 1, rule: 'sim-harness', message, fix: 'Start from templates/test/sims/__GAME_ID__/balance.sim.test.ts.' });
-    }
+  const code = maskComments(readFileSync(join(root, rel), 'utf8'));
+  const needs = [
+    [/from\s+['"]@e07\/game-kit\/testing\//, 'does not play through the game-kit harness (traceBot/playBot)'],
+    [/\bwriteSimReport\s*\(/, 'does not write reports/sim/<id>.json (writeSimReport)'],
+    [/\bbandProblems\s*\(/, 'does not assert bandProblems(report, bands)'],
+  ];
+  for (const [pattern, message] of needs) {
+    if (!pattern.test(code)) report.problem({ file: rel, line: 1, rule: 'sim-harness', message, fix: 'Start from templates/test/sims/__GAME_ID__/balance.sim.test.ts.' });
   }
 }
 

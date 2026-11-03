@@ -21,6 +21,20 @@ const REPORT = `reports/sim/${GAME}.json`;
 const BANDS = `test/sims/${GAME}/balance-bands.json`;
 const SIM = `test/sims/${GAME}/balance.sim.test.ts`;
 const TUNING = `apps/${GAME}/src/rules/${GAME}-tuning.ts`;
+const EXTRA_SIM = `test/sims/${GAME}/daily-boards.sim.test.ts`;
+const EXTRA_SIM_TEXT = [
+  `// ${EXTRA_SIM}`,
+  '// A slow sweep (every seed hands out a fresh board), so it runs with the sims, not on every commit.',
+  `import { create } from '@e07/${GAME}/rules/create.ts';`,
+  '',
+  `describe('${GAME} daily boards', () => {`,
+  "  it('hands out a board for every seed of the sweep', () => {",
+  '    const seeds = [1, 2, 3];',
+  '    expect(seeds.filter((seed) => create(seed, 0).score !== 0)).toStrictEqual([]);',
+  '  });',
+  '});',
+  '',
+].join('\n');
 const RT_GAME = 'halo-drift';
 const RT_REPORT = `reports/sim/${RT_GAME}.json`;
 const RT_BANDS = `test/sims/${RT_GAME}/balance-bands.json`;
@@ -101,6 +115,21 @@ const CASES = {
   'sim-missing': (dir) => {
     rmSync(join(dir, SIM));
     return ['[sim-missing]', `${GAME} has no bot simulation`];
+  },
+  // A slow proof sweep runs with the sims (npm run test:sim) but is no bot sim: only the game's
+  // balance.sim.test.ts plays the harness, and the sweep alone is not a bot simulation.
+  'pass-extra-sim': (dir) => {
+    write(dir, EXTRA_SIM, EXTRA_SIM_TEXT);
+    return ['check-balance: 17 harness files and games checked, 0 problems'];
+  },
+  'extra-sim-only': (dir) => {
+    rmSync(join(dir, SIM));
+    write(dir, EXTRA_SIM, EXTRA_SIM_TEXT);
+    return [`${SIM} [sim-missing]`, `${GAME} has no bot simulation (daily-boards.sim.test.ts plays no bots)`];
+  },
+  'extra-sim-random': (dir) => {
+    write(dir, EXTRA_SIM, EXTRA_SIM_TEXT.replace('[1, 2, 3]', '[Math.floor(Math.random() * 9)]'));
+    return ['[sim-determinism]', `${EXTRA_SIM}:${lineOf(dir, EXTRA_SIM, 'Math.random')}`, 'Math.random()'];
   },
   'sim-in-app': (dir) => {
     const rel = `apps/${GAME}/src/rules/quick.sim.test.ts`;
