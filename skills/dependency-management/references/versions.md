@@ -31,7 +31,7 @@ Each of these is a dependency of **every** app with the identical specifier, and
 
 | Package | Version | Spec | Install | Why this version and pin |
 |---|---|---|---|---|
-| `expo` | 57.0.30 | `~57.0.30` | npx expo install (in each app) | SDK 57 line; 57.0.30 (published 2026-10-15) is the newest patch at least 7 days old on 2026-10-24 and its module map carries `expo-sqlite` ~57.0.4, `expo-constants` ~57.0.22, `expo-splash-screen` ~57.0.10 and `expo-network` ~57.0.2; 57.0.31 (with `expo-network` ~57.0.3, both published 2026-10-21) is younger (due 2026-10-29), next is 58.0.0 (not latest, so no SDK move is due) |
+| `expo` | 57.0.31 | `~57.0.31` | npx expo install (in each app) | SDK 57 line; 57.0.31 (published 2026-10-21, due 2026-10-29, moved 2026-10-31) is the newest `sdk-57` patch; its module map carries `expo-sqlite` ~57.0.4, `expo-constants` ~57.0.22, `expo-splash-screen` ~57.0.10 and `expo-network` ~57.0.3, and it pulls `@expo/cli` ^57.0.32, `@expo/config-plugins` ~57.0.11 and `expo-modules-core` ~57.0.24 (all 2026-10-21); npm `latest` is 58.0.21 (2026-10-28), and `check-sdk-trigger.mjs` on 2026-10-31 says no SDK move is due before 2026-11-04 |
 | `react-native` | 0.86.3 | `0.86.3` | npx expo install (in each app) | SDK 57's React Native; npm latest 0.87.1 is not for SDK 57 |
 | `react` | 19.2.3 | `19.2.3` | npx expo install (in each app) | 19.3.0 belongs to SDK 58; the root `overrides` pin the same two |
 | `@react-navigation/native` | 7.4.1 | `7.4.1` | npm install -w apps/<each> | not in the Expo map; v8 is still an alpha |
@@ -44,7 +44,7 @@ Each of these is a dependency of **every** app with the identical specifier, and
 | `expo-build-properties` | 57.0.22 | `~57.0.22` | npx expo install (in each app) | has ios.enableSceneSupport (needs expo >= 57.0.23); on Android it sets `kotlinVersion` 2.1.20, React Native 0.86.3's Kotlin ("Android toolchain" below); installed by the Android port (Android step 2) |
 | `expo-constants` | 57.0.22 | `~57.0.22` | npx expo install (in each app) | runtime read of expo.extra |
 | `expo-haptics` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | HapticsPort adapter |
-| `expo-network` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | ConnectivityPort; no HTTP probe |
+| `expo-network` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | ConnectivityPort; no HTTP probe |
 | `expo-store-review` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | "Rate this game" (OS component) |
 | `expo-tracking-transparency` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | App Tracking Transparency prompt behind `ConsentPort.requestTracking` (owner decision O1, 2026-09-30); on 2026-09-30 npm `sdk-57` = `latest` = 57.0.2, published 2026-09-11, MIT, no install script; imported only by `services/consent/admob-consent-adapter.ts`; its plugin entry in `shell-plugins.ts` (`userTrackingPermission`) writes `NSUserTrackingUsageDescription` (Expo's generic English sentence when the option is missing) and adds Android's `com.google.android.gms.permission.AD_ID` |
 | `expo-splash-screen` | 57.0.10 | `~57.0.10` | npx expo install (in each app) | splash config plugin (code-drawn art) |
@@ -82,7 +82,7 @@ Pure JavaScript libraries only the Shell imports are ordinary dependencies of `p
 | `@types/node` | 26.4.1 | npm install -D (root) | matches the Node 26.4 runtime |
 | `@types/jest` | 29.5.14 | npm install -D (root) | Expo related pin |
 | `jest` | 29.7.0 | npm install -D (root) | Expo related ~29.7.0; Jest 30 is not supported by jest-expo 57 |
-| `jest-expo` | 57.0.5 | npm install -D (root) | SDK 57 preset |
+| `jest-expo` | 57.0.6 | npm install -D (root) | SDK 57 preset; the map of `expo` 57.0.30 and 57.0.31 asks `~57.0.6` (published 2026-10-12), moved with `expo` 57.0.31 on 2026-10-31 |
 | `babel-jest` | 29.7.0 | npm install -D (root) | same release as jest; jest.sim.config.js names it |
 | `@react-native/jest-preset` | 0.86.3 | npm install -D (root) | jest-expo peer; must equal the React Native version |
 | `@testing-library/react-native` | 14.0.1 | npm install -D (root) | async API |
@@ -120,14 +120,14 @@ Some pins hold only when a second package is pinned with them, because npm would
 | `jest-image-snapshot` 6.5.2 | `@types/jest-image-snapshot` 6.4.2 | installed in the same command (`npm install -D @types/jest-image-snapshot@6.4.2 jest-image-snapshot@6.5.2`) | the package ships no types: installed alone, `npm run typecheck` fails `TS7016: Could not find a declaration file for module 'jest-image-snapshot'` in `test/goldens/boards/skia-golden.ts` (seen 2026-09-30) |
 | `@react-navigation/native-stack` 7.19.2 | `@react-navigation/native` 7.4.1, `react-native-screens` 4.26.2, `react-native-safe-area-context` 5.7.0 | installed together (the two native ones with `npx expo install` in every app) | `>= 4.0.0` peers: alone, npm picks the newest release, not the SDK 57 one |
 | `react-native-reanimated` 4.5.1 | `react-native-worklets` 0.10.1 | installed together | a 0.10.x peer that Expo pins exactly |
-| `jest-expo` 57.0.5 | `@react-native/jest-preset` 0.86.3 | installed together | a `^0.86.3` peer that must equal the React Native version |
+| `jest-expo` 57.0.6 | `@react-native/jest-preset` 0.86.3 | installed together | a `^0.86.3` peer that must equal the React Native version |
 | `@stryker-mutator/jest-runner`, `/typescript-checker` 10.0.0 | `@stryker-mutator/core` 10.0.0 | installed together | an exact peer |
 | `typescript-eslint` 8.70.1 | the ten `@typescript-eslint/*` packages (`eslint-plugin`, `parser`, `project-service`, `scope-manager`, `tsconfig-utils`, `type-utils`, `types`, `typescript-estree`, `utils`, `visitor-keys`) at 8.70.1 | root `overrides` | `eslint-config-expo` asks for `^8.59.0`; a newer copy at the root next to `typescript-eslint`'s own crashes ESLint with `Cannot redefine plugin "@typescript-eslint"` (seen 2026-09-29 with 8.71.0) |
 
 The root `overrides` hold exactly three kinds of key, and `check-deps-policy.mjs` fails any other (`stale-override`):
 
 1. `react` and `react-native`, at the apps' versions (one React);
-2. every package `packages/shell` lists as a `"*"` peer, at the version the apps install (`peer-override`): today `expo` 57.0.30, `@shopify/react-native-skia` 2.6.2, `react-native-gesture-handler` 2.32.0, `react-native-reanimated` 4.5.1, `react-native-worklets` 0.10.1, and `react-native-screens` 4.26.2, `react-native-safe-area-context` 5.7.0 and the other native rows once installed;
+2. every package `packages/shell` lists as a `"*"` peer, at the version the apps install (`peer-override`): today `expo` 57.0.31, `@shopify/react-native-skia` 2.6.2, `react-native-gesture-handler` 2.32.0, `react-native-reanimated` 4.5.1, `react-native-worklets` 0.10.1, and `react-native-screens` 4.26.2, `react-native-safe-area-context` 5.7.0 and the other native rows once installed;
 3. the companions marked "root `overrides`" above (`companion`).
 
 An override moves with its row: an SDK move (`expo-sdk-upgrade`) updates the first two kinds, an upgrade of `typescript-eslint` the third.

@@ -3571,11 +3571,11 @@
         ]
       },
       "examples/sdk-move-report.md": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "epics/E18-android-port.md",
@@ -3630,7 +3630,7 @@
         ]
       },
       "references/upgrade-policy.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3642,7 +3642,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
