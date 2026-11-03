@@ -1,6 +1,6 @@
 {
   "gameId": "line-siege",
-  "rulesFingerprint": "895355ed0b63f51c4595f2a871aabe16c81ca1ade051195ebf336e50291b637c",
+  "rulesFingerprint": "2d18042a71c0a1858fc58d99d691803ab1dcc1cac82cdf6bcd123ae6ef559c30",
   "seedsPerCell": 100,
   "maxMoves": 400,
   "cells": [
