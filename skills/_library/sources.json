@@ -1773,20 +1773,20 @@
         ]
       },
       "templates/game-kit/timeline/sample.test.ts": {
-        "recorded": "2026-10-31",
+        "recorded": "2026-11-03",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
+            "path": "packages/game-kit/src/timeline/sample.test.ts",
+            "sha256": "beff884eac92f3b0f52ff74279e71cab9ee47e2de4b61ef50d57332a5919ef03"
           }
         ]
       },
       "templates/game-kit/timeline/sample.ts": {
-        "recorded": "2026-10-31",
+        "recorded": "2026-11-03",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
+            "path": "packages/game-kit/src/timeline/sample.ts",
+            "sha256": "c340f08908674bf51cd92a63a74155b2b795a55bdd137565e8be9ea34c96141d"
           }
         ]
       },
