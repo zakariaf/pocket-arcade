@@ -29,7 +29,7 @@ Continuous collision for one fixed step, so fast balls never tunnel through thin
 - `MovingCircle = { center, motion, radius }` where `motion` is velocity × step.
 - `sweepCirclePoint(circle, point)`: first contact with a fixed point (a segment end-cap): the smallest `t` in 0…1 with `|center + t·motion − point| = radius`, plus the normal.
 - `sweepCircleSegment(circle, { a, b })`: earliest contact with the segment's interior (the line offset by the radius, clipped to the segment) or either rounded end; `null` when there is none this step.
-- `circlesOverlap(a, b, radiusSum)`: overlap test by squared distance (no `sqrt`).
+- No ball-vs-ball helper ships: the kit holds only what a game calls (knip fails an unused export). The first game with ball-vs-ball overlap adds `circlesOverlap(a, b, radiusSum)` to `sweep.ts`, test first, comparing squared distances (`const d = sub(a, b); return dot(d, d) < radiusSum * radiusSum;`, no `sqrt`).
 
 Verified by tests: contact time and normal against a wall (`t = 0.5`, normal `y = −1`), the rounded end, and a fast-check property that reflection keeps the speed.
 

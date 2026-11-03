@@ -1,0 +1,1 @@
+note apps/demo/src/rules/list-moves.ts:11 ArithmeticOperator mutant survived: "anchor.col - dx" (accepted as equivalent: apps/demo/src/rules/list-moves.ts:11:ArithmeticOperator:anchor.col - dx)

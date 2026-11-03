@@ -21,7 +21,8 @@ const SPEC = {
   positionals: { min: 0, max: 1 },
   details: [
     'Rules (test files are *.test.ts(x), *.golden.test.ts, *.sim.test.ts):',
-    '  disabled-test            .only / .skip / .failing / .todo, xit, xdescribe, fit, fdescribe',
+    '  disabled-test            .only / .skip / .failing / .todo, xit, xdescribe, fit, fdescribe (call sites only:',
+    '                           comments, titles and other strings are not read)',
     '  test-retry               jest.retryTimes (a retry hides a flaky test)',
     '  use-it                   test(...) instead of it(...)',
     '  test-title-verb          it() title does not start with a third-person verb or "can" (^(can|[a-z]+s)\\b)',
@@ -80,6 +81,33 @@ function isPerfTiming(rel, match, code) {
   return /^test\/.+\.perf\.test\.ts$/.test(rel) && /^performance\.now/.test(match) && /import\s*\{[^}]*\bperformance\b[^}]*\}\s*from\s*['"]node:perf_hooks['"]/.test(code);
 }
 
+/**
+ * The code with the contents of strings and template literals blanked (quotes, newlines and so
+ * line numbers kept), so call-site checks never read a test title such as "does not fit (it
+ * refuses)" as fit( . Expects comments already masked.
+ */
+function blankStrings(code) {
+  let out = '';
+  let quote = null;
+  for (let i = 0; i < code.length; i += 1) {
+    const ch = code[i];
+    if (quote === null) {
+      if (ch === '"' || ch === "'" || ch === '`') quote = ch;
+      out += ch;
+    } else if (ch === '\\') {
+      out += code[i + 1] === '\n' ? ' \n' : '  ';
+      i += 1;
+    } else if (ch === quote) {
+      quote = null;
+      out += ch;
+    } else if (ch === '\n') {
+      out += ch;
+      if (quote !== '`') quote = null;
+    } else out += ' ';
+  }
+  return out;
+}
+
 /** Index just after the parenthesised group that starts at `open` (which must be "("). */
 function closeParen(text, open) {
   let depth = 0;
@@ -122,10 +150,11 @@ function resolveImport(fromRel, spec) {
 
 function checkTestFile(report, rel, source, shown, importedByTests) {
   const code = maskComments(source);
+  const calls = blankStrings(code);
   const at = (index) => lineOf(code, index);
   for (const check of CHECKS) {
     if (check.skip?.(rel)) continue;
-    for (const match of code.matchAll(check.re)) {
+    for (const match of calls.matchAll(check.re)) {
       if (check.allow?.(rel, match[0], code)) continue;
       report.problem({ file: shown, line: at(match.index), rule: check.rule, message: check.message(match[0]), fix: check.fix });
     }

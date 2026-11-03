@@ -231,11 +231,11 @@ node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/e2e/pri
 
 `templates/packages/tooling/src/e2e/print-level-line.ts` (with the pure `level-line.ts` and its test) loads the game's pure modules (`rules/<id>-engine.ts`, `testing/<id>-testing.ts`, `board/<id>-board.ts`, the committed `levels/pack-<n>.json`) and prints:
 
-- the first listed move that taps can make, as tap targets (`tray col 0 row 0, then board col 0 row 0`): each move's targets come from the board's `targetsOfMove` and are checked through the engine's own `intentToMove` (a select-region tap first for tap-then-tap games);
+- the first listed move that taps can make, as tap targets (`tray col 0 row 0, then board col 0 row 0`): each move's targets come from the board's `targetsOfMove` (a board without it is searched over every cell of its portrait phone layout, `layoutCells`) and are checked through the engine's own `intentToMove` (a select-region tap first for tap-then-tap games);
 - `action=win-level earns <n> star(s)`: the level's star rule applied to `testing.examples.win()` (after the flow's one move, which is what a par rule counts);
 - the bot's whole line with its taps (`testing.bot` from the level's seed, bot RNG `seedRng(seed ^ 0x5bd1e995)` as `playBot` does) and how it ends.
 
-Targets are region cells of the portrait phone layout (the E2E phone). A board without `targetsOfMove`, or a swipe or drag game, prints the moves without taps: write those gestures by hand. Line Siege level 1 prints exactly the 12-move line round 2 played on the simulator.
+Targets are region cells of the portrait phone layout (the E2E phone). A move no tap makes (a swipe or a drag) prints without taps: write that gesture by hand. A board module that does not load in Node prints why on stderr, and the moves then print without taps. Line Siege level 1 prints exactly the 12-move line round 2 played on the simulator.
 
 ## Ending smoke flows: no network
 

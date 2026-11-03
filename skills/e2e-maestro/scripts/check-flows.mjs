@@ -8,7 +8,7 @@
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { dirname, join, posix } from 'node:path';
+import { dirname, join, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, readShellSlice, REPO_SCAN_IGNORES, requireDir, run, sliceSkipReason, walk } from './check-lib.mjs';
@@ -22,7 +22,7 @@ const SPEC = {
   options: {
     today: { type: 'string', value: 'YYYY-MM-DD', help: 'The date quarantine ages are measured from (default: today)' },
     syntax: { type: 'boolean', help: 'Also run tools/maestro/bin/maestro check-syntax on every file (about 3 s per file)' },
-    maestro: { type: 'string', default: 'tools/maestro/bin/maestro', value: 'path', help: 'The Maestro binary for --syntax, relative to the repo root' },
+    maestro: { type: 'string', default: 'tools/maestro/bin/maestro', value: 'path', help: 'The Maestro binary for --syntax: absolute, or relative to the repo root' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line before the RESULT line' },
   },
   positionals: { min: 0, max: 1 },
@@ -688,7 +688,7 @@ function reportNoFlows(slice, report) {
 }
 
 function checkSyntax(root, rels, maestro, report) {
-  const bin = join(root, maestro);
+  const bin = resolve(root, maestro);
   if (!existsSync(bin)) fail(`--syntax needs Maestro at ${maestro}`, 'Run bash packages/tooling/scripts/install-maestro.sh first (or pass --maestro <path>).');
   const javaHome = process.env.JAVA_HOME ?? '/Applications/Android Studio.app/Contents/jbr/Contents/Home';
   const env = { ...process.env, JAVA_HOME: javaHome, MAESTRO_CLI_NO_ANALYTICS: 'true', MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true', MAESTRO_DISABLE_UPDATE_CHECK: 'true' };

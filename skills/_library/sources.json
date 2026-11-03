@@ -482,11 +482,11 @@
         ]
       },
       "examples/ad-wiring.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -542,7 +542,7 @@
         ]
       },
       "references/placements-and-lifecycle.md": {
-        "recorded": "2026-10-25",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -554,7 +554,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -1298,43 +1298,43 @@
     },
     "board-gestures-and-input": {
       "examples/bank-shot/intent-to-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/bank-shot/intent-to-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/flock-tilt/intent-to-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/flock-tilt/intent-to-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/input-pipeline.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -1346,7 +1346,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -1355,16 +1355,16 @@
         ]
       },
       "references/intent-to-move.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/rngh-v3-migration.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -1372,21 +1372,21 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/stick-input.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/testing-gestures.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -1394,61 +1394,61 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/contract/input-intent.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/classify-swipe.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/classify-swipe.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/stick-command.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/stick-command.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/hit-targets.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -1457,85 +1457,85 @@
         ]
       },
       "templates/game/rules/intent-to-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/rules/intent-to-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/board-gesture-probe.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/pan-intent.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/pan-intent.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/stick-gesture-probe.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/use-board-gestures.test.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/use-board-gestures.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       }
     },
     "board-rendering-skia": {
       "examples/line-siege/board/board-palettes.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -1544,11 +1544,11 @@
         ]
       },
       "examples/line-siege/board/board-palettes.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -1557,74 +1557,74 @@
         ]
       },
       "examples/line-siege/board/build-timeline.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/build-timeline.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/draw-board.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/draw-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/layout-board.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/layout-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/line-siege-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/board/to-view.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -1656,29 +1656,29 @@
         ]
       },
       "examples/line-siege/rules/line-siege-types.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/api-traps.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/architecture.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -1687,7 +1687,7 @@
         ]
       },
       "references/drawing.md": {
-        "recorded": "2026-10-25",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
@@ -1695,7 +1695,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -1712,7 +1712,7 @@
         ]
       },
       "references/testing-and-goldens.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -1720,7 +1720,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -1729,7 +1729,7 @@
         ]
       },
       "references/timeline-and-clock.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -1737,7 +1737,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -1746,83 +1746,83 @@
         ]
       },
       "templates/game-kit/geom/board-layout.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/board-layout.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/particles.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/sample.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/sample.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/track.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/__GAME_ID__-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/board-ids.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/board-palettes.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -1831,11 +1831,11 @@
         ]
       },
       "templates/game/board/board-palettes.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -1844,74 +1844,74 @@
         ]
       },
       "templates/game/board/build-timeline.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/build-timeline.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/draw-board.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/draw-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/layout-board.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/layout-board.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/to-view.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/app/use-is-app-active.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -1943,11 +1943,11 @@
         ]
       },
       "templates/shell/game-host/board-kit.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "packages/shell/src/game-host/board-kit.ts",
@@ -1992,7 +1992,7 @@
         ]
       },
       "templates/shell/game-host/board-scene.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -2000,16 +2000,16 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/board-scene.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -2032,38 +2032,38 @@
         ]
       },
       "templates/shell/game-host/cue-scheduler.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/cue-scheduler.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/describe-error.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/draw-centered-text.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -2104,29 +2104,29 @@
         ]
       },
       "templates/shell/game-host/paint-board-png.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/present-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/present-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -2149,11 +2149,11 @@
         ]
       },
       "templates/shell/game-host/run-board-frame.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -2167,20 +2167,20 @@
         ]
       },
       "templates/shell/game-host/use-board-clock.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/use-game-lifecycle.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -2203,16 +2203,16 @@
         ]
       },
       "templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/test/goldens/boards/skia-golden.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -2220,25 +2220,25 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/tooling/quality/check-worklet-boundary.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/tooling/quality/check-worklet-boundary.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -3550,7 +3550,7 @@
     },
     "expo-sdk-upgrade": {
       "assets/sdk-lines.json": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3562,7 +3562,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "epics/E18-android-port.md",
@@ -3605,7 +3605,7 @@
         ]
       },
       "references/sdk-58-changes.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3617,7 +3617,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -3688,7 +3688,7 @@
     },
     "game-audio-and-haptics": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3700,7 +3700,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -3750,11 +3750,11 @@
         ]
       },
       "references/haptics.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -3767,7 +3767,7 @@
         ]
       },
       "references/sound-design.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -3775,7 +3775,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -3818,11 +3818,11 @@
         ]
       },
       "scripts/lib/synth.mjs": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -3866,11 +3866,11 @@
         ]
       },
       "templates/packages/shell/src/app/use-is-app-active.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -4130,7 +4130,7 @@
     },
     "game-balance-and-bots": {
       "SKILL.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4138,7 +4138,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -4159,11 +4159,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/apply-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4172,11 +4172,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/apply-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4185,11 +4185,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/create.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4198,11 +4198,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/create.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4211,11 +4211,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/line-siege-tuning.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4224,11 +4224,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/line-siege-types.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4237,11 +4237,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/list-moves.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4250,11 +4250,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/outcome.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4263,11 +4263,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/rules/pieces.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4276,11 +4276,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/testing/line-siege-bot.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4289,11 +4289,11 @@
         ]
       },
       "examples/line-siege/apps/line-siege/src/testing/line-siege-bot.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/toys/line-siege.html",
@@ -4302,7 +4302,7 @@
         ]
       },
       "examples/line-siege/reports/sim/line-siege.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4310,12 +4310,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/test/sims/line-siege/balance-bands.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4323,12 +4323,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/test/sims/line-siege/balance.sim.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4336,7 +4336,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -4354,7 +4354,7 @@
         ]
       },
       "references/bots-and-sims.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4366,7 +4366,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -4408,7 +4408,7 @@
         ]
       },
       "references/tuning-playbook.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4416,7 +4416,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "idea-hunt/research-notes.md",
@@ -4433,7 +4433,7 @@
         ]
       },
       "scripts/check-balance.mjs": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4441,7 +4441,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -4455,7 +4455,7 @@
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4463,7 +4463,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -4477,7 +4477,7 @@
         ]
       },
       "templates/packages/game-kit/src/testing/balance-bands.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4485,12 +4485,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/balance-bands.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4498,12 +4498,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/bot-policies.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4511,12 +4511,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/bot-policies.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4524,12 +4524,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/parse-balance-bands.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4537,12 +4537,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/parse-balance-bands.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4550,21 +4550,21 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/play-bot.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/run-sim-bot.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4572,12 +4572,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/run-sim-bot.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4585,12 +4585,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/sim-stats.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4598,12 +4598,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/sim-stats.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4611,12 +4611,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/trace-bot.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4624,12 +4624,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/trace-bot.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4637,12 +4637,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/tooling/src/sims/write-sim-report.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4650,12 +4650,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/test/sims/__GAME_ID__/balance-bands.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4663,12 +4663,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/test/sims/__GAME_ID__/balance.sim.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -4676,14 +4676,14 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       }
     },
     "game-host-integration": {
       "examples/game-screen/game-screen.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -4691,7 +4691,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -4752,7 +4752,7 @@
         ]
       },
       "references/assembling-a-game.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4760,11 +4760,11 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -4773,7 +4773,7 @@
         ]
       },
       "references/host-architecture.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4785,7 +4785,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -4798,7 +4798,7 @@
         ]
       },
       "references/session-flow.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4810,7 +4810,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -4965,11 +4965,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/fullscreen-gate.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -4978,11 +4978,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/fullscreen-gate.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/11-ads-admob.md",
@@ -5420,7 +5420,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/use-pause-on-background.test.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -5428,7 +5428,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -5437,7 +5437,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/use-pause-on-background.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -5445,7 +5445,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -5523,7 +5523,7 @@
     },
     "game-rules-engine": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5535,7 +5535,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -5544,7 +5544,7 @@
         ]
       },
       "examples/line-siege/rules/apply-move.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5552,12 +5552,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/apply-move.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5565,12 +5565,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/create.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5578,12 +5578,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/create.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5591,12 +5591,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/line-siege-types.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5604,12 +5604,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/list-moves.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5617,12 +5617,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/outcome.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5630,12 +5630,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/outcome.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5643,12 +5643,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/line-siege/rules/pieces.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5656,12 +5656,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/determinism-and-rng.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -5673,12 +5673,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/engine-contract.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5686,7 +5686,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -5699,7 +5699,7 @@
         ]
       },
       "references/testing-rules.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -5707,16 +5707,16 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/writing-rules.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5728,7 +5728,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -5737,7 +5737,7 @@
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-engine.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5749,12 +5749,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-engine.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5766,12 +5766,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-persistence.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5783,12 +5783,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-persistence.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5800,12 +5800,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-stats.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5817,12 +5817,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-stats.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5834,12 +5834,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-types.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5851,12 +5851,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/apply-move.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5868,12 +5868,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/apply-move.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5885,12 +5885,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/create.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5902,12 +5902,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/create.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5919,12 +5919,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/flip-cells.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5936,12 +5936,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/list-moves.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5953,12 +5953,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/outcome.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5970,12 +5970,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/rules/outcome.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5987,12 +5987,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/testing/__GAME_ID__-testing.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6004,12 +6004,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/testing/__GAME_ID__-testing.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6021,12 +6021,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/game-engine.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6034,12 +6034,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/game-identity.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6047,12 +6047,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/game-module.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6060,12 +6060,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/game-rules.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6073,12 +6073,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/input-intent.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6086,12 +6086,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/levels.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6099,12 +6099,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/messages.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6112,12 +6112,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/persistence.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6125,12 +6125,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/realtime.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6138,12 +6138,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/stats.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6151,12 +6151,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/teaching.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6164,12 +6164,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/contract/testing.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6177,12 +6177,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/geom/board-layout-edges.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6190,12 +6190,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/geom/board-layout.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6203,12 +6203,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/geom/board-layout.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6216,12 +6216,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/geom/classify-swipe.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6229,12 +6229,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/geom/classify-swipe.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6242,12 +6242,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/rng/pick-at.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6255,12 +6255,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/rng/pick-at.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6268,12 +6268,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/rng/sfc32.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6281,12 +6281,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/rng/sfc32.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6294,12 +6294,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/engine-contract.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6311,12 +6311,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/engine-contract.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6328,12 +6328,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/json-shape.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6345,12 +6345,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/json-shape.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6362,12 +6362,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/play-bot.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6379,12 +6379,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/play-bot.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6396,12 +6396,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/play-choices.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6413,12 +6413,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/play-choices.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6430,12 +6430,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/timeline/track.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6443,12 +6443,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/timeline/track.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6456,14 +6456,14 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       }
     },
     "git-commits-and-reporting": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6479,7 +6479,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6488,7 +6488,7 @@
         ]
       },
       "examples/commit-messages.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6496,12 +6496,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/owner-requests.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6509,7 +6509,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6518,7 +6518,7 @@
         ]
       },
       "examples/release-evidence.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6526,12 +6526,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/slice-evidence.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6539,12 +6539,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/commit-format.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6560,7 +6560,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -6573,7 +6573,7 @@
         ]
       },
       "references/owner-updates.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6585,7 +6585,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6594,7 +6594,7 @@
         ]
       },
       "references/stop-and-ask.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -6610,7 +6610,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6619,7 +6619,7 @@
         ]
       },
       "references/tags-and-releases.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6631,7 +6631,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6653,7 +6653,7 @@
         ]
       },
       "scripts/check-report.mjs": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6661,7 +6661,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -6679,7 +6679,7 @@
         ]
       },
       "templates/commit-message.txt": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6687,12 +6687,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/evidence-release-play.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6700,7 +6700,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -6709,7 +6709,7 @@
         ]
       },
       "templates/evidence-release.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6721,12 +6721,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/evidence-slice.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6734,21 +6734,21 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/owner-request.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/release-stop.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -6756,7 +6756,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -6794,7 +6794,7 @@
         ]
       },
       "references/golden-policy.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -6806,7 +6806,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -6819,7 +6819,7 @@
         ]
       },
       "references/pixel-goldens.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6827,7 +6827,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -6872,7 +6872,7 @@
         ]
       },
       "templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6880,7 +6880,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
@@ -7297,7 +7297,7 @@
     },
     "ios-release-testflight": {
       "examples/release-messages.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -7305,7 +7305,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -7986,7 +7986,7 @@
     },
     "level-generation-and-solvers": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8002,7 +8002,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -8011,7 +8011,7 @@
         ]
       },
       "examples/tap-flip-levels.golden.test.ts.snap.ios": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8027,12 +8027,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/generators-and-plans.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8044,7 +8044,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -8053,7 +8053,7 @@
         ]
       },
       "references/goldens-and-quality.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -8065,7 +8065,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -8091,7 +8091,7 @@
         ]
       },
       "references/solvers.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8103,7 +8103,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -8112,7 +8112,7 @@
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-level-plan.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8128,12 +8128,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-level-plan.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8149,12 +8149,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-levels.golden.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8170,12 +8170,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-levels.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8191,12 +8191,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-levels.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8212,12 +8212,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-solver.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8233,12 +8233,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/apps/__GAME_ID__/src/levels/__GAME_ID__-solver.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8254,12 +8254,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/dates/daily-seed.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8275,12 +8275,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/dates/date-key.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8296,12 +8296,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/dates/date-key.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8317,12 +8317,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/daily-start.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8338,12 +8338,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/daily-start.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8359,12 +8359,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/level-plan.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8380,12 +8380,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/level-table.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8401,12 +8401,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/level-table.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8422,12 +8422,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/levels-contract.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8443,12 +8443,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/levels-contract.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8464,12 +8464,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/pack-progress.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8485,12 +8485,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/pack-progress.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8506,12 +8506,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/plan-level-table.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8527,12 +8527,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/plan-level-table.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8548,12 +8548,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/star-rating.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8569,12 +8569,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/levels/star-rating.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8590,12 +8590,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/bfs-solve.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8611,12 +8611,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/bfs-solve.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8632,12 +8632,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/engine-solver.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8653,12 +8653,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/ida-star-solve.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8674,12 +8674,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/ida-star-solve.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8695,12 +8695,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/search-problem.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8716,12 +8716,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/verify-line.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8737,12 +8737,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/solver/verify-line.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8758,12 +8758,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/render-cells.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8779,12 +8779,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/game-kit/src/testing/render-cells.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8800,12 +8800,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/packages/tooling/src/levels/generate-levels.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8821,23 +8821,23 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       }
     },
     "monorepo-bootstrap": {
       "examples/bootstrap-report.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/first-install-and-verify.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8853,12 +8853,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/repo-layout.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -8870,12 +8870,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/root-files.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8899,12 +8899,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/toolchain-setup.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8916,7 +8916,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -8930,20 +8930,20 @@
         ]
       },
       "templates/repo/AGENTS.md.tmpl": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/repo/CLAUDE.md.tmpl": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -9737,7 +9737,7 @@
     },
     "new-game-scaffold": {
       "SKILL.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9749,7 +9749,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9758,7 +9758,7 @@
         ]
       },
       "examples/flock-tilt/en.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9770,12 +9770,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/flock-tilt/game.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9787,12 +9787,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/flock-tilt/scaffold-plan.txt": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9804,12 +9804,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "examples/owner-request.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9821,7 +9821,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -9843,7 +9843,7 @@
         ]
       },
       "references/ids-and-names.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9855,7 +9855,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9864,7 +9864,7 @@
         ]
       },
       "references/new-game-checklist.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9876,7 +9876,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "spec.txt",
@@ -9885,7 +9885,7 @@
         ]
       },
       "templates/app/app.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9897,12 +9897,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/dot-gitignore": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9914,12 +9914,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/game.config.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9931,12 +9931,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/index.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9948,12 +9948,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/metro.config.js": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9965,12 +9965,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/package.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9982,12 +9982,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/ckb.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9999,12 +9999,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/de.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10016,12 +10016,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/en.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10033,12 +10033,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/src/i18n/fa.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10050,12 +10050,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "templates/app/tsconfig.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -10067,7 +10067,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -10109,11 +10109,11 @@
         ]
       },
       "references/measuring.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -10139,11 +10139,11 @@
         ]
       },
       "scripts/check-perf-code.mjs": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -10325,11 +10325,11 @@
     },
     "pocket-arcade-index": {
       "SKILL.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10338,11 +10338,11 @@
         ]
       },
       "assets/index.json": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10351,11 +10351,11 @@
         ]
       },
       "references/build-orders.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10364,11 +10364,11 @@
         ]
       },
       "references/loading-and-reporting.md": {
-        "recorded": "2026-10-10",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -11656,7 +11656,7 @@
         ]
       },
       "templates/gate-question.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -11664,7 +11664,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -12094,56 +12094,56 @@
     },
     "realtime-game-loop": {
       "examples/bank-shot/simulate-volley.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/bank-shot/simulate-volley.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/bank-shot/volley-timeline.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/halo-drift/halo-sim.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "examples/halo-drift/halo-sim.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/fixed-step-loop.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12156,16 +12156,16 @@
         ]
       },
       "references/geom-kit.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/sim-design.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -12177,124 +12177,124 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "references/simulate-then-replay.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/spatial-hash.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/spatial-hash.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/sweep.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/sweep.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/geom/vec2.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/testing/replay-commands.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/testing/replay-commands.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/fixed-step.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game-kit/timeline/fixed-step.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/board-palettes.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/board-palettes.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/board/draw-arena.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -12303,43 +12303,43 @@
         ]
       },
       "templates/game/board/draw-arena.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/sim/__GAME_ID__-sim.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/game/sim/__GAME_ID__-sim.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/paint-sim-png.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/realtime-board-host.test.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -12347,12 +12347,12 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/realtime-board-host.tsx": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -12360,57 +12360,57 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/record-sim.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/record-sim.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/run-loop-frame.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/run-loop-frame.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/shell/game-host/use-fixed-step-loop.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },
       "templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -12418,7 +12418,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       }
@@ -13900,7 +13900,7 @@
         ]
       },
       "references/game-session.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -13912,7 +13912,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "spec.txt",
@@ -14215,7 +14215,7 @@
     },
     "tdd-workflow": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14223,7 +14223,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14249,7 +14249,7 @@
         ]
       },
       "references/build-order.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14257,7 +14257,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14266,7 +14266,7 @@
         ]
       },
       "references/definition-of-done.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14274,7 +14274,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -14365,7 +14365,7 @@
         ]
       },
       "templates/slice-plan.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -14373,7 +14373,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       }
@@ -19210,7 +19210,7 @@
     },
     "troubleshooting-playbook": {
       "assets/known-failures.json": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -19246,7 +19246,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -19282,7 +19282,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -19320,7 +19320,7 @@
         ]
       },
       "references/build-and-simulator.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -19368,12 +19368,12 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
       "references/claude-code-and-skills.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -19381,7 +19381,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -19415,7 +19415,7 @@
         ]
       },
       "references/diagnosing-new-failures.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -19427,7 +19427,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -19453,7 +19453,7 @@
         ]
       },
       "references/open-risks.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -19469,7 +19469,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -19493,7 +19493,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -19519,7 +19519,7 @@
         ]
       },
       "references/quality-gates-and-git.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -19531,7 +19531,7 @@
           },
           {
             "path": "docs/17-claude-code-playbook.md",
-            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+            "sha256": "8ed88b29741803ea0430f1f047db2d2dc2f1bed0ba937a7219d35380c741e337"
           }
         ]
       },
@@ -19561,7 +19561,7 @@
         ]
       },
       "references/rendering-and-game-loop.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -19573,7 +19573,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -19599,7 +19599,7 @@
         ]
       },
       "references/testing-and-e2e.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -19607,7 +19607,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -19636,7 +19636,7 @@
         ]
       },
       "references/typescript-and-lint.md": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -19660,7 +19660,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           },
           {
             "path": "docs/13-privacy-network-security.md",
@@ -20002,7 +20002,7 @@
         ]
       },
       "references/properties.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-31",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -20014,7 +20014,7 @@
           },
           {
             "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "sha256": "f5a95e884c4d71a4b31c2ed0858f33b117de6866c3854e59a6f55c05f45ac8d9"
           }
         ]
       },

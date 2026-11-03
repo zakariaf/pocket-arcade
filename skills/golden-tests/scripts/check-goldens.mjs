@@ -34,7 +34,8 @@ const SPEC = {
     '  matcher-missing         pixel goldens exist but test/goldens/boards/skia-golden.ts does not',
     '  pixel-deps              pixel goldens exist but the root devDependencies lack exact pins of jest-image-snapshot',
     '                          and @types/jest-image-snapshot (verified: 6.5.2 and 6.4.2)',
-    '  pixel-golden-cases      a pixel golden renders fewer than 3 sizes or not the moments 0, 0.5 and 1',
+    '  pixel-golden-cases      a board golden (<game-id>-board.golden.test.ts) renders fewer than 3 sizes or not the',
+    '                          moments 0, 0.5 and 1 (a fixed-scene pixel golden names its own sizes and phases)',
     '  baseline-missing        a pixel golden has no PNG in the __image_snapshots__ folder next to it',
     '  daily-golden-missing    a game with a daily challenge has no golden that calls dailySeed(',
     '  daily-golden-dates      the daily golden pins fewer than 3 dates or no Dec 31 / Jan 1 year boundary',
@@ -109,12 +110,15 @@ function checkPixelGolden(root, rel, code, report) {
   for (const match of code.matchAll(/\b(failureThreshold|failureThresholdType|customDiffConfig|configureToMatchImageSnapshot)\b/g)) problem('golden-tolerance', match.index, `sets ${match[1]} in the test`, 'Remove it: the tolerance lives only in skia-golden.ts (0.1% of pixels).');
   const widths = new Set([...code.matchAll(/\bwidth:\s*(\d+)/g)].map((match) => match[1]));
   const hasMoments = /\[\s*0\s*,\s*0\.5\s*,\s*1\s*\]/.test(code);
-  if (widths.size < 3 || !hasMoments) problem('pixel-golden-cases', at, `renders ${widths.size} canvas size(s)${hasMoments ? '' : ' and not the moments [0, 0.5, 1]'}`, 'Render phone-portrait 390x560, tablet-landscape 1024x700 and small 320x400 at moments [0, 0.5, 1] of the busiest turn.');
+  // The 3 sizes x 3 moments of the busiest turn are the game's board golden (<game-id>-board.golden.test.ts);
+  // another pixel golden freezes one fixed scene (the tutorial's first board) at the sizes and phases it names.
+  const isBoardGolden = /-board\.golden\.test\.ts$/.test(rel);
+  if (isBoardGolden && (widths.size < 3 || !hasMoments)) problem('pixel-golden-cases', at, `renders ${widths.size} canvas size(s)${hasMoments ? '' : ' and not the moments [0, 0.5, 1]'}`, 'Render phone-portrait 390x560, tablet-landscape 1024x700 and small 320x400 at moments [0, 0.5, 1] of the busiest turn.');
   const folder = join(root, dirname(rel), '__image_snapshots__');
-  const prefix = basename(rel).replace(/-board\.golden\.test\.ts$/, '-');
+  const prefix = basename(rel).replace(/(?:-board)?\.golden\.test\.ts$/, '-');
   const pngs = existsSync(folder) ? readdirSync(folder).filter((name) => name.endsWith('.png')) : [];
-  const own = prefix.endsWith('.golden.test.ts') ? pngs : pngs.filter((name) => name.startsWith(prefix));
-  if (own.length === 0) problem('baseline-missing', at, `no baseline PNG${prefix.endsWith('-') ? ` starting with ${prefix}` : ''} in ${posix.join(posix.dirname(rel), '__image_snapshots__')}/`, `Create them on purpose: npx jest ${rel} --selectProjects golden -u, open every PNG, commit with a Gate-Change trailer.`);
+  const own = pngs.filter((name) => name.startsWith(prefix));
+  if (own.length === 0) problem('baseline-missing', at, `no baseline PNG starting with ${prefix} in ${posix.join(posix.dirname(rel), '__image_snapshots__')}/`, `Create them on purpose: npx jest ${rel} --selectProjects golden -u, open every PNG, commit with a Gate-Change trailer.`);
 }
 
 function checkMatcher(root, hasPixel, report) {

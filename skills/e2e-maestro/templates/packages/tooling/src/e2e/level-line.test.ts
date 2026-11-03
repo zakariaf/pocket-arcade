@@ -2,7 +2,7 @@
 // The taps a level-1 flow needs, over two tiny games: a one-tap board (tap a cell to fill it) and
 // a tap-then-tap board (select a tray slot, then tap the cell). Moves are checked through each
 // game's own intentToMove, and the bot plays with playBot's seed rule.
-import { levelLine, formatLevelLine, tapsFor } from './level-line.ts';
+import { formatLevelLine, layoutCells, levelLine, tapsFor } from './level-line.ts';
 
 import type { LineGame } from './level-line.ts';
 import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
@@ -70,12 +70,59 @@ describe('tapsFor', () => {
     ]);
   });
 
+  it("finds a board's taps among its layout's cells when it has no targetsOfMove", () => {
+    const cells = layoutCells({
+      width: 300,
+      height: 200,
+      isMirrored: false,
+      regions: [
+        { id: 'board', x: 0, y: 0, cell: 100, cols: 3, rows: 1 },
+        { id: 'tray', x: 0, y: 100, cell: 100, cols: 2, rows: 1 },
+      ],
+    });
+    const withCells = (game: LineGame<Cells, Fill>): LineGame<Cells, Fill> => {
+      const { engine, bot, winExample } = game;
+      return { engine, bot, winExample, cellsOf: () => cells };
+    };
+    const oneTap = withCells(fillGame([]));
+    expect(tapsFor(oneTap, oneTap.engine.create(1, 0), { slot: 0, col: 2 })).toStrictEqual([
+      { regionId: 'board', col: 2, row: 0 },
+    ]);
+    const twoTap = withCells(fillGame(['tray']));
+    expect(tapsFor(twoTap, twoTap.engine.create(1, 0), { slot: 1, col: 0 })).toStrictEqual([
+      { regionId: 'tray', col: 1, row: 0 },
+      { regionId: 'board', col: 0, row: 0 },
+    ]);
+  });
+
   it('gives no taps without targetsOfMove or when intentToMove disagrees', () => {
     const { engine, bot, winExample } = fillGame([]);
     const noTargets = { engine, bot, winExample };
     expect(tapsFor(noTargets, { cells: [0, 0, 0], score: 0 }, { slot: 0, col: 0 })).toBeNull();
     const game = fillGame([]);
     expect(tapsFor(game, game.engine.create(1, 0), { slot: 1, col: 0 })).toBeNull();
+  });
+});
+
+describe('layoutCells', () => {
+  it('lists every cell of every region, region by region, row by row', () => {
+    expect(
+      layoutCells({
+        width: 200,
+        height: 300,
+        isMirrored: false,
+        regions: [
+          { id: 'well', x: 0, y: 0, cell: 100, cols: 2, rows: 2 },
+          { id: 'next', x: 0, y: 200, cell: 100, cols: 1, rows: 1 },
+        ],
+      }),
+    ).toStrictEqual([
+      { regionId: 'well', col: 0, row: 0 },
+      { regionId: 'well', col: 1, row: 0 },
+      { regionId: 'well', col: 0, row: 1 },
+      { regionId: 'well', col: 1, row: 1 },
+      { regionId: 'next', col: 0, row: 0 },
+    ]);
   });
 });
 

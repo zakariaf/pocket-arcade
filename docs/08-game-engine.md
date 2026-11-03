@@ -2309,13 +2309,9 @@ export function sweepCircleSegment(circle: MovingCircle, segment: Segment): Swee
   }
   return best;
 }
-
-/** Overlap test without sqrt: squared distance vs squared radius sum. */
-export function circlesOverlap(a: Vec2, b: Vec2, radiusSum: number): boolean {
-  const d = sub(a, b);
-  return dot(d, d) < radiusSum * radiusSum;
-}
 ```
+
+The kit ships no ball-vs-ball helper while no game calls one (knip fails an unused export): the first game with ball-vs-ball overlap adds `circlesOverlap(a, b, radiusSum)` to `sweep.ts`, test first, comparing squared distances (`dot(d, d) < radiusSum * radiusSum`, no `sqrt`).
 
 ```ts
 // packages/game-kit/src/geom/spatial-hash.ts

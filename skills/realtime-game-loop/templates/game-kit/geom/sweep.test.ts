@@ -1,7 +1,7 @@
 // packages/game-kit/src/geom/sweep.test.ts
 import fc from 'fast-check';
 
-import { circlesOverlap, sweepCircleSegment } from './sweep.ts';
+import { sweepCircleSegment } from './sweep.ts';
 import { length, reflect } from './vec2.ts';
 
 const FLOOR = { a: { x: 0, y: 100 }, b: { x: 200, y: 100 } };
@@ -36,13 +36,5 @@ describe('sweepCircleSegment', () => {
       ),
       { seed: 5, numRuns: 300 },
     );
-  });
-});
-
-describe('circlesOverlap', () => {
-  it('tells overlapping circles from touching and apart ones by squared distance', () => {
-    expect(circlesOverlap({ x: 0, y: 0 }, { x: 3, y: 4 }, 5.5)).toBe(true);
-    expect(circlesOverlap({ x: 0, y: 0 }, { x: 3, y: 4 }, 5)).toBe(false);
-    expect(circlesOverlap({ x: 0, y: 0 }, { x: 30, y: 40 }, 20)).toBe(false);
   });
 });

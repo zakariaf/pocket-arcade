@@ -15,7 +15,8 @@ const SPEC = {
   usage: '[options] [report.json]',
   options: {
     changed: { type: 'string', multiple: true, value: 'file', help: 'A source file (repo-relative) that must have no Survived or NoCoverage mutant' },
-    allow: { type: 'string', multiple: true, value: 'id', help: 'A mutant id accepted as equivalent (write why in the evidence report)' },
+    allow: { type: 'string', multiple: true, value: 'key', help: 'A mutant accepted as equivalent, by the stable key <file>:<line>:<mutator>:<replacement> its line prints (quote it; write why in the evidence report)' },
+    'allow-file': { type: 'string', value: 'file', help: 'A file of stable keys accepted as equivalent, one per line (a line starting with # is a comment)' },
     break: { type: 'string', value: 'n', help: 'Minimum score in percent (default: the report\'s thresholds.break, at least 75)' },
     all: { type: 'boolean', help: 'List every undetected mutant of every file (default: one summary line per file)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line before the RESULT line' },
@@ -32,7 +33,13 @@ const SPEC = {
     '  no-coverage          a mutant in a --changed file was never run by any test',
     '  changed-not-mutated  a --changed file is not in the report (run: npx stryker run --mutate <file>);',
     '                       a types-only file (nothing left once the types are stripped) gets a SKIP line instead',
-    '  allow-unknown        an --allow id matches no mutant in the report',
+    '  allow-unknown        an --allow key matches no mutant in the report',
+    '  allow-run-id         an --allow value is a bare Stryker id: ids are numbered per run, so the same id',
+    '                       names another mutant after the next run; pass the stable key instead',
+    '',
+    'Stable key: <file>:<line>:<mutator>:<replacement>, the replacement with its whitespace collapsed, for',
+    'example apps/demo/src/rules/list-moves.ts:11:ArithmeticOperator:anchor.col - dx. A rerun keeps it, so',
+    'the accepted list can live in an --allow-file beside the evidence report.',
     '',
     'Other files get one note line each (counts and first line); --all lists every mutant, for the evidence report.',
   ].join('\n'),
@@ -72,7 +79,18 @@ function isTypesOnly(file) {
   }
 }
 
-const clean = (text) => String(text).replace(/\s+/g, ' ').trim().slice(0, 80);
+const collapse = (text) => String(text).replace(/\s+/g, ' ').trim();
+const clean = (text) => collapse(text).slice(0, 80);
+
+/** The key of a mutant that a rerun keeps (Stryker numbers its ids per run). */
+const stableKey = (file, mutant) => `${file}:${mutant.location?.start?.line ?? 0}:${mutant.mutatorName}:${collapse(mutant.replacement ?? '')}`;
+
+/** The keys of every --allow and of every line of --allow-file (blank and # lines skipped). */
+function allowedKeys(options) {
+  const file = options['allow-file'];
+  const lines = file === undefined ? [] : readFileSync(requireFile(file, 'allow file'), 'utf8').split('\n');
+  return [...options.allow, ...lines].map((line) => line.trim()).filter((line) => line !== '' && !line.startsWith('#'));
+}
 
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
@@ -82,31 +100,32 @@ run(async () => {
   const data = loadReport(path);
   const breakAt = options.break === undefined ? Math.max(75, Number(data.thresholds?.break ?? 75)) : Number(options.break);
   if (!Number.isFinite(breakAt) || breakAt < 75) fail(`--break ${options.break} is below 75`, 'The break threshold is a gate: never run with less than 75.');
-  const allowed = new Set(options.allow);
+  const allowed = new Set(allowedKeys(options));
   const changed = new Set(options.changed.map((file) => file.replace(/^\.\//, '')));
   const report = createReporter({ name: SPEC.name, json: options.json });
   let detected = 0;
   let undetected = 0;
   let total = 0;
-  const seenIds = new Set();
+  const seenKeys = new Set();
   for (const [file, entry] of Object.entries(data.files).sort(([a], [b]) => (a < b ? -1 : 1))) {
     const mutants = Array.isArray(entry?.mutants) ? entry.mutants : [];
     const summary = { Survived: 0, NoCoverage: 0, firstLine: 0 };
     for (const mutant of mutants) {
       total += 1;
-      seenIds.add(String(mutant.id));
+      const key = stableKey(file, mutant);
+      seenKeys.add(key);
       if (DETECTED.has(mutant.status)) detected += 1;
       if (!UNDETECTED.has(mutant.status)) continue;
-      const isAllowed = allowed.has(String(mutant.id));
+      const isAllowed = allowed.has(key);
       if (!isAllowed) undetected += 1;
       const line = mutant.location?.start?.line ?? 0;
-      const what = `${mutant.mutatorName} mutant ${mutant.id} ${mutant.status === 'Survived' ? 'survived' : 'was never run by a test'}: "${clean(mutant.replacement ?? '')}"`;
+      const what = `${mutant.mutatorName} mutant ${mutant.status === 'Survived' ? 'survived' : 'was never run by a test'}: "${clean(mutant.replacement ?? '')}"`;
       if (isAllowed) {
-        report.note(`note ${file}:${line} ${what} (accepted as equivalent with --allow)`);
+        report.note(`note ${file}:${line} ${what} (accepted as equivalent: ${key})`);
       } else if (changed.has(file)) {
-        report.problem({ file, line, rule: mutant.status === 'Survived' ? 'survivor' : 'no-coverage', message: what, fix: mutant.status === 'Survived' ? 'Add the example that tells the real code from this change (usually a boundary: exactly the limit, the same millisecond, an empty list), or delete dead code.' : 'Add a test that runs this line (often a branch or action no test reaches).' });
+        report.problem({ file, line, rule: mutant.status === 'Survived' ? 'survivor' : 'no-coverage', message: `${what} (key ${key})`, fix: mutant.status === 'Survived' ? 'Add the example that tells the real code from this change (usually a boundary: exactly the limit, the same millisecond, an empty list), or delete dead code.' : 'Add a test that runs this line (often a branch or action no test reaches).' });
       } else if (options.all) {
-        report.note(`note ${file}:${line} ${what}`);
+        report.note(`note ${file}:${line} ${what} (key ${key})`);
       } else {
         summary[mutant.status] += 1;
         summary.firstLine = summary.firstLine || line;
@@ -122,8 +141,9 @@ run(async () => {
     }
     report.problem({ file, line: 0, rule: 'changed-not-mutated', message: 'is not in the mutation report', fix: `Run npx stryker run --mutate ${file}, then rerun this check.` });
   }
-  for (const id of allowed) {
-    if (!seenIds.has(id)) report.problem({ file: path, line: 0, rule: 'allow-unknown', message: `--allow ${id} matches no mutant in the report`, fix: 'Pass the id shown in the survivor line, or drop the --allow.' });
+  for (const key of allowed) {
+    if (/^\d+$/.test(key)) report.problem({ file: path, line: 0, rule: 'allow-run-id', message: `--allow ${key} is a Stryker run id, which names another mutant after the next run`, fix: 'Pass the stable key <file>:<line>:<mutator>:<replacement> that the mutant\'s line prints after "key".' });
+    else if (!seenKeys.has(key)) report.problem({ file: path, line: 0, rule: 'allow-unknown', message: `--allow ${key} matches no mutant in the report`, fix: 'Pass the key the mutant\'s line prints after "key" (when the code moved, its line number changed), or drop the --allow.' });
   }
   const valid = detected + undetected;
   const score = valid === 0 ? 100 : (detected / valid) * 100;

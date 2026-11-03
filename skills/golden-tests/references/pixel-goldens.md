@@ -46,6 +46,10 @@ export const toMatchPixelGolden = configureToMatchImageSnapshot({
 - A realistic mid-game view with localised digits, the dark scheme by default (add light or mirrored cases when the game draws them differently).
 - It runs in the `golden` Jest project: `testEnvironment: '@shopify/react-native-skia/jestEnv.js'` loads CanvasKit into `global.CanvasKit`, `setupFilesAfterEnv: ['@shopify/react-native-skia/jestSetup.js']` mocks the module with a CanvasKit-backed `Skia`. The `unit` project cannot render Skia ("Native Skia Module failed to correctly install JSI Bindings!").
 
+## A fixed-scene pixel golden
+
+A pixel golden that freezes one fixed scene beside the board golden (Line Siege's tutorial board with the pointing hand, `test/goldens/boards/line-siege-tutorial.golden.test.ts`) is named `<game-id>-<scene>.golden.test.ts`, not `-board`. It renders only the sizes and phases the scene needs (one phone size and the hand's phases there), uses the same matcher and tolerance, and names its PNGs `<game-id>-<scene>-*.png`. `check-goldens.mjs` asks the 3 sizes x 3 moments (`pixel-golden-cases`) only of `<game-id>-board.golden.test.ts`, and a baseline starting with `<game-id>-<scene>-` of every pixel golden (`baseline-missing`).
+
 ## Fonts and text
 
 Skia's `jestSetup` returns `null` for `useFont` / `matchFont`, so a golden that draws text loads the app's bundled font explicitly:

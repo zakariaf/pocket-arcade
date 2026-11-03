@@ -24,7 +24,7 @@ const SPEC = {
     'checked (tall frames: across every planned scroll offset), the sheet is fresh, and parity/signoff.json has an entry ' +
     'for exactly that sheet with every eye check answered and no open difference. --themes and --langs narrowing is for ' +
     'iteration only: a narrowed run prints "narrowed: not a sign-off" and exits 1. --draft <run-dir> prints a ledger ' +
-    'entry to fill in.',
+    'entry to fill in, only for a run whose check passed.',
   usage: '(--frame <key>... | --screen <S4>... | --all) [options] | --draft <run-dir> [--from-ledger] [--date YYYY-MM-DD]',
   options: {
     platform: PLATFORM_OPTION,
@@ -124,6 +124,11 @@ function draftEntry(options, show) {
   }
   const changed = Object.entries(sheets.files ?? {}).filter(([name, hash]) => !existsSync(join(dir, name)) || sha256(readFileSync(join(dir, name))) !== hash).map(([name]) => name);
   if (changed.length) report.problem({ file: show(sheetsPath), rule: 'stale-sheet', message: `${show(dir)}: ${changed.slice(0, 3).join(', ')} missing or changed since make-sheet.mjs wrote them`, fix: 'Run make-sheet.mjs again, look at the new sheets, then draft.' });
+  // The look comes after the machine gates: an entry for a failing run could never sign it off.
+  const rep = existsSync(reportPath) ? JSON.parse(readFileSync(reportPath, 'utf8')) : null;
+  if (rep && rep.result !== 'PASS') {
+    report.problem({ file: show(reportPath), rule: 'not-passing', message: `${show(dir)}: check-parity found ${rep.problems?.length ?? '?'} problems (first: ${rep.problems?.[0]?.message ?? 'see report.json'})`, fix: 'Fix the app, rebuild, capture and check again (a waiver counts once check-parity ran with it), then draft.' });
+  }
   const entry = {
     platform: r.info.platform,
     game: r.info.game,

@@ -30,7 +30,7 @@ Goldens are the frozen answers of Pocket Arcade: the level each seed makes, the 
 
 ## Definition of done
 
-- [ ] Every data golden has its `.snap.ios`, every pixel golden its nine PNGs, and `CI=1 npx jest --ci --selectProjects golden` passes.
+- [ ] Every data golden has its `.snap.ios`, every board golden its nine PNGs (a fixed-scene pixel golden its own `<name>-*.png`), and `CI=1 npx jest --ci --selectProjects golden` passes.
 - [ ] Every new or changed golden was read (snapshot) or opened (PNG), and the report lists them with the reason.
 - [ ] Each game with a daily challenge pins at least three dates with a year boundary, and no existing daily entry changed after the game's first release tag (before it, only with a Gate-Change trailer naming the daily).
 - [ ] Every golden change sits in a commit with a `Gate-Change:` trailer; no tolerance went up.

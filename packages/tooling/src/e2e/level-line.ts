@@ -3,14 +3,15 @@
 // move is the first listed move that taps can make; the bot's line is testing.bot played from the
 // level's seed by game-kit's own bot loop (playBotLine: playBot's game, step by step, with its seed
 // rule), so the same level gives the same line on every machine and in the app. A move's taps are found with the
-// board's targetsOfMove and checked through the engine's own intentToMove (a tap in a select
-// region first for tap-then-tap games). print-level-line.ts prints the result.
+// board's targetsOfMove (or, for a board without it, among every cell of its layout) and checked
+// through the engine's own intentToMove (a tap in a select region first for tap-then-tap games).
+// print-level-line.ts prints the result.
 import { starsFor } from '@e07/game-kit/levels/star-rating.ts';
 import { playBotLine } from '@e07/game-kit/testing/play-bot.ts';
 
 import type { GameEngine, Outcome } from '@e07/game-kit/contract/game-engine.ts';
 import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { StarCount } from '@e07/game-kit/levels/star-rating.ts';
 import type { BotPolicy } from '@e07/game-kit/testing/play-bot.ts';
 
@@ -25,8 +26,13 @@ export type LineGame<TState, TMove> = {
   readonly bot: BotPolicy<TState, TMove>;
   /** testing.examples.win: the state action=win-level swaps in. */
   readonly winExample: () => TState;
-  /** presentation.board.targetsOfMove; without it no taps can be derived. */
+  /** presentation.board.targetsOfMove, the cells one move touches. */
   readonly targetsOfMove?: (state: TState, move: TMove) => readonly BoardTarget[];
+  /**
+   * Every cell of the board's laid-out regions (layoutCells of the portrait phone layout): the
+   * candidates a board without targetsOfMove is searched with. Without either no taps are derived.
+   */
+  readonly cellsOf?: (state: TState) => readonly BoardTarget[];
 };
 
 export type LineStep<TMove> = {
@@ -49,13 +55,24 @@ const FLOW_MOVES = 1;
 
 const isSameMove = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
 
+/** Every cell of every region of `layout`, region by region, row by row. */
+export function layoutCells(layout: BoardLayout): readonly BoardTarget[] {
+  return layout.regions.flatMap((region) =>
+    Array.from({ length: region.rows * region.cols }, (_, index) => ({
+      regionId: region.id,
+      col: index % region.cols,
+      row: Math.floor(index / region.cols),
+    })),
+  );
+}
+
 /** The taps that make `move` in `state`, checked through intentToMove; null when none do. */
 export function tapsFor<TState, TMove>(
   game: LineGame<TState, TMove>,
   state: TState,
   move: TMove,
 ): readonly BoardTarget[] | null {
-  const targets = game.targetsOfMove?.(state, move) ?? [];
+  const targets = game.targetsOfMove?.(state, move) ?? game.cellsOf?.(state) ?? [];
   const isSelect = (target: BoardTarget): boolean =>
     game.engine.selectRegions.includes(target.regionId);
   const selects: readonly (BoardTarget | null)[] = targets.some(isSelect)
