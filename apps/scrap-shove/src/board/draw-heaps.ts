@@ -52,11 +52,15 @@ export function drawHeaps(canvas: SkCanvas, frame: Frame): void {
   }
 }
 
-/** Heaps a heavy robot smashed are gone from the view: their smash tracks carry them as they fade. */
-export function drawSmashedHeaps(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
+/**
+ * Heaps a heavy robot smashed are gone from the view: their smash tracks carry them as they fade.
+ * `keys` are the frame's track keys, listed once per frame by drawBoard.
+ */
+export function drawSmashedHeaps(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  for (const key of keys) {
+    if (!key.startsWith('smash:')) continue;
     const smash = frame.fx.entries[key];
-    if (!key.startsWith('smash:') || smash === undefined) continue;
+    if (smash === undefined) continue;
     const alpha = smash.values[2] ?? 0;
     // A heap the player shoved earlier in the turn slides to where it is smashed.
     const square = trackedSquare(frame, `heap:${key.slice('smash:'.length)}`, smash.values);
