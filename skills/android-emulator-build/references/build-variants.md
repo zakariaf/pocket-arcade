@@ -90,7 +90,7 @@ prints 1 or more for a test build and 0 for a store build. `check-emu-app` rule 
 | `assets/index.android.bundle` sentinel count (`test-code`) | 1 or more | 0 |
 | `assets/app.config` `extra.appVariant` / `extra.adsMode` (`constants-variant`) | `test` / `test` or `off` | `store` / `live` or `off` |
 | `E07AppVariant` meta-data (`variant`) | `test` | `store` |
-| AdMob `APPLICATION_ID` (`ad-app-id`, `owner-placeholder`) | the sample id | the sample id for `off`; the game's own id for `live`, or GP5 pending |
+| AdMob `APPLICATION_ID` (`ad-app-id`, `owner-placeholder`) | the sample id | the sample id for `off`; the game's own id for `live`, or GP5 pending (a live build's `extra.adUnits.android` holding a placeholder or one of Google's sample units is GP5 pending too) |
 | Links `example.com`, `support@example.com` (`owner-placeholder`) | not checked | owner step G3 until supplied |
 | package (`package`) | `io.applander.<game>` | `io.applander.<game>` |
 | permissions (`permission`) | the allowlist | the allowlist |

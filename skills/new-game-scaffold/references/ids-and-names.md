@@ -51,7 +51,7 @@ These stay until the owner's step replaces them. `check-game-app.mjs --stage com
 | `example.com` (path `/<id>/privacy`) | `links.privacyPolicy.host` | G3 |
 | `support@example.com` | `links.supportEmail` | G3 |
 
-The AdMob placeholders are never used in test builds (`ADS_MODE=test` picks Google's test ids); a live build needs the real ones. So until G3 and G5 are done, the complete stage fails on exactly these six `owner-placeholder` lines, then prints `OWNER STEPS PENDING: G3, G5` right before `RESULT: FAIL (6 problems)`, by design (lead decision L14); the report lists G3 and G5 as open owner steps, never as a passed gate.
+The AdMob placeholders are never used in test builds (`ADS_MODE=test` picks Google's test ids); a live build needs the real ones. Google's sample (test) ids (publisher `3940256099942544`) are no stand-in either: typed into `game.config.ts` they count as not real ids, `owner-placeholder` with G5 (GP5 for `ads.ids.android`), because a live build would serve test ads and earn nothing. So until G3 and G5 are done, the complete stage fails on exactly these six `owner-placeholder` lines, then prints `OWNER STEPS PENDING: G3, G5` right before `RESULT: FAIL (6 problems)`, by design (lead decision L14); the report lists G3 and G5 as open owner steps, never as a passed gate.
 
 ## Identifiers inside the game
 

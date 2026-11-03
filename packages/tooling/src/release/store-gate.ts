@@ -9,11 +9,14 @@
 // (G5: the AdMob ids, Google's sample units in a live build included; G3: the store build's links);
 // ownerStepsPendingLine gives the line the release stops with ('OWNER STEPS PENDING: G3, G5'). Until
 // the owner supplies them, those are the only problems a release of the pilot can stop on here.
+// ownerValueProblems asks the same of game.config.ts in the preflight, before anything is built.
+// "Not a real AdMob id" is one definition: our placeholders here plus ads-config.ts's
+// isGoogleSampleAdId, the same question live builds ask before they are built.
+import { GOOGLE_SAMPLE_APP_IDS, isGoogleSampleAdId } from '@e07/shell/config/ads-config.ts';
+
 import type { BuildVariant } from '@e07/shell/config/app-variant.ts';
 
-export const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
-/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts) only. */
-const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
+export const SAMPLE_APP_ID = GOOGLE_SAMPLE_APP_IDS.ios;
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 
 /** The owner step that replaces a scaffold value (human steps G3 and G5); null: the agent fixes it. */
@@ -97,6 +100,16 @@ function ownerPlaceholderProblem(where: string, value: string | undefined): stri
   return `${OWNER_PLACEHOLDER}${where} is ${found.name} ${found.value} (owner step ${step})`;
 }
 
+/**
+ * Not a real AdMob id: one of our placeholders or one of Google's sample (test) ids, which a live
+ * build would show test ads with and earn nothing (owner step G5), or ''.
+ */
+function notRealAdIdProblem(where: string, id: string): string {
+  const placeholder = ownerPlaceholderProblem(where, id);
+  if (placeholder !== '' || !isGoogleSampleAdId(id)) return placeholder;
+  return `${OWNER_PLACEHOLDER}${where} is Google's sample (test) AdMob id ${id} (owner step G5)`;
+}
+
 /** 'OWNER STEPS PENDING: G3, G5' for the gate's problems (only the steps still pending), or null. */
 export function ownerStepsPendingLine(problems: readonly string[]): string | null {
   const steps = new Set<string>();
@@ -177,7 +190,7 @@ function adIdProblem(facts: ArtifactFacts, expected: GateExpectation): string {
   const placeholder = ownerPlaceholderProblem('Info.plist GADApplicationIdentifier', id);
   if (placeholder !== '') return placeholder;
   if (expected.variant.adsMode === 'live') {
-    const isLive = LIVE_APP_ID.test(id) && id !== SAMPLE_APP_ID;
+    const isLive = LIVE_APP_ID.test(id) && !isGoogleSampleAdId(id);
     return isLive ? '' : `GADApplicationIdentifier ${shown} is not a live AdMob app ID`;
   }
   return id === SAMPLE_APP_ID ? '' : `GADApplicationIdentifier ${shown} is not the sample app ID`;
@@ -205,15 +218,6 @@ function appIdProblem(facts: ArtifactFacts, expected: GateExpectation): string {
 }
 
 /**
- * A live build's AdMob unit from Google's sample publisher: G5 is still pending (a live build with
- * Google's test ids shows test ads and earns nothing), or ''.
- */
-function sampleUnitProblem(unit: string): string {
-  if (!unit.startsWith(SAMPLE_PUBLISHER)) return '';
-  return `${OWNER_PLACEHOLDER}extra.adUnits is Google's sample (test) AdMob id ${unit} (owner step G5)`;
-}
-
-/**
  * The iOS live units of a built app's expo.extra.adUnits. withShell writes the units per platform,
  * { ios: {...}, android: {...} | null } (ads-config.ts adUnitsExtra), so an iOS artefact is judged
  * by its own entry only; anything else holds no unit.
@@ -229,10 +233,7 @@ export function iosAdUnitsOf(adUnits: unknown): string[] {
 /** The AdMob units (live builds) in every variant, the links in store builds: owner steps G5 and G3. */
 function placeholderProblems(facts: ArtifactFacts, isStore: boolean): string[] {
   return [
-    ...facts.adUnits.map((unit) => {
-      const placeholder = ownerPlaceholderProblem('extra.adUnits', unit);
-      return placeholder === '' ? sampleUnitProblem(unit) : placeholder;
-    }),
+    ...facts.adUnits.map((unit) => notRealAdIdProblem('extra.adUnits', unit)),
     ...(isStore
       ? [
           ownerPlaceholderProblem('extra.game.links.privacyPolicy.host', facts.privacyHost),
@@ -240,6 +241,52 @@ function placeholderProblems(facts: ArtifactFacts, isStore: boolean): string[] {
         ]
       : []),
   ];
+}
+
+/** The game.config.ts values the owner supplies (steps G3 and G5), as the preflight reads them. */
+export type OwnerValues = {
+  readonly ads: {
+    readonly isEnabled: boolean;
+    readonly ids: {
+      readonly ios: {
+        readonly appId: string;
+        readonly units: Readonly<Record<string, string>>;
+      };
+    };
+  };
+  readonly links: {
+    readonly privacyPolicy: { readonly host: string };
+    readonly supportEmail: string;
+  };
+};
+
+/**
+ * Release step 1 asks game.config.ts what the gate would find, before the build number commit: a
+ * live build that shows ads needs the owner's iOS AdMob ids (G5; Google's sample ids are no real
+ * ids: test builds get them from ADS_MODE test, never from game.config.ts), and a store build needs
+ * the owner's links (G3). Worded like the gate's lines, so ownerStepsPendingLine reads both.
+ */
+export function ownerValueProblems(config: OwnerValues, variant: BuildVariant): string[] {
+  const { appId, units } = config.ads.ids.ios;
+  const isLiveAds = variant.adsMode === 'live' && config.ads.isEnabled;
+  const where = 'game.config.ts';
+  const adIds = isLiveAds
+    ? [
+        notRealAdIdProblem(`${where} ads.ids.ios.appId`, appId),
+        ...Object.entries(units).map(([unit, id]) =>
+          notRealAdIdProblem(`${where} ads.ids.ios.units.${unit}`, id),
+        ),
+      ]
+    : [];
+  const { privacyPolicy, supportEmail } = config.links;
+  const links =
+    variant.appVariant === 'store'
+      ? [
+          ownerPlaceholderProblem(`${where} links.privacyPolicy.host`, privacyPolicy.host),
+          ownerPlaceholderProblem(`${where} links.supportEmail`, supportEmail),
+        ]
+      : [];
+  return [...adIds, ...links].filter((problem) => problem !== '');
 }
 
 function trackingTextProblems(facts: ArtifactFacts): string[] {

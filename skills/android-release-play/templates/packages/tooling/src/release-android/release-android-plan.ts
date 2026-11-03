@@ -4,6 +4,7 @@
 // ever written: promoting a release is the owner's step in the Play Console.
 import { join } from 'node:path';
 
+import { isGoogleSampleAdId } from '@e07/shell/config/ads-config.ts';
 import { readFlagPairs } from '@e07/tooling/build/flag-pairs.ts';
 import { isGameId } from '@e07/tooling/build/game-id.ts';
 
@@ -132,12 +133,11 @@ export type OwnerValues = {
 
 /** The scaffold's AdMob placeholders (Google's documented examples) and links (owner steps G5, G3). */
 const PLACEHOLDER_PUBLISHER = 'ca-app-pub-1234567890123456';
-/** Google's sample publisher: its test ids belong to test builds (ads-config.ts), never here. */
-const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
 const PLACEHOLDER_LINKS = { host: 'example.com', supportEmail: 'support@example.com' } as const;
 
+/** Not a real AdMob id: our placeholder publisher, or Google's sample ids (test builds only). */
 function isStandInAdId(id: string): boolean {
-  return id.startsWith(PLACEHOLDER_PUBLISHER) || id.startsWith(SAMPLE_PUBLISHER);
+  return id.startsWith(PLACEHOLDER_PUBLISHER) || isGoogleSampleAdId(id);
 }
 
 /**

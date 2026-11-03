@@ -9,6 +9,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, requireDir, requireFile, run } from './check-lib.mjs';
+import { GOOGLE_SAMPLE_PUBLISHER } from './lib/ship-placeholders.mjs';
 
 const SPEC = {
   name: 'audit-bundle',
@@ -100,7 +101,7 @@ run(async () => {
     const sentinel = new RegExp(rel.sentinel);
     const storekit = new RegExp(rel.storekitTest);
     for (const { source, content } of modules) {
-      if (content.includes(rel.samplePublisher) && packageOf(source) !== rel.sampleAllowedPackage) report.problem({ file: source, rule: 'sample-id', message: "Google's sample ad publisher ID outside the AdMob library", fix: 'Test IDs come only from TestIds inside the library; ads-config.ts keeps the sample app ID out of the JS bundle.' });
+      if (content.includes(GOOGLE_SAMPLE_PUBLISHER) && packageOf(source) !== rel.sampleAllowedPackage) report.problem({ file: source, rule: 'sample-id', message: "Google's sample ad publisher ID outside the AdMob library", fix: 'Test IDs come only from TestIds inside the library; ads-config.ts keeps the sample app ID out of the JS bundle.' });
       if (sentinel.test(content)) report.problem({ file: source, rule: 'test-only-code', message: `test-only module shipped (${rel.sentinel})`, fix: 'Test-only code is reachable only through the literal EXPO_PUBLIC_APP_VARIANT gate in test-only.ts; export with the store variables and a fresh Metro cache.' });
       if (storekit.test(content)) report.problem({ file: source, rule: 'storekit-test-code', message: 'StoreKit test code shipped', fix: 'StoreKit testing lives only in the hosted XCTest harness, never in JS.' });
       if (source.includes(rel.debugScreens)) report.problem({ file: source, rule: 'debug-screen', message: 'a debug screen is in the store bundle', fix: 'Debug screens load only through the test-only entry.' });

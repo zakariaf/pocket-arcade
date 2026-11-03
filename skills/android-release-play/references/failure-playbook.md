@@ -40,7 +40,7 @@ Symptom, cause and action for every failure of an Android release seen or expect
 | `version-code` | not the committed number, or not above a tag | a new run 1 takes a new number |
 | `test-code` | the store bundle has `SHELL_TEST_BUILD_ONLY` | the variant was lost or Metro reused a test transform: rebuild from a clean prebuild with the variables exported once |
 | `ad-app-id` | Google's sample id in a live build | `ads-config.ts` must give a live build no sample id (admob-ads); supply GP5 |
-| `owner-placeholder` | G3 or GP5 values missing (Google's test ids in `ads.ids.android` count as missing: a live build would show test ads) | stop: ask the owner; the rehearsal meanwhile |
+| `owner-placeholder` | G3 or GP5 values missing (Google's test ids `ca-app-pub-3940256099942544…` count as missing, in `ads.ids.android` and in a live bundle's `extra.adUnits.android`: a live build would show test ads) | stop: ask the owner; the rehearsal meanwhile |
 | `permission` | a permission outside the allowlist | block it in `withShell` or remove the module; a new permission changes the Data safety answers (GP4) |
 | `target-sdk` | below 36 | the Expo SDK and React Native levels; never lower them |
 | `shell-slice` | a partial Shell | finish the Shell first |

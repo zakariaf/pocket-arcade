@@ -16,10 +16,10 @@ import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
 import { parseBadging, parseXmlTree } from './lib/apk.mjs';
 import { findElements, metaDataValue } from './lib/manifest-tree.mjs';
 import { dominantColour, readPng } from './lib/png.mjs';
-import { adUnitFields, ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
+import { adPlaceholderOf, adUnitFields, ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, GOOGLE_SAMPLE_APP_IDS, isGoogleSampleAdId, notRealAdIdOf, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 import { readZipEntry, readZipIndex } from './lib/zip.mjs';
 
-const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~3347511713';
+const SAMPLE_APP_ID = GOOGLE_SAMPLE_APP_IDS.android;
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 const APP_ID_META = 'com.google.android.gms.ads.APPLICATION_ID';
 const VARIANT_META = 'E07AppVariant';
@@ -52,7 +52,9 @@ const SPEC = {
     '  variant            the E07AppVariant manifest meta-data equals --variant',
     `  ad-app-id          ${APP_ID_META}: Google's Android sample id for off/test, a real id (never the sample) for live`,
     '  owner-placeholder  a value the owner supplies, by field: in store builds the links example.com and',
-    '                     support@example.com (owner step G3); the AdMob placeholders (G5); a live build without an',
+    "                     support@example.com (owner step G3); the AdMob placeholders and a live build's units that",
+    "                     are not real ones (a placeholder or Google's sample (test) unit ca-app-pub-3940256099942544/...)",
+    '                     (owner step GP5, the Android AdMob ids); a live build without an',
     "                     Android AdMob app id (game.config.ts ads.ids.android: null, owner step GP5). The line before",
     "                     RESULT is then 'OWNER STEPS PENDING: ...' and the result stays FAIL, by design",
     '  permission         a uses-permission outside assets/permission-allowlist.json (spec N3)',
@@ -131,10 +133,14 @@ function checkConstants(context) {
     if (extra[key] !== want) report.problem({ file, rule: 'constants-variant', message: `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, fix: 'The variables changed between prebuild and Gradle: export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole run and rebuild.' });
   }
   const links = options.variant === 'store' ? (extra.game?.links ?? {}) : {};
-  const values = [...adUnitFields(extra.adUnits, 'android'), ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host], ['extra.game.links.supportEmail', links.supportEmail]];
-  for (const [field, value] of values) {
-    const placeholder = ownerPlaceholderOf(value);
-    if (placeholder !== null) report.problem(ownerPlaceholderProblem({ entry: placeholder, where: field, file }));
+  // A live build's units that are not the owner's (a placeholder or Google's sample (test) id): GP5.
+  const values = [
+    ...adUnitFields(extra.adUnits, 'android').map(([field, unit]) => [field, notRealAdIdOf(unit, 'android')]),
+    ['extra.game.links.privacyPolicy.host', ownerPlaceholderOf(links.privacyPolicy?.host)],
+    ['extra.game.links.supportEmail', ownerPlaceholderOf(links.supportEmail)],
+  ];
+  for (const [field, entry] of values) {
+    if (entry !== null) report.problem(ownerPlaceholderProblem({ entry, where: field, file }));
   }
 }
 
@@ -143,11 +149,11 @@ function checkManifest({ manifest, where, options, report }) {
   const variant = metaDataValue(manifest, VARIANT_META);
   if (variant !== options.variant) report.problem({ file, rule: 'variant', message: `meta-data ${VARIANT_META} is ${variant === null ? 'missing' : `"${variant}"`}, expected "${options.variant}"`, fix: 'with-app-variant-marker.ts writes the variant into the manifest at prebuild: keep APP_VARIANT exported for the whole run and prebuild with --clean.' });
   const appId = metaDataValue(manifest, APP_ID_META);
-  const placeholder = ownerPlaceholderOf(appId);
+  const placeholder = adPlaceholderOf(appId, 'android');
   const where2 = `AndroidManifest ${APP_ID_META}`;
   if (placeholder !== null) report.problem(ownerPlaceholderProblem({ entry: placeholder, where: where2, file }));
   else if (options.ads === 'live' && appId === null) report.problem(ownerPlaceholderProblem({ entry: ANDROID_AD_IDS_MISSING, where: where2, file }));
-  else if (options.ads === 'live' && (!LIVE_APP_ID.test(appId) || appId === SAMPLE_APP_ID)) report.problem({ file, rule: 'ad-app-id', message: `${APP_ID_META} is "${appId}", expected the game's own AdMob Android app id`, fix: "A live build never carries Google's sample id: put the owner's ids in game.config.ts ads.ids.android (owner step GP5) and build with ADS_MODE=live." });
+  else if (options.ads === 'live' && (!LIVE_APP_ID.test(appId) || isGoogleSampleAdId(appId))) report.problem({ file, rule: 'ad-app-id', message: `${APP_ID_META} is "${appId}", expected the game's own AdMob Android app id`, fix: "A live build never carries Google's sample id: put the owner's ids in game.config.ts ads.ids.android (owner step GP5) and build with ADS_MODE=live." });
   else if (options.ads !== 'live' && appId !== SAMPLE_APP_ID) report.problem({ file, rule: 'ad-app-id', message: `${APP_ID_META} is ${appId === null ? 'missing' : `"${appId}"`}, expected Google's Android sample id ${SAMPLE_APP_ID}`, fix: 'Non-live builds use the sample app id (a missing id crashes the AdMob SDK at launch); check withShell and ADS_MODE, then prebuild again.' });
   const application = findElements(manifest, 'application')[0]?.attributes ?? {};
   if (application.supportsRtl !== 'true') report.problem({ file, rule: 'supports-rtl', message: `application android:supportsRtl is ${application.supportsRtl ?? 'missing'}`, fix: 'withShell sets android.supportsRtl: true; without it fa and ckb lay out left to right (N6, N11).' });
