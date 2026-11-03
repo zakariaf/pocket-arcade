@@ -103,3 +103,39 @@ describe('suggestMove on a phone', () => {
     expect(jest.mocked(advanceFloor).mock.calls.length).toBeLessThanOrEqual(5_000 * MAX_MOVES);
   });
 });
+
+describe('suggestMove while the player follows its hints', () => {
+  /** The first move of a fresh search from this position (null when it finds no win). */
+  function searched(state: ScrapShoveState): unknown {
+    const result = solveFloor(state, HINT_MAX_NODES);
+    return result.kind === 'solved' ? (result.line[0] ?? null) : null;
+  }
+
+  it('answers the next hint from the line it found, without a new search', () => {
+    const start = create(356_075_057, 0);
+    const first = suggestMove(start);
+    if (first === null) throw new Error('level 1 is solvable');
+    const next = applyMove(start, first).state;
+    jest.mocked(advanceFloor).mockClear();
+    const second = suggestMove(next);
+    expect(jest.mocked(advanceFloor)).not.toHaveBeenCalled();
+    expect(second).toStrictEqual(searched(next));
+  });
+
+  it('gives the move a fresh search gives, on the line it found and off it', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 100_000 }), fc.nat(), (seed, pick) => {
+        const states = followHints(create(seed, 30));
+        const second = states[1];
+        const offMoves = second === undefined ? [] : listMoves(second);
+        const offMove = offMoves[pick % Math.max(offMoves.length, 1)];
+        const off =
+          second === undefined || offMove === undefined ? [] : [applyMove(second, offMove).state];
+        for (const state of [...states, ...off]) {
+          expect(suggestMove(state)).toStrictEqual(searched(state));
+        }
+      }),
+      { numRuns: 20 },
+    );
+  });
+});
