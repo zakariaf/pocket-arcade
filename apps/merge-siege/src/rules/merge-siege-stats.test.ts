@@ -88,6 +88,11 @@ describe('MERGE_SIEGE_STATS', () => {
     ]);
   });
 
+  it("asks S10 for the biggest tile as a plain number, the design's 512 (never ×512)", () => {
+    const styles = MERGE_SIEGE_STATS.counters.map((counter) => counter.bestOfStyle ?? null);
+    expect(styles).toStrictEqual([null, null, 'plain']);
+  });
+
   it('measures zero for a swipe that only slides and marches', () => {
     expect(MERGE_SIEGE_STATS.counters.map((counter) => counter.measure(QUIET_SWIPE))).toStrictEqual(
       [0, 0, 0],
