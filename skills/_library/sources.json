@@ -4982,6 +4982,24 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/drag-path.test.tsx": {
+        "recorded": "2026-11-03",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/drag-path.test.tsx",
+            "sha256": "3cc4f48639a4ae903d3040c5c1d43c7d012cc74656555b4840218d815138b2f5"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/drag-path.ts": {
+        "recorded": "2026-11-03",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/drag-path.ts",
+            "sha256": "cfbbee7c71e10b1de660eb326ddaa1c60d975fab0bd367c97f15c083d0e418fb"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/fullscreen-gate.test.ts": {
         "recorded": "2026-10-31",
         "sources": [
