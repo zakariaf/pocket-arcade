@@ -105,9 +105,12 @@ function drawEnemies(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
   }
 }
 
+/** The board and the frame's track keys, listed once per frame by drawBoard. */
+type Keyed = { readonly region: GridRegion; readonly keys: readonly string[] };
+
 /** Jumped enemies are gone from the view: their pop tracks carry the square and the size. */
-function drawPops(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
+function drawPops(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  for (const key of keys) {
     if (!key.startsWith('pop:')) continue;
     const [col = 0, row = 0, size = 0] = frame.fx.entries[key]?.values ?? [];
     const point = centreOf(frame, { col, row });
@@ -116,11 +119,12 @@ function drawPops(canvas: SkCanvas, frame: Frame): void {
 }
 
 /** Particles where an enemy was captured (full motion only: reduced motion has no burst). */
-function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
+function drawBursts(canvas: SkCanvas, frame: Frame, { region, keys }: Keyed): void {
   const { kit, colors, fx } = frame;
-  for (const key of Object.keys(fx.entries)) {
+  for (const key of keys) {
+    if (!key.startsWith('burst:')) continue;
     const burst = playingAt(fx, key);
-    if (!key.startsWith('burst:') || burst === undefined) continue;
+    if (burst === undefined) continue;
     const [col = 0, row = 0] = burst.values;
     const point = centreOf(frame, { col, row });
     if (point === null) continue;
@@ -176,18 +180,22 @@ function drawMarchBadge(canvas: SkCanvas, frame: Frame, region: GridRegion): voi
   drawFittedText(canvas, { text: view.marchInText, rect }, { font, paint: kit.fill });
 }
 
-/** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */
+/**
+ * Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. The layers
+ * that walk a channel's keys share one list of the frame's keys.
+ */
 export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   const { colors, kit, layout, view } = frame;
   canvas.drawColor(colors.color.background);
   const region = boardRegion(frame);
   if (region === null) return;
+  const keys = Object.keys(frame.fx.entries);
   drawSquares(canvas, frame, region);
   drawTargets(canvas, frame, region);
   const target = previewed(frame);
   if (target !== null) drawPath(canvas, frame, target);
   drawEnemies(canvas, frame, region);
-  drawPops(canvas, frame);
+  drawPops(canvas, frame, keys);
   const moving = fxEntry(frame.fx, 'piece', TURN_ENTITY)?.values;
   const piece = centreOf(frame, {
     col: moving?.[0] ?? view.piece.col,
@@ -195,7 +203,7 @@ export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   });
   if (piece !== null) drawPiece(canvas, frame, { point: piece, alpha: 1 });
   if (target !== null) drawCaptures(canvas, frame, target);
-  drawBursts(canvas, frame, region);
+  drawBursts(canvas, frame, { region, keys });
   // Whatever slides in from a waiting rank further up stays hidden above the peek band.
   kit.fill.setColor(colors.color.background);
   canvas.drawRect({ x: 0, y: 0, width: layout.width, height: peekTop(region) }, kit.fill);
