@@ -69,7 +69,9 @@ describe('Jump Chain run counters', () => {
           });
         },
       ),
-      { numRuns: 40 },
+      // Random runs reach the continue only now and then (5 of 300 fast-check seeds never do), so
+      // one fixed run that loses and continues always comes first.
+      { numRuns: 40, examples: [[0, 25, [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]]] },
     );
     // The property must reach the continue, or it proves nothing about it.
     expect(continued).toBeGreaterThan(0);
