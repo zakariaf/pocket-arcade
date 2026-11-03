@@ -8,7 +8,6 @@ import { FIELD_REGION } from './board-ids.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { FlockTiltView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas, SkPath } from '@shopify/react-native-skia';
 
@@ -55,11 +54,6 @@ export function inset(rect: Rect, share: number): Rect {
     width: rect.width - 2 * by,
     height: rect.height - 2 * by,
   };
-}
-
-/** An effect that is not a tween of something visible draws only while its track plays. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /** Draws a unit path scaled into its rectangle: fill, then the ink edge (a circle without it). */

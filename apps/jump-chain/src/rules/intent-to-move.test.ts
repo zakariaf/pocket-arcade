@@ -2,7 +2,8 @@
 // The piece is dragged from its square to the square where the move should end, or that square is
 // tapped. Either way the move that ends there is played (move-ends.ts): the longest chain, the first
 // listed among equally long ones, or the step onto it. A drag let go back on the piece's own square
-// cancels (there is no undo, so that is how a player takes a drag back).
+// cancels (there is no undo, so that is how a player takes a drag back), unless its traced path went
+// round a loop chain's landing squares: then that loop is played.
 import fc from 'fast-check';
 
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
@@ -48,8 +49,41 @@ const TO_TOP: JumpChainMove = {
   ],
 };
 
+/** The chain round the left enemy first, back to the piece's own square. */
+const LEFT_LOOP: JumpChainMove = {
+  kind: 'jump',
+  path: [{ col: 0, row: 4 }, { col: 2, row: 2 }, { col: 4, row: 4 }, PIECE],
+};
+
+/**
+ * Every listed loop (a chain back to the piece's square) is played by a drag let go there whose
+ * path passes its landing squares in order, with a wobble on each square between them.
+ */
+function expectLoops(state: JumpChainState): void {
+  const isPiece = (square: Square): boolean =>
+    square.col === state.piece.col && square.row === state.piece.row;
+  for (const move of listMoves(state)) {
+    if (move.kind !== 'jump' || !isPiece(move.path.at(-1) ?? state.piece)) continue;
+    const wobbly = move.path.flatMap((square) => [
+      square,
+      { col: square.col + 1, row: square.row },
+    ]);
+    const path = [state.piece, ...wobbly.slice(0, -1)];
+    const played = intentToMove(state, tracedDrag(state, state.piece, path));
+    expect(played?.kind === 'jump' && isPiece(played.path.at(-1) ?? state.piece)).toBe(true);
+    expect(listMoves(state).map((listed) => JSON.stringify(listed))).toContain(
+      JSON.stringify(played),
+    );
+  }
+}
+
 function drag(state: JumpChainState, to: Square | null): InputIntent {
   return { kind: 'drag-end', from: cell(state.piece), to: to === null ? null : cell(to) };
+}
+
+/** A drag of the piece let go on `to`, with the path the board host traced (start first). */
+function tracedDrag(state: JumpChainState, to: Square, path: readonly Square[]): InputIntent {
+  return { kind: 'drag-end', from: cell(state.piece), to: cell(to), path: path.map(cell) };
 }
 
 function endOf(move: JumpChainMove): Square | undefined {
@@ -91,6 +125,57 @@ describe('intentToMove', () => {
 
   it('cancels a drag let go back on the piece’s own square, even where a loop chain ends', () => {
     expect(intentToMove(CHAINS, drag(CHAINS, PIECE))).toBeNull();
+  });
+
+  // Spec 13: "only multi-jump chains clear them". A loop chain ends where the piece stands, so the
+  // drop square alone reads as a cancel; the drag's traced path (the board host's drag-end path)
+  // tells the two apart.
+  it('plays the loop chain a drag traced round and back to the piece’s own square', () => {
+    const traced = [PIECE, { col: 1, row: 5 }, { col: 0, row: 4 }, { col: 2, row: 2 }];
+    const path = [...traced, { col: 3, row: 3 }, { col: 4, row: 4 }, PIECE];
+    expect(intentToMove(CHAINS, tracedDrag(CHAINS, PIECE, path))).toStrictEqual(LEFT_LOOP);
+  });
+
+  it('plays the loop the drag traced, round the other way', () => {
+    const path = [PIECE, { col: 4, row: 4 }, { col: 2, row: 2 }, { col: 0, row: 4 }, PIECE];
+    expect(intentToMove(CHAINS, tracedDrag(CHAINS, PIECE, path))).toStrictEqual({
+      kind: 'jump',
+      path: [{ col: 4, row: 4 }, { col: 2, row: 2 }, { col: 0, row: 4 }, PIECE],
+    });
+  });
+
+  it('cancels a drag back on the piece whose path misses a square of every loop', () => {
+    const outAndBack = [PIECE, { col: 1, row: 5 }, { col: 0, row: 4 }, { col: 1, row: 5 }, PIECE];
+    const skipsOne = [PIECE, { col: 0, row: 4 }, { col: 4, row: 4 }, PIECE];
+    for (const path of [outAndBack, skipsOne, [PIECE]]) {
+      expect(intentToMove(CHAINS, tracedDrag(CHAINS, PIECE, path))).toBeNull();
+    }
+  });
+
+  it('plays a traced loop only when it is let go on the piece’s own square', () => {
+    const path = [PIECE, { col: 0, row: 4 }, { col: 2, row: 2 }, { col: 4, row: 4 }];
+    expect(intentToMove(CHAINS, tracedDrag(CHAINS, { col: 4, row: 4 }, path))).toStrictEqual(
+      intentToMove(CHAINS, drag(CHAINS, { col: 4, row: 4 })),
+    );
+  });
+
+  it('plays every listed loop chain from a drag traced along its jumps', () => {
+    fc.assert(
+      fc.property(
+        fc.nat(),
+        fc.integer({ min: 0, max: 100 }),
+        fc.array(fc.nat(), { maxLength: 12 }),
+        (seed, difficulty, choices) => {
+          const { states } = playChoices(
+            { listMoves, applyMove },
+            create(seed, difficulty),
+            choices,
+          );
+          for (const state of [CHAINS, ...states]) expectLoops(state);
+        },
+      ),
+      { seed: 5, numRuns: 60 },
+    );
   });
 
   it('plays a step onto a free neighbour when no jump exists, dragged or tapped', () => {

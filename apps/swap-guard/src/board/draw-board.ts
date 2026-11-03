@@ -2,11 +2,11 @@
 'worklet';
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
-import { degreesOf, drawUnitPath, inset, isPlaying, rectAt, scaled } from './board-geometry.ts';
+import { degreesOf, drawUnitPath, inset, rectAt, scaled } from './board-geometry.ts';
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawBursts, drawEnemies, drawFallen, drawGuard, drawGuardHit } from './draw-pieces.ts';
 import { BADGE_STRIP_PT } from './layout-board.ts';
@@ -97,8 +97,8 @@ function drawLanding(canvas: SkCanvas, frame: Frame): void {
     if (rect === null) continue;
     const shade = struck?.values[0] ?? 0;
     if (shade > 0) drawShade(canvas, frame, { rect, alpha: shade });
-    const flash = fxEntry(fx, 'flash', cellEntity(cell));
-    if (!isPlaying(flash)) continue;
+    const flash = playingEntry(fx, 'flash', cellEntity(cell));
+    if (flash === undefined) continue;
     const glow = flash.values[0] ?? 0;
     setPaintColor(kit.fill, colors.color.flash, 1 - glow);
     canvas.drawRRect(tileOf(scaled(rect, 0.7 + glow * 0.35)), kit.fill);

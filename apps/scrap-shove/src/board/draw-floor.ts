@@ -1,17 +1,10 @@
 // apps/scrap-shove/src/board/draw-floor.ts
 'worklet';
 
-import { fxEntry, trackKey } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry, trackKey } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import {
-  centred,
-  drawUnitPath,
-  inset,
-  isPlaying,
-  squareAt,
-  trackedSquare,
-} from './board-geometry.ts';
+import { centred, drawUnitPath, inset, squareAt, trackedSquare } from './board-geometry.ts';
 import { PLAYER_ENTITY, TURN_ENTITY } from './board-ids.ts';
 
 import type { Frame } from './board-geometry.ts';
@@ -79,8 +72,8 @@ export function drawArrows(canvas: SkCanvas, frame: Frame): void {
 
 /** The wait pulse: a ring that grows and fades around the player. */
 function drawWait(canvas: SkCanvas, frame: Frame, body: Rect): void {
-  const wait = fxEntry(frame.fx, 'wait', PLAYER_ENTITY);
-  if (!isPlaying(wait)) return;
+  const wait = playingEntry(frame.fx, 'wait', PLAYER_ENTITY);
+  if (wait === undefined) return;
   const pulse = wait.values[0] ?? 0;
   const { stroke } = frame.kit;
   setPaintColor(stroke, frame.colors.color.player, 1 - pulse);

@@ -1,11 +1,11 @@
 // apps/flock-tilt/src/board/draw-animals.ts
 'worklet';
 
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { sheepEntity, wolfEntity } from './board-ids.ts';
-import { cellBox, drawUnitShape, indexBox, inset, isPlaying } from './draw-parts.ts';
+import { cellBox, drawUnitShape, indexBox, inset } from './draw-parts.ts';
 
 import type { Frame, Grid } from './draw-parts.ts';
 import type { Sheep, Wolf } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
@@ -40,8 +40,8 @@ function placeOf(frame: Frame, grid: Grid, at: { entity: number; cell: number })
 
 /** Squashes the canvas around a rectangle's centre while the animal's bump plays. */
 function squash(canvas: SkCanvas, frame: Frame, at: { entity: number; rect: Rect }): boolean {
-  const bump = fxEntry(frame.fx, 'bump', at.entity);
-  if (!isPlaying(bump)) return false;
+  const bump = playingEntry(frame.fx, 'bump', at.entity);
+  if (bump === undefined) return false;
   const [amount = 0, dx = 0, dy = 0] = bump.values;
   const along = amount * SQUASH;
   const cx = at.rect.x + at.rect.width / 2;
@@ -94,8 +94,9 @@ function drawLostMarks(canvas: SkCanvas, frame: Frame, at: { entity: number; rec
   if (lost === undefined || lost.ageMs > 0) {
     canvas.drawCircle(cx, cy, at.rect.width * 0.44, kit.stroke);
   }
-  if (isPlaying(lost)) {
-    setPaintColor(kit.fill, colors.color.lost, (lost.values[0] ?? 0) * 0.5);
+  const flash = playingEntry(frame.fx, 'lost', at.entity);
+  if (flash !== undefined) {
+    setPaintColor(kit.fill, colors.color.lost, (flash.values[0] ?? 0) * 0.5);
     canvas.drawCircle(cx, cy, at.rect.width * 0.5, kit.fill);
   }
 }

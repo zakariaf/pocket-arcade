@@ -49,5 +49,7 @@ export const FLOCK_TILT_RULES: GameRules<FlockTiltState, FlockTiltMove, FlockTil
     kind: 'once',
     descriptionId: 'flock-tilt.continue.undo-tilt',
     apply: continueAfterLoss,
+    // The flock stands as before the losing tilt, so its counts go too (spec S10).
+    isTakeBack: true,
   },
 };

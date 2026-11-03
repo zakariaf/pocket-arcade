@@ -14,6 +14,7 @@ import {
 } from '@e07/shell/game-host/board-host-model.ts';
 import { makeBoardColors } from '@e07/shell/game-host/board-kit.ts';
 import { boardCoachOf, coachGameOf } from '@e07/shell/game-host/coach-pointer.ts';
+import { createDragPathTracer } from '@e07/shell/game-host/drag-path.ts';
 import { GameBoardHost } from '@e07/shell/game-host/game-board-host.tsx';
 import { useGameSession } from '@e07/shell/game-host/game-session-store.ts';
 import { useBoardSelection } from '@e07/shell/game-host/use-board-selection.ts';
@@ -55,12 +56,6 @@ export type BoardPorts = {
   readonly frameTime?: () => BoardFrameTime | undefined;
 };
 
-/**
- * Hover previews are drawn on the UI thread from the pointer sample (frame.fx.pointer), so hover
- * changes need no JS work; the selection and the hint reach the board as its highlight.
- */
-const ignoreHover = (): void => undefined;
-
 const ANNOUNCEMENTS = {
   selected: 'game-screen.board.selected.a11y-announcement',
   unselected: 'game-screen.board.unselected.a11y-announcement',
@@ -101,6 +96,10 @@ function boardHostFor<T extends ShellGameTypes>(
   // Once per opened run, on the JS thread: unit paths and scratch paints, never per frame.
   const kit = boardKitOf(board);
   const coachGame = coachGameOf(game);
+  // Hover previews are drawn on the UI thread from the pointer sample (frame.fx.pointer); the
+  // hover changes only trace the drag's path (InputIntent drag-end `path`), UI state of this run's
+  // board, never a move. The selection and the hint reach the board as its highlight.
+  const dragPath = createDragPathTracer();
   return function BoardHost(props: BoardHostProps): ReactNode {
     const result = useGameSession(controller.store, (state) => selectResult(state.session));
     const coach = boardCoachOf(coachGame, result.state, props.coachPointer);
@@ -141,8 +140,11 @@ function boardHostFor<T extends ShellGameTypes>(
           haptics={ports.haptics}
           isFocused={isFocused}
           isFullscreenAdShowing={isFullscreenAdShowing}
-          onIntent={selection.onIntent}
-          onHover={ignoreHover}
+          onIntent={(intent) => {
+            selection.onIntent(dragPath.finish(intent));
+          }}
+          onHover={dragPath.hover}
+          onDragStart={dragPath.start}
           onMiss={selection.clearSelection}
           onFailure={handlers.onFailure}
           reportError={handlers.reportError}

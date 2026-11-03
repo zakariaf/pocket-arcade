@@ -2,7 +2,7 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingAt, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
@@ -22,7 +22,6 @@ import type { BoardToken } from './board-palettes.ts';
 import type { Frame, Point } from './draw-parts.ts';
 import type { EnemyView, TargetView } from './to-view.ts';
 import type { GridRegion, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { Square } from '@e07/jump-chain/rules/jump-chain-types.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -37,11 +36,6 @@ const GLOW_ALPHA = 0.5;
 const BURST_COUNT = 10;
 /** An enemy further up than this (sliding in from a waiting rank) is hidden under the cover. */
 const HIDDEN_ROW = -2;
-
-/** An effect that is not a tween of something visible draws only once its track has started. */
-function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
-}
 
 /** The board's rectangle (rows 0 to the last), mirrored like its squares. */
 function boardRect(frame: Frame, region: GridRegion): Rect {
@@ -146,8 +140,8 @@ function drawEnemies(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
     const at = enemyAt(frame, enemy);
     if (at === null) continue;
     drawEnemy(canvas, frame, at);
-    const breach = fxEntry(frame.fx, 'breach', enemyEntity(enemy.id));
-    if (!isPlaying(breach)) continue;
+    const breach = playingEntry(frame.fx, 'breach', enemyEntity(enemy.id));
+    if (breach === undefined) continue;
     const alpha = breach.values[0] ?? 0;
     drawDisc(canvas, frame, { at: at.point, radius: region.cell / 2, fill: 'breach', alpha });
   }
@@ -167,8 +161,8 @@ function drawPops(canvas: SkCanvas, frame: Frame): void {
 function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
   const { kit, colors, fx } = frame;
   for (const key of Object.keys(fx.entries)) {
-    const burst = fx.entries[key];
-    if (!key.startsWith('burst:') || !isPlaying(burst)) continue;
+    const burst = playingAt(fx, key);
+    if (!key.startsWith('burst:') || burst === undefined) continue;
     const [col = 0, row = 0] = burst.values;
     const point = centreOf(frame, { col, row });
     if (point === null) continue;
@@ -192,8 +186,8 @@ function drawBursts(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
 
 /** A rank was cleared: the whole board glows and fades. */
 function drawGlow(canvas: SkCanvas, frame: Frame, region: GridRegion): void {
-  const glow = fxEntry(frame.fx, 'clear', TURN_ENTITY);
-  if (!isPlaying(glow)) return;
+  const glow = playingEntry(frame.fx, 'clear', TURN_ENTITY);
+  if (glow === undefined) return;
   const { kit, colors } = frame;
   setPaintColor(kit.fill, colors.color.glow, (glow.values[0] ?? 0) * GLOW_ALPHA);
   canvas.drawRect(boardRect(frame, region), kit.fill);

@@ -45,10 +45,18 @@ function replayEntry<TState, TMove, TEvent>(
   return rules.continueRun.kind === 'once' ? rules.continueRun.apply(state) : { state, events: [] };
 }
 
+/** True when the game's continue takes the losing move back (ContinuePolicy isTakeBack). */
+function isTakeBackContinue<TState, TMove, TEvent>(
+  rules: SessionRules<TState, TMove, TEvent>,
+): boolean {
+  return rules.continueRun.kind === 'once' && rules.continueRun.isTakeBack === true;
+}
+
 /**
  * A finished run's game counters (spec 10 STATISTICS, S10). Replays the kept move line from
  * create(seed, difficulty) and folds each counter over every move's events: undone moves never
- * count, and a run resumed after a kill measures exactly what the player kept.
+ * count, a continue that takes the losing move back drops that move's counts (sums and maxima),
+ * and a run resumed after a kill measures exactly what the player kept.
  */
 export function measureCounters<TState, TMove, TEvent>(
   rules: SessionRules<TState, TMove, TEvent>,
@@ -57,9 +65,13 @@ export function measureCounters<TState, TMove, TEvent>(
 ): CounterTally {
   let state = rules.create(session.seed, session.difficulty);
   let tally = noCounters(counters);
+  // The tally as it stood before the last replayed move: what a take-back continue goes back to.
+  let beforeLastMove = tally;
   for (const entry of session.log) {
     const result = replayEntry(rules, state, entry);
-    tally = fold(tally, counters, result.events);
+    const isTakenBack = entry.kind === 'continue' && isTakeBackContinue(rules);
+    if (entry.kind === 'move') beforeLastMove = tally;
+    tally = fold(isTakenBack ? beforeLastMove : tally, counters, result.events);
     state = result.state;
   }
   return tally;

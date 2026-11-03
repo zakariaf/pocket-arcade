@@ -6,7 +6,6 @@ import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { ScrapShoveView } from './to-view.ts';
 import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas, SkPath } from '@shopify/react-native-skia';
 
@@ -40,11 +39,6 @@ export function centred(rect: Rect, share: number): Rect {
 export function trackedSquare(frame: Frame, key: string, rest: readonly number[]): Rect | null {
   const values = frame.fx.entries[key]?.values ?? rest;
   return squareAt(frame.layout, values[0] ?? 0, values[1] ?? 0);
-}
-
-/** An effect that is not a tween of something visible draws only once its track has started. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /** The whole floor's rectangle, or null before the canvas has a size. */

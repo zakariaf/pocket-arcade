@@ -3,13 +3,13 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { FENCE_SHARE, sheepEntity, TILT_KEY_REGIONS, TURN_ENTITY } from './board-ids.ts';
 import { drawRocks, drawSheep, drawWolves } from './draw-animals.ts';
-import { cellBox, fieldGrid, indexBox, inset, isPlaying } from './draw-parts.ts';
+import { cellBox, fieldGrid, indexBox, inset } from './draw-parts.ts';
 
 import type { Frame, Grid } from './draw-parts.ts';
 import type { Direction } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
@@ -93,8 +93,8 @@ function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
     lifeMs: 600,
   };
   for (const sheep of frame.view.sheep) {
-    const entry = fxEntry(frame.fx, 'burst', sheepEntity(sheep.id));
-    if (!isPlaying(entry)) continue;
+    const entry = playingEntry(frame.fx, 'burst', sheepEntity(sheep.id));
+    if (entry === undefined) continue;
     const spec = { ...burst, seed: sheep.id * 31 + frame.view.pen };
     for (let i = 0; i < spec.count; i += 1) {
       const particle = sampleParticle(spec, i, entry.ageMs);
@@ -108,8 +108,8 @@ function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
 function drawWashes(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   const field = fieldRect(frame, grid);
   for (const [channel, token, strength] of WASHES) {
-    const entry = fxEntry(frame.fx, channel, TURN_ENTITY);
-    if (!isPlaying(entry)) continue;
+    const entry = playingEntry(frame.fx, channel, TURN_ENTITY);
+    if (entry === undefined) continue;
     setPaintColor(frame.kit.fill, frame.colors.color[token], (entry.values[0] ?? 0) * strength);
     canvas.drawRect(field, frame.kit.fill);
   }
