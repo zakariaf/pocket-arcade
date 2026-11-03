@@ -1,5 +1,10 @@
 // packages/shell/src/config/ads-config.test.ts
-import { admobPluginOptions, adUnitsExtra, GOOGLE_SAMPLE_APP_IDS } from './ads-config.ts';
+import {
+  admobPluginOptions,
+  adUnitsExtra,
+  GOOGLE_SAMPLE_APP_IDS,
+  isGoogleSampleAdId,
+} from './ads-config.ts';
 
 import type { AdmobGameIds } from './ads-config.ts';
 
@@ -46,6 +51,19 @@ describe('ads config', () => {
   it('accepts a game without Android IDs yet (iOS first)', () => {
     expect(admobPluginOptions('live', IOS_ONLY, []).iosAppId).toBe(LIVE.ios.appId);
     expect(adUnitsExtra('live', IOS_ONLY)?.ios).toStrictEqual(LIVE.ios.units);
+  });
+
+  // Spec 8.8: test builds use Google's test ad IDs; the release gates ask this same question.
+  it.each([
+    [GOOGLE_SAMPLE_APP_IDS.ios, true],
+    [GOOGLE_SAMPLE_APP_IDS.android, true],
+    ['ca-app-pub-3940256099942544/2934735716', true],
+    [LIVE.ios.appId, false],
+    [LIVE.android?.units.banner ?? '', false],
+    ['ca-app-pub-39402565099425440/2934735716', false],
+    ['x-ca-app-pub-3940256099942544/2934735716', false],
+  ])('knows %s as one of Google sample ids: %s', (id, isSample) => {
+    expect(isGoogleSampleAdId(id)).toBe(isSample);
   });
 
   it('rejects sample or malformed IDs in live builds', () => {

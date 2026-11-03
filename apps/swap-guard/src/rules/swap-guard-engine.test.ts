@@ -75,6 +75,8 @@ describe('SWAP_GUARD_RULES', () => {
     expect(SWAP_GUARD_ENGINE.outcome(lost).kind).toBe('lost');
     if (SWAP_GUARD_RULES.continueRun.kind !== 'once') throw new Error('continue expected');
     expect(SWAP_GUARD_RULES.continueRun.descriptionId).toBe('swap-guard.continue.swap-back');
+    // The board stands as before the losing swap, so the Shell drops that swap's counts (S10).
+    expect(SWAP_GUARD_RULES.continueRun.isTakeBack).toBe(true);
     expect(SWAP_GUARD_RULES.continueRun.apply(lost)).toStrictEqual(continueAfterLoss(lost));
     expect(SWAP_GUARD_ENGINE.outcome(SWAP_GUARD_RULES.continueRun.apply(lost).state)).toStrictEqual(
       {

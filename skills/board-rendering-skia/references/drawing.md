@@ -42,7 +42,7 @@ const glow = playingEntry(frame.fx, 'glow', TURN_ENTITY); // FxEntry while playi
 if (glow !== undefined) { /* draw it */ }
 ```
 
-Never decide "playing" from the eased `progress` (`progress < 1`): an `out-back` track passes 1 at about 37 % of its time and overshoots, so a glow, label or pop guarded that way vanished two thirds early (found in review, 2026-10-25). `sampleTimeline` records each key's linear time in `fx.linear` (0 before the track starts, 1 once it ended).
+Never decide "playing" from the eased `progress` (`progress < 1`): an `out-back` track passes 1 at about 37 % of its time and overshoots, so a glow, label or pop guarded that way vanished two thirds early (found in review, 2026-10-25). Each sampled entry carries its track's linear time as `linear` (0 before the track starts, 1 once it ended), and a test that asks whether a track has ended reads `entry.linear >= 1`.
 
 ## The render kit and palettes
 

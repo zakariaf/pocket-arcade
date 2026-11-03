@@ -1,11 +1,13 @@
 // packages/tooling/src/audit/release-bundle-checks.ts
+import { GOOGLE_SAMPLE_PUBLISHER } from '@e07/shell/config/ads-config.ts';
+
 import { modulesMatching, packageOf } from './bundle-modules.ts';
 
 import type { BundleModule } from './bundle-modules.ts';
 
 // Google's sample publisher id may appear ONLY inside the AdMob library itself
 // (its TestIds and doc comments are always bundled: Metro does not tree-shake).
-const SAMPLE_PUBLISHER = /3940256099942544/;
+const SAMPLE_PUBLISHER = new RegExp(GOOGLE_SAMPLE_PUBLISHER);
 const DEBUG_SENTINEL = /SHELL_TEST_BUILD_ONLY/; // the test-only entry's TEST_BUILD_SENTINEL
 const STOREKIT_TEST = /StoreKitTest|SKTestSession/;
 

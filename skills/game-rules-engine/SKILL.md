@@ -38,7 +38,7 @@ Makes every Pocket Arcade game's rules a pure, deterministic TypeScript engine b
 ## Definition of done
 
 - [ ] The root `package.json` pins `fast-check` exactly in `devDependencies` (no `kit-test-dependency` line).
-- [ ] `packages/game-kit/src/contract/` holds the thirteen contract files (with `difficulty.ts` and its test), `rng/sfc32.ts` with its golden test, `pick-at.ts`, and the five testing helpers (`play-choices`, `play-bot`, `json-shape`, `engine-contract`, `contract-intents`), all passing their tests.
+- [ ] `packages/game-kit/src/contract/` holds the thirteen contract files (with `difficulty.ts` and its test), `rng/sfc32.ts` with its golden test, `pick-at.ts`, and the six testing helpers (`play-choices`, `play-bot`, `json-shape`, `engine-contract`, `contract-intents`, `teaching-contract`), all passing their tests.
 - [ ] `apps/<game-id>/src/rules/` has `<game-id>-types.ts`, `create.ts`, `list-moves.ts`, `apply-move.ts`, `outcome.ts`, persistence and stats files, each with tests; `apps/<game-id>/src/testing/<game-id>-testing.ts` has a bot and the four example states.
 - [ ] Every rules test file follows the loop: examples, fast-check properties, one `GOLDEN_*` value; coverage of the rules folder is at least 95/95/95/90.
 - [ ] Every catalog key the rules name (hud, stats, continue, each `.lose.<reason>`) is in all four catalogs.
@@ -70,7 +70,7 @@ Makes every Pocket Arcade game's rules a pure, deterministic TypeScript engine b
 | [references/testing-rules.md](references/testing-rules.md) | The loop, examples, property checklist, pinned goldens, the contract test, gates, commands, traps | Steps 5 and 8 |
 | `templates/packages/game-kit/src/contract/` | The thirteen contract files (canonical, copy verbatim): the types, `input-intent.ts` (shared with the board skills; tap carries `selected`) and `difficulty.ts` (`ENDLESS_DIFFICULTY`, `MAX_LEVEL_DIFFICULTY`, `clampDifficulty`, `isEndlessDifficulty`, `rowFor`) with its test | Step 2 |
 | `templates/packages/game-kit/src/rng/` | `sfc32.ts` with its golden test, `pick-at.ts` with its test | Step 2 |
-| `templates/packages/game-kit/src/testing/` | `play-choices`, `play-bot`, `json-shape`, `engine-contract` and `contract-intents` (pan mode, select regions, tap selections, endless never won), each with its test | Step 2 |
+| `templates/packages/game-kit/src/testing/` | `play-choices`, `play-bot`, `json-shape`, `engine-contract`, `contract-intents` (pan mode, select regions, tap selections, endless never won) and `teaching-contract` (`tutorialSaveProblems`: every tutorial state reads back through `parseState`), each with its test | Step 2 |
 | `templates/packages/game-kit/src/geom/` | `board-layout.ts` (+ two tests), `classify-swipe.ts` (+ test): types the contract imports; copy only when missing | Step 2 |
 | `templates/packages/game-kit/src/timeline/` | `track.ts` (+ test): `Track` and `Motion` for `buildTimeline`; copy only when missing | Step 2 |
 | `templates/apps/__GAME_ID__/src/rules/` | The template game's types, create, list-moves, apply-move, outcome, flip-cells, engine, persistence, stats, and their tests, plus its tuning (`__GAME_ID__-tuning.ts` and test: every balance number, rows picked with `rowFor`; synced from the library, the same file game-balance-and-bots ships) | Step 3 |

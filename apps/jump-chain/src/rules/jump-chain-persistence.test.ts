@@ -16,6 +16,7 @@ import { JUMP_CHAIN_PERSISTENCE, parseMove, parseState } from './jump-chain-pers
 import { marchEveryFor } from './jump-chain-tuning.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
+import { TUTORIAL_START } from './tutorial-board.ts';
 
 import type { JumpChainMove, JumpChainState } from './jump-chain-types.ts';
 
@@ -193,6 +194,16 @@ describe('parseState', () => {
     ['an RNG word above 32 bits', { ...startRecord(), rng: [1, 2, 3, 2 ** 33] }],
   ])('rejects %s', (_name, json) => {
     expect(parseState(json)).toBeNull();
+  });
+});
+
+describe('parseState with the tutorial run', () => {
+  // Spec S13 and 8.6: the first-launch tutorial is saved like any run, so a kill during it must
+  // bring it back; its board makes two ranks where level 0 opens with three.
+  it('reads back the tutorial start, whose two ranks only the tutorial makes at its difficulty', () => {
+    expect(parseState(saved(TUTORIAL_START))).toStrictEqual(TUTORIAL_START);
+    const record = saved(TUTORIAL_START) as Record<string, unknown>;
+    expect(parseState({ ...record, difficulty: 25 })).toBeNull();
   });
 });
 

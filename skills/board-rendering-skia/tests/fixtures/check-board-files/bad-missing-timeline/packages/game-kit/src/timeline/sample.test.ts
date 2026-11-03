@@ -1,5 +1,12 @@
 // packages/game-kit/src/timeline/sample.test.ts
-import { EMPTY_FX, fxEntry, playingAt, playingEntry, sampleTimeline } from './sample.ts';
+import {
+  EMPTY_FX,
+  fxEntry,
+  playingAt,
+  playingEntry,
+  sampleTimeline,
+  sampleTrack,
+} from './sample.ts';
 
 import type { Track } from './track.ts';
 
@@ -31,7 +38,22 @@ describe('sampleTimeline', () => {
 
   it('ends exactly on the target values', () => {
     const fx = sampleTimeline([hop(0, 1, 2)], 10_000);
-    expect(fxEntry(fx, 'row', 7)).toStrictEqual({ values: [2], progress: 1, ageMs: 100 });
+    expect(fxEntry(fx, 'row', 7)).toStrictEqual({
+      values: [2],
+      progress: 1,
+      ageMs: 100,
+      linear: 1,
+    });
+  });
+});
+
+describe('sampleTrack', () => {
+  it('gives the linear time of the track: 0 before it starts, its share of time, 1 once it ended', () => {
+    const pop: Track = { ...hop(100, 0, 1), easing: 'out-back' };
+    expect(
+      [0, 100, 125, 160, 200, 10_000].map((atMs) => sampleTrack(pop, atMs).linear),
+    ).toStrictEqual([0, 0, 0.25, 0.6, 1, 1]);
+    expect(sampleTrack({ ...pop, durationMs: 0 }, 0).linear).toBe(1);
   });
 });
 
@@ -56,7 +78,11 @@ describe('playingEntry', () => {
   });
 
   it('reads the linear time of the active track: 0.5 halfway through an out-back pop', () => {
-    expect(sampleTimeline([pop], 150).linear).toStrictEqual({ 'row:7': 0.5 });
+    expect(fxEntry(sampleTimeline([pop], 150), 'row', 7)?.linear).toBe(0.5);
+    expect(sampleTimeline([pop], 150)).toStrictEqual({
+      elapsedMs: 150,
+      entries: { 'row:7': sampleTrack(pop, 150) },
+    });
     expect(playingEntry(sampleTimeline([pop], 150), 'row', 7)?.ageMs).toBe(50);
   });
 });

@@ -29,11 +29,11 @@ const SPEC = {
     "  game-config         every apps/<game>/game.config.ts has one `version: 'X.Y.Z'` and exactly one `buildNumber: <int>,` line,",
     "                      bundleId io.applander.<game id without hyphens> and premium productId <bundleId>.premium (owner",
     '                      decision O4), and no com.example.* id',
-    '  owner-placeholder   a scaffold value the owner replaces, by field: the AdMob app',
-    '                      ca-app-pub-1234567890123456~1234567890 and units /1111111111, /2222222222, /3333333333 (owner',
-    "                      step G5), Google's sample (test) ids ca-app-pub-3940256099942544 in ads.ids.ios (G5 too: a live",
-    '                      build would show test ads), the privacy host example.com and support@example.com (owner step',
-    '                      G3). The line before',
+    '  owner-placeholder   a scaffold value the owner replaces, by field: every AdMob id in ads.ids.ios that is not',
+    '                      a real one (notRealAdIdOf: the placeholder app ca-app-pub-1234567890123456~1234567890 and',
+    "                      units /1111111111, /2222222222, /3333333333, or any of Google's sample (test) ids",
+    '                      ca-app-pub-3940256099942544, which a live build would serve as test ads; owner step G5), the',
+    '                      privacy host example.com and support@example.com (owner step G3). The line before',
     "                      RESULT is then 'OWNER STEPS PENDING: G3, G5' (the steps still pending) and the result stays FAIL:",
     '                      until the owner supplies them these are the only expected FAIL lines',
     '  npm-script          root package.json release:ios runs packages/tooling/src/release/release-ios.ts',
@@ -59,9 +59,6 @@ const IGNORE = ['node_modules', 'ios', 'android', 'build', 'dist', '.expo', 'cov
 const EXPORT_BASE = { method: 'app-store-connect', destination: 'export', signingStyle: 'automatic', manageAppVersionAndBuildNumber: false, uploadSymbols: true };
 const PREREQ_SCRIPTS = ['verify', 'audit:privacy', 'audit:network'];
 const SECRET_LINES = ['*.p8', 'AuthKey_*', 'ApiKey_*', '*.p12', '*.mobileprovision', '*.xcarchive', '*.ipa'];
-/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts), never in game.config.ts. */
-const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
-const SAMPLE_ID = new RegExp(String.raw`(\w+)\s*:\s*['"\`](${SAMPLE_PUBLISHER}[~/]\d+)['"\`]`, 'g');
 const DENY_RULES = ['Read(~/.appstoreconnect/**)', 'Read(**/*.p8)', 'Read(**/AuthKey_*)', 'Read(**/*.p12)', 'Read(**/*.mobileprovision)'];
 // Built from parts so this checker's own source never contains the text it hunts for.
 const PRIVATE_KEY_TEXT = new RegExp(['-----BEGIN ', '(?:EC |RSA )?', 'PRIVATE KEY-----'].join(''));
@@ -116,7 +113,12 @@ function checkGameConfigs(ctx) {
   }
 }
 
-/** Owner decision O4 and the scaffold's placeholders: a release ships only the owner's real ids. */
+/**
+ * Owner decision O4 and the scaffold's placeholders: a release ships only the owner's real ids. Every
+ * AdMob id in ads.ids.ios that is not the owner's (a placeholder, or Google's sample (test) id, which a
+ * live build would serve as test ads) is owner step G5; the Android ids (GP5) are
+ * check-release-setup-android's.
+ */
 function checkAppIds(ctx, full, source, game) {
   const wanted = appIdOf(game);
   const bundle = /\bbundleId\s*:\s*['"]([^'"]*)['"]/.exec(source);
@@ -125,28 +127,10 @@ function checkAppIds(ctx, full, source, game) {
   if (product !== null && product[1] !== `${wanted}.premium`) ctx.problem(full, lineOf(source, product.index), 'game-config', `premium productId is '${product[1]}', not '${wanted}.premium'`, 'Premium is <bundleId>.premium (owner decision O4).');
   for (const found of placeholdersInText(source)) {
     if (found.value === bundle?.[1] || found.value === product?.[1]) continue; // reported above
+    if (found.entry.ownerStep === 'GP5') continue; // the Android ids: check-release-setup-android
     if (found.entry.ownerStep === null) ctx.problem(full, lineOf(source, found.index), 'game-config', `holds ${found.name} (${found.value})`, 'A release never ships a scaffold placeholder; owner decision O4: io.applander.<game id>.');
     else ctx.report.problem(ownerPlaceholderProblem({ entry: found.entry, file: full, line: lineOf(source, found.index) }));
   }
-  for (const sample of sampleIosAdIds(source)) ctx.report.problem(ownerPlaceholderProblem({ entry: sample.entry, file: full, line: lineOf(source, sample.index) }));
-}
-
-/**
- * Google's sample (test) AdMob ids in ads.ids.ios: owner step G5 is still pending, since a live build
- * with them shows test ads and earns nothing. An id belongs to the nearest `ios:` or `android:` key
- * before it (Android's ids are android-release-play's GP5); the field is the key in front of it.
- */
-function sampleIosAdIds(source) {
-  const found = [];
-  for (const match of source.matchAll(SAMPLE_ID)) {
-    const before = source.slice(0, match.index);
-    const platform = [...before.matchAll(/\b(ios|android)\s*:/g)].at(-1)?.[1];
-    if (platform !== 'ios') continue;
-    const [, key, value] = match;
-    const field = key === 'appId' ? 'ads.ids.ios.appId' : `ads.ids.ios.units.${key}`;
-    found.push({ index: match.index, entry: { field, value, name: "Google's sample (test) AdMob id", ownerStep: 'G5' } });
-  }
-  return found;
 }
 
 function checkScriptsAndSigning(ctx) {

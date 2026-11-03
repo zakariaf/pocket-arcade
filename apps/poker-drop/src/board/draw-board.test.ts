@@ -159,7 +159,7 @@ describe('drawBoard', () => {
         ? fx
         : { ...fx, entries: { ...fx.entries, [key]: { ...entry, progress: 1 } } };
     };
-    expect(sampleTimeline(TRACKS, 1255).linear[key]).toBeLessThan(1);
+    expect(sampleTimeline(TRACKS, 1255).entries[key]?.linear).toBeLessThan(1);
     expect(draw({ tracks: TRACKS, atMs: 1255, reshape: atOne }).texts).toContain('×۲');
   });
 

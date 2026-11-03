@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, requireDir, requireFile, run, walk } from './check-lib.mjs';
 import { parseXmlPlist, readPlist } from './lib/plist.mjs';
-import { adUnitFields, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
+import { adPlaceholderOf, adUnitFields, bundleIdProblem, finishWithOwnerSteps, GOOGLE_SAMPLE_APP_IDS, isGoogleSampleAdId, notRealAdIdOf, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
@@ -68,7 +68,9 @@ function readEntitlements(app, option) {
 /**
  * A store/off archive carries Google's sample app id and no units, yet the store/live build it
  * rehearses carries the owner's AdMob ids (owner step G5): a store/off rehearsal reads them from
- * game.config.ts, so it names every owner step still pending, as check-release-setup does (D68).
+ * game.config.ts and names every iOS id there that is not a real one (a scaffold placeholder or
+ * Google's sample id, notRealAdIdOf), so it names every owner step still pending, as
+ * check-release-setup does (D68).
  */
 function rehearsalAdIdProblems(options) {
   const file = `apps/${options.game}/game.config.ts`;
@@ -98,12 +100,12 @@ run(async () => {
   let checked = 1;
 
   const appId = info.GADApplicationIdentifier;
-  const appIdPlaceholder = ownerPlaceholderOf(appId);
+  const appIdPlaceholder = adPlaceholderOf(appId, 'ios');
   if (appIdPlaceholder !== null) {
     report.problem(ownerPlaceholderProblem({ entry: appIdPlaceholder, where: 'Info.plist GADApplicationIdentifier', file: 'Info.plist' }));
   } else if (adsMode === 'live') {
-    if (typeof appId !== 'string' || !new RegExp(rel.liveAppId).test(appId) || appId.includes(rel.samplePublisher)) report.problem({ file: 'Info.plist', rule: 'ad-app-id', message: `GADApplicationIdentifier is ${JSON.stringify(appId)}, not the game's live AdMob app ID`, fix: 'Build with APP_VARIANT=store ADS_MODE=live exported for the whole run, with the real IDs in game.config.ts.' });
-  } else if (appId !== rel.sampleAppId) {
+    if (typeof appId !== 'string' || !new RegExp(rel.liveAppId).test(appId) || isGoogleSampleAdId(appId)) report.problem({ file: 'Info.plist', rule: 'ad-app-id', message: `GADApplicationIdentifier is ${JSON.stringify(appId)}, not the game's live AdMob app ID`, fix: 'Build with APP_VARIANT=store ADS_MODE=live exported for the whole run, with the real IDs in game.config.ts.' });
+  } else if (appId !== GOOGLE_SAMPLE_APP_IDS.ios) {
     report.problem({ file: 'Info.plist', rule: 'ad-app-id', message: `GADApplicationIdentifier is ${JSON.stringify(appId)}; ADS_MODE=${adsMode} builds carry Google's sample app ID`, fix: 'A test or ads-off build never contains the real app ID; check the plugin options (admobPluginOptions).' });
   }
 
@@ -123,9 +125,10 @@ run(async () => {
       if (extra.adsMode !== adsMode) report.problem({ file: 'EXConstants.bundle/app.config', rule: 'extra-ads-mode', message: `extra.adsMode is ${JSON.stringify(extra.adsMode)}, expected "${adsMode}"`, fix: 'Export the variables for the whole run; a mixed build is not shippable.' });
       const hasUnits = extra.adUnits !== undefined && extra.adUnits !== null;
       if (hasUnits !== (adsMode === 'live')) report.problem({ file: 'EXConstants.bundle/app.config', rule: 'extra-ad-units', message: hasUnits ? `extra.adUnits is present in an ADS_MODE=${adsMode} build` : 'extra.adUnits is missing in a live build', fix: 'withShell writes adUnits only when ADS_MODE=live (adUnitsExtra).' });
+      // A live build's units that are not the owner's: a placeholder or Google's sample (test) id (G5).
       for (const [field, unit] of adUnitFields(extra.adUnits, 'ios')) {
-        const unitPlaceholder = ownerPlaceholderOf(unit);
-        if (unitPlaceholder !== null) report.problem(ownerPlaceholderProblem({ entry: unitPlaceholder, where: field, file: 'EXConstants.bundle/app.config' }));
+        const notReal = notRealAdIdOf(unit, 'ios');
+        if (notReal !== null) report.problem(ownerPlaceholderProblem({ entry: notReal, where: field, file: 'EXConstants.bundle/app.config' }));
       }
       const links = extra.game?.links;
       if (variant === 'store' && links) {

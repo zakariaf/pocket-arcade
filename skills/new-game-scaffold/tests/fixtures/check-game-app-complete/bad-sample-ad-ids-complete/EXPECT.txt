@@ -1,0 +1,5 @@
+[owner-placeholder]
+ads.ids.ios.appId is Google's sample (test) AdMob id ca-app-pub-3940256099942544~1458002511 (owner step G5)
+ads.ids.ios.units.rewarded is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1712485313 (owner step G5)
+OWNER STEPS PENDING: G5
+RESULT: FAIL (2 problems)

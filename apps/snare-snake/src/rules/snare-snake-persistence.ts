@@ -12,8 +12,11 @@ import type { Critter, Direction, SnareSnakeMove, SnareSnakeState } from './snar
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
 import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 
-/** Bump when the shape of SnareSnakeState or SnareSnakeMove changes, and add a migrateState step. */
-export const SNARE_SNAKE_STATE_VERSION = 1;
+/**
+ * Bump when the shape of SnareSnakeState or SnareSnakeMove changes, and add a migrateState step.
+ * Version 2 always saves the heading; version 1 saved it from its second build on (migrateState).
+ */
+export const SNARE_SNAKE_STATE_VERSION = 2;
 
 const UINT32_MAX = 4_294_967_295;
 const DIRECTION_NAMES: readonly Direction[] = ['up', 'right', 'down', 'left'];
@@ -33,8 +36,6 @@ const STATE_KEYS = [
   'hasContinued',
   'rng',
 ] as const;
-/** The first build saved no heading; such a run still loads, its head looking from its neck. */
-const FIRST_BUILD_KEYS = STATE_KEYS.filter((key) => key !== 'heading');
 /** The largest side any tuning row draws: a saved board must fit the game's rows. */
 const MAX_SIDE = Math.max(...TUNING.levelRows.flatMap((row) => [row.cols, row.rows]));
 
@@ -109,20 +110,15 @@ function isShaped(json: JsonRecord): boolean {
   );
 }
 
-/** This build's keys, or the first build's (no heading). */
-function hasStateKeys(json: JsonRecord): boolean {
-  return hasExactly(json, STATE_KEYS) || hasExactly(json, FIRST_BUILD_KEYS);
-}
-
-/** A saved heading: one of the four directions, or null (or absent in a first-build save). */
+/** A saved heading: one of the four directions, or null (the head looks from its neck). */
 function parseHeading(json: JsonRecord): Direction | null | undefined {
-  const saved = json['heading'] ?? null;
+  const saved = json['heading'];
   return saved === null ? null : DIRECTION_NAMES.find((name) => name === saved);
 }
 
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): SnareSnakeState | null {
-  if (!isRecord(json) || !hasStateKeys(json) || !isShaped(json)) return null;
+  if (!isRecord(json) || !hasExactly(json, STATE_KEYS) || !isShaped(json)) return null;
   const heading = parseHeading(json);
   if (heading === undefined) return null;
   const grid = { cols: Number(json['cols']), rows: Number(json['rows']) };
@@ -144,6 +140,17 @@ export function parseState(json: unknown): SnareSnakeState | null {
   return { difficulty, ...grid, snake, critters, ...counts, heading, hasContinued, rng };
 }
 
+/**
+ * A version-1 run -> this version's state, or null (the Shell then drops only the run). Version 1's
+ * first build saved no heading: such a run gets heading null, its head looking from its neck, as
+ * it did then; a version-1 run that saved its heading keeps it. Pure: a literal null, then the
+ * same checks as parseState.
+ */
+export function migrateState(json: unknown, fromVersion: number): SnareSnakeState | null {
+  if (fromVersion !== 1 || !isRecord(json)) return null;
+  return parseState('heading' in json ? json : { ...json, heading: null });
+}
+
 /** One logged move -> a typed move, or null (the Shell then drops only the move log). */
 export function parseMove(json: unknown): SnareSnakeMove | null {
   if (!isRecord(json) || !hasExactly(json, ['kind', 'direction']) || json['kind'] !== 'steer') {
@@ -157,7 +164,6 @@ export const SNARE_SNAKE_PERSISTENCE: PersistenceSpec<SnareSnakeState, SnareSnak
   stateVersion: SNARE_SNAKE_STATE_VERSION,
   parseState,
   parseMove,
-  // Version 1 has no older shape to upgrade from.
-  migrateState: () => null,
+  migrateState,
   savePolicy: { kind: 'after-every-move' },
 };

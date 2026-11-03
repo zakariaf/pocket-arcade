@@ -15,7 +15,8 @@ export type AdmobGameIds = {
   readonly android: AdmobPlatformIds | null;
 };
 
-const GOOGLE_SAMPLE_PUBLISHER = '3940256099942544';
+/** Google's sample AdMob publisher: its ids belong to test builds only (spec 8.8). */
+export const GOOGLE_SAMPLE_PUBLISHER = '3940256099942544';
 // Google's sample app IDs (developers.google.com/admob/ios/test-ads, .../android/test-ads).
 export const GOOGLE_SAMPLE_APP_IDS = {
   ios: `ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}~1458002511`,
@@ -25,10 +26,18 @@ export const GOOGLE_SAMPLE_APP_IDS = {
 const APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 const UNIT_ID = /^ca-app-pub-\d{16}\/\d{10}$/;
 
+const GOOGLE_SAMPLE_ID = new RegExp(`^ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}[~/]\\d+$`);
+
+// One of Google's sample (test) ids: an app or unit id of the sample publisher. The one answer in
+// the repo: live builds refuse them here, and the release tooling's gates ask the same question.
+export function isGoogleSampleAdId(id: string): boolean {
+  return GOOGLE_SAMPLE_ID.test(id);
+}
+
 export function assertLiveIds(ids: AdmobPlatformIds): void {
   const units = Object.values(ids.units);
   const isValid = APP_ID.test(ids.appId) && units.every((unit) => UNIT_ID.test(unit));
-  const isSample = [ids.appId, ...units].some((id) => id.includes(GOOGLE_SAMPLE_PUBLISHER));
+  const isSample = [ids.appId, ...units].some(isGoogleSampleAdId);
   if (!isValid || isSample) throw new Error(`invalid live AdMob ids: ${JSON.stringify(ids)}`);
 }
 

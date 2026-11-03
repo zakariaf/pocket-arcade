@@ -7,7 +7,7 @@ import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 import { traySlotTarget } from '@e07/trail-clear/board/layout-board.ts';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
 import { cellAt } from '@e07/trail-clear/rules/board-cells.ts';
-import { create } from '@e07/trail-clear/rules/create.ts';
+import { drawStart } from '@e07/trail-clear/rules/create.ts';
 import { distinctTurns } from '@e07/trail-clear/rules/tiles.ts';
 import { knobsFor } from '@e07/trail-clear/rules/trail-clear-tuning.ts';
 
@@ -29,12 +29,18 @@ const STRAIGHT: TileKind = 'road-straight';
 
 type Spot = { readonly col: number; readonly row: number; readonly tile: PlacedTile };
 
+/**
+ * Seed 1's own level-0 board, the one create(1, DIFFICULTY) hands out too (the witness wins it; the
+ * teaching test pins that), drawn without the witness so loading this module stays cheap.
+ */
+const LEVEL_0 = drawStart(1, DIFFICULTY);
+
 /** A level-0 position with these tiles, this offered tile and `left` tiles still to place. */
 function position(spots: readonly Spot[], offered: TileKind, left: number): TrailClearState {
-  const cells: (PlacedTile | null)[] = create(1, DIFFICULTY).cells.map(() => null);
+  const cells: (PlacedTile | null)[] = LEVEL_0.cells.map(() => null);
   for (const spot of spots) cells[cellAt(spot.col, spot.row)] = spot.tile;
   return {
-    ...create(1, DIFFICULTY),
+    ...LEVEL_0,
     cells,
     offered,
     placements: knobsFor(DIFFICULTY).bag - left,

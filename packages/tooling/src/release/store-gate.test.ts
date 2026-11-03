@@ -3,10 +3,12 @@ import {
   appIdOf,
   iosAdUnitsOf,
   ownerStepsPendingLine,
+  ownerValueProblems,
   PLACEHOLDERS,
   SAMPLE_APP_ID,
   storeGateProblems,
   type ArtifactFacts,
+  type OwnerValues,
 } from './store-gate.ts';
 
 const STORE = {
@@ -231,5 +233,73 @@ describe('iosAdUnitsOf', () => {
     expect(iosAdUnitsOf({ ios: null, android: ANDROID })).toStrictEqual([]);
     expect(iosAdUnitsOf(undefined)).toStrictEqual([]);
     expect(iosAdUnitsOf('ca-app-pub-1234567890123456/3333333333')).toStrictEqual([]);
+  });
+});
+
+// Spec 8.8: test builds use Google's test ad ids, real ids only in store builds. The preflight asks
+// for the owner's steps before the build number commit, worded like the gate (lead decision L14).
+describe('ownerValueProblems (release step 1: owner steps G3 and G5 before anything is built)', () => {
+  const OWNER: OwnerValues = {
+    ads: {
+      isEnabled: true,
+      ids: {
+        ios: {
+          appId: 'ca-app-pub-7310520968431056~5190264813',
+          units: {
+            banner: 'ca-app-pub-7310520968431056/4417703951',
+            interstitial: 'ca-app-pub-7310520968431056/8165377272',
+            rewarded: 'ca-app-pub-7310520968431056/2913050594',
+          },
+        },
+      },
+    },
+    links: { privacyPolicy: { host: 'games.applander.io' }, supportEmail: 'support@applander.io' },
+  };
+  const STAND_IN: OwnerValues = {
+    ads: {
+      isEnabled: true,
+      ids: {
+        ios: {
+          appId: SAMPLE_APP_ID,
+          units: {
+            banner: 'ca-app-pub-1234567890123456/1111111111',
+            interstitial: 'ca-app-pub-7310520968431056/8165377272',
+            rewarded: 'ca-app-pub-3940256099942544/1712485313',
+          },
+        },
+      },
+    },
+    links: { privacyPolicy: { host: 'example.com' }, supportEmail: 'support@applander.io' },
+  };
+
+  it("passes the owner's ids and links in a store/live release", () => {
+    expect(ownerValueProblems(OWNER, STORE.variant)).toStrictEqual([]);
+  });
+
+  it("names G5 for Google's sample ids and the placeholders in ads.ids.ios of a live build", () => {
+    const problems = ownerValueProblems({ ...STAND_IN, links: OWNER.links }, STORE.variant);
+    expect(problems).toStrictEqual([
+      "[owner-placeholder] game.config.ts ads.ids.ios.appId is Google's sample (test) AdMob id ca-app-pub-3940256099942544~1458002511 (owner step G5)",
+      '[owner-placeholder] game.config.ts ads.ids.ios.units.banner is the placeholder AdMob banner unit ca-app-pub-1234567890123456/1111111111 (owner step G5)',
+      "[owner-placeholder] game.config.ts ads.ids.ios.units.rewarded is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1712485313 (owner step G5)",
+    ]);
+    expect(ownerStepsPendingLine(problems)).toBe('OWNER STEPS PENDING: G5');
+  });
+
+  it('asks for G3 in every store build, and for G5 only in a live build that shows ads', () => {
+    const storeOff = { appVariant: 'store', adsMode: 'off' } as const;
+    const linkLine =
+      '[owner-placeholder] game.config.ts links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3)';
+    expect(ownerValueProblems(STAND_IN, storeOff)).toStrictEqual([linkLine]);
+    const noAds = { ...STAND_IN, ads: { ...STAND_IN.ads, isEnabled: false } };
+    expect(ownerValueProblems(noAds, STORE.variant)).toStrictEqual([linkLine]);
+    expect(ownerStepsPendingLine(ownerValueProblems(STAND_IN, STORE.variant))).toBe(
+      'OWNER STEPS PENDING: G3, G5',
+    );
+  });
+
+  it("releases a test build with Google's test ids and the scaffold's links", () => {
+    expect(ownerValueProblems(STAND_IN, TEST.variant)).toStrictEqual([]);
+    expect(ownerValueProblems(STAND_IN, { appVariant: 'test', adsMode: 'off' })).toStrictEqual([]);
   });
 });
