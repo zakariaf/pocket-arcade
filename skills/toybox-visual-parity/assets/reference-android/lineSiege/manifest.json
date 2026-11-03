@@ -3,9 +3,9 @@
  "game": "lineSiege",
  "platform": "android",
  "set": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 44 dp status bar (the system image's punch-hole cutout sets it) and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
- "rendered": "2026-10-25",
+ "rendered": "2026-11-03",
  "renderer": {
-  "chrome": "155.0.8059.85",
+  "chrome": "156.0.8078.76",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -800,8 +800,8 @@
    "bytes": 12405
   },
   "dark-fa/s7-result-win--score.png": {
-   "sha256": "f53074092cdbe2238d0d9e5a7b2f6037e70d8357eccdf1e77eec5255f16bf664",
-   "bytes": 136591,
+   "sha256": "e5efa3eb285292c679556811296ce926176c29275d538bf9507d015c4132ef73",
+   "bytes": 136586,
    "width": 1206,
    "height": 2622
   },
@@ -810,8 +810,8 @@
    "bytes": 12079
   },
   "dark-fa/s7-result-win.png": {
-   "sha256": "7dc82ee657f0e445a03618aa1c9d7fb079a3b61d4e9855f6d7da10c2e560f217",
-   "bytes": 133842,
+   "sha256": "6d1ef6a7e78597101669f966c84c2bbc168823f994ed34a60b9ed909bfe25348",
+   "bytes": 133838,
    "width": 1206,
    "height": 2622
   },
@@ -1560,8 +1560,8 @@
    "bytes": 12412
   },
   "light-fa/s7-result-win--score.png": {
-   "sha256": "02da2b29d1cd25cc84859580f431b6ac3c4b89b3a157384f6b5443cd40faeff2",
-   "bytes": 133050,
+   "sha256": "b0d3340183a65e04ce746c27a146f3a72e7b9b8e9e41a18858dfeea16f998c5f",
+   "bytes": 133046,
    "width": 1206,
    "height": 2622
   },
@@ -1570,8 +1570,8 @@
    "bytes": 12086
   },
   "light-fa/s7-result-win.png": {
-   "sha256": "9a4472c6b566bb99b58f7a1a5caefd2773766429d23a4e65dfaf7bb8fedfa6cb",
-   "bytes": 130223,
+   "sha256": "6dc5bd617dc4848897bf56abed50e6ea7b99b3b24e618777f98877ea240439e0",
+   "bytes": 130220,
    "width": 1206,
    "height": 2622
   },
@@ -1772,6 +1772,18 @@
    "variants": [],
    "what": "Merging main into E28 again put Trail Clear into the design after Toggle Drop and Poker Drop (palettes, logos, texts, sample counters and how-to-play pictures). No Line Siege frame or variant changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
    "why": "spec 13: each game design pass; the passes were drafted on separate branches and are joined here (E28 game helper, 2026-10-25)."
+  },
+  {
+   "id": "R-chrome-156-premium-underline",
+   "date": "2026-11-03",
+   "frames": [
+    "s7-result-win"
+   ],
+   "variants": [
+    "s7-result-win--score"
+   ],
+   "what": "The four Persian S7 win renders of the Android set (s7-result-win and s7-result-win--score, light-fa and dark-fa) were re-rendered with Chrome 156.0.8078.76. They were 156 pixels apart from a fresh render, all in one row at y 826-828 dp: Chrome draws the underline of the Premium upsell link (the quiet link under the keys) one device pixel shorter at each end than the Chrome 154 render of 2026-10-16. No text, colour, box or other pixel moved, the design copy and every other input are unchanged, and the iOS set already matches Chrome 156 byte for byte (its full --check passes).",
+   "why": "Renderer drift, not a design change: shoot-design --check must prove the committed Android set against the Chrome this Mac renders with, and it failed reference-drift on exactly these four files (tooling helper, final pass, decided under the owner's delegation of 2026-10-16; the Toybox mockup is unchanged)."
   }
  ]
 }
