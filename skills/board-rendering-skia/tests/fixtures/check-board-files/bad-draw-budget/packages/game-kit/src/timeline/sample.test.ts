@@ -1,5 +1,5 @@
 // packages/game-kit/src/timeline/sample.test.ts
-import { EMPTY_FX, fxEntry, playingEntry, sampleTimeline } from './sample.ts';
+import { EMPTY_FX, fxEntry, playingAt, playingEntry, sampleTimeline } from './sample.ts';
 
 import type { Track } from './track.ts';
 
@@ -58,5 +58,24 @@ describe('playingEntry', () => {
   it('reads the linear time of the active track: 0.5 halfway through an out-back pop', () => {
     expect(sampleTimeline([pop], 150).linear).toStrictEqual({ 'row:7': 0.5 });
     expect(playingEntry(sampleTimeline([pop], 150), 'row', 7)?.ageMs).toBe(50);
+  });
+});
+
+describe('playingAt', () => {
+  // Effect layers that walk every key of a channel (burst:<id>, spark:<id>) read "playing" by key.
+  const pop: Track = { ...hop(100, 0, 1), easing: 'out-back' };
+
+  it('gives a key the entry playingEntry gives its channel and entity, at every moment', () => {
+    for (const atMs of [0, 100, 110, 150, 160, 199, 200, 10_000]) {
+      const fx = sampleTimeline([pop], atMs);
+      expect(playingAt(fx, 'row:7')).toBe(playingEntry(fx, 'row', 7));
+    }
+  });
+
+  it('keeps an out-back key playing through its overshoot, and nothing for an unknown key', () => {
+    const fx = sampleTimeline([pop], 160);
+    expect(playingAt(fx, 'row:7')?.values).toStrictEqual(fxEntry(fx, 'row', 7)?.values);
+    expect(playingAt(fx, 'row:8')).toBeUndefined();
+    expect(playingAt(EMPTY_FX, 'row:7')).toBeUndefined();
   });
 });

@@ -88,11 +88,21 @@ export function fxEntry(fx: FxSample, channel: string, entityId: number): FxEntr
 }
 
 /**
+ * playingEntry by track key (`<channel>:<entityId>`): the entry only while its track plays by its
+ * linear time. For an effect layer that walks every key of its channel (`burst:<id>`, `spark:<id>`)
+ * because the entities that own one are gone from the view. Declared first: a worklet module's
+ * functions are not hoisted.
+ */
+export function playingAt(fx: FxSample, key: string): FxEntry | undefined {
+  const t = fx.linear[key];
+  return t !== undefined && t > 0 && t < 1 ? fx.entries[key] : undefined;
+}
+
+/**
  * The entry of a key only while its track plays: started and not yet ended by its linear time.
  * Effect layers (flash, glow, burst, shake) draw only then; the eased progress cannot tell, because
  * an out-back track passes 1 early and overshoots before it ends.
  */
 export function playingEntry(fx: FxSample, channel: string, entityId: number): FxEntry | undefined {
-  const t = fx.linear[trackKey(channel, entityId)];
-  return t !== undefined && t > 0 && t < 1 ? fxEntry(fx, channel, entityId) : undefined;
+  return playingAt(fx, trackKey(channel, entityId));
 }

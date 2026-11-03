@@ -2,12 +2,12 @@
 'worklet';
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, heartEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawBursts, drawMonsters, drawVanishing } from './draw-monsters.ts';
-import { CORNER, drawBlock, inset, INSET, isPlaying } from './draw-parts.ts';
+import { CORNER, drawBlock, inset, INSET } from './draw-parts.ts';
 import { drawGhost, drawHinted, drawTray } from './draw-tray.ts';
 import { lanePoint, wallRect } from './layout-board.ts';
 
@@ -116,10 +116,10 @@ function drawCells(canvas: SkCanvas, frame: Frame): void {
 function drawBeams(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, colors, fx } = frame;
   for (let lane = 0; lane < view.size; lane += 1) {
-    const beam = fxEntry(fx, 'beam', lane);
+    const beam = playingEntry(fx, 'beam', lane);
     const bottom = cellRect(layout, { regionId: 'board', col: lane, row: view.size - 1 });
     const far = lanePoint(layout, view, { lane, row: 0 });
-    if (!isPlaying(beam) || bottom === null || far === null) continue;
+    if (beam === undefined || bottom === null || far === null) continue;
     const base = bottom.y + bottom.height;
     const height = (base - (far.y - far.step / 2)) * beam.progress;
     const width = bottom.width * 0.4;
@@ -131,10 +131,10 @@ function drawBeams(canvas: SkCanvas, frame: Frame): void {
 /** A band that sweeps the lanes: the shockwave (up from the wall) and the continue's push-back. */
 function drawWave(canvas: SkCanvas, frame: Frame, channel: 'shock' | 'push'): void {
   const { view, layout, colors, kit, fx } = frame;
-  const wave = fxEntry(fx, channel, TURN_ENTITY);
+  const wave = playingEntry(fx, channel, TURN_ENTITY);
   const near = lanePoint(layout, view, { lane: 0, row: view.laneRows - 1 });
   const wall = wallRect(layout, view);
-  if (!isPlaying(wave) || near === null || wall === null) return;
+  if (wave === undefined || near === null || wall === null) return;
   setPaintColor(kit.fill, colors.color.shock, 1 - wave.progress);
   const y = wall.y - near.step * view.laneRows * wave.progress - near.step;
   canvas.drawRect(
@@ -146,8 +146,8 @@ function drawWave(canvas: SkCanvas, frame: Frame, channel: 'shock' | 'push'): vo
 /** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */
 export function drawBoard(canvas: SkCanvas, frame: Frame): void {
   canvas.drawColor(frame.colors.color.background);
-  const shake = fxEntry(frame.fx, 'shake', TURN_ENTITY);
-  const offset = isPlaying(shake) ? (shake.values[0] ?? 0) * SHAKE_PT : 0;
+  const shake = playingEntry(frame.fx, 'shake', TURN_ENTITY);
+  const offset = (shake?.values[0] ?? 0) * SHAKE_PT;
   canvas.save();
   canvas.translate(offset * (Math.floor(frame.fx.elapsedMs / 40) % 2 === 0 ? 1 : -1), 0);
   drawLanes(canvas, frame);
