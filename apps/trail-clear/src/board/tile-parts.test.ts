@@ -5,7 +5,7 @@ import fc from 'fast-check';
 
 import { TILE_KINDS, edgesOf } from '@e07/trail-clear/rules/tiles.ts';
 
-import { capCentre, partPath, trailParts } from './tile-parts.ts';
+import { capCentre, partPath, tileLayers, trailParts } from './tile-parts.ts';
 
 const ROAD = 1;
 const RIVER = 2;
@@ -86,5 +86,44 @@ describe('capCentre', () => {
     const edges = edgesOf('ford', 0);
     expect([edges[0], edges[2]]).toStrictEqual([ROAD, RIVER]);
     expect(capCentre(2).y - capCentre(0).y).toBeGreaterThan(0.25);
+  });
+});
+
+describe('tileLayers', () => {
+  it('names the paths a ford draws: a river stub to its pond, a road stub to its house (spec 13)', () => {
+    expect(tileLayers(edgesOf('ford', 0))).toStrictEqual({
+      river: ['river-stub-2'],
+      road: ['road-stub-0'],
+      dashes: ['line-stub-0'],
+      pond: { x: 0.5, y: 0.64 },
+      house: 'house-0',
+    });
+  });
+
+  it('gives every tile in every turn the paths its parts name (property)', () => {
+    fc.assert(
+      fc.property(fc.constantFrom(...TILE_KINDS), fc.integer({ min: 0, max: 3 }), (kind, turns) => {
+        const edges = edgesOf(kind, turns);
+        const road = trailParts(edges, ROAD);
+        const [riverEnd] = trailParts(edges, RIVER);
+        const layers = tileLayers(edges);
+        expect([layers.road, layers.dashes]).toStrictEqual([
+          road.map((part) => partPath(ROAD, part)),
+          road.map((part) => partPath(0, part)),
+        ]);
+        expect(layers.river).toStrictEqual(trailParts(edges, RIVER).map((p) => partPath(RIVER, p)));
+        const isPond = riverEnd?.shape === 'stub';
+        expect(layers.pond).toStrictEqual(isPond ? capCentre(riverEnd.turn) : null);
+        const [roadEnd] = road;
+        const isHouse = roadEnd?.shape === 'stub';
+        expect(layers.house).toBe(isHouse ? `house-${String(roadEnd.turn)}` : null);
+      }),
+      { numRuns: 80 },
+    );
+  });
+
+  it('looks the layers up in a table built once, so drawing a frame builds no path names', () => {
+    const edges = edgesOf('bridge', 1);
+    expect(tileLayers([...edges])).toBe(tileLayers(edges));
   });
 });

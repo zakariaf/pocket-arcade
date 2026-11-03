@@ -107,11 +107,15 @@ export function drawRobots(canvas: SkCanvas, frame: Frame): void {
   }
 }
 
-/** Robots that broke down this turn are gone from the view: their ghost tracks carry them. */
-export function drawGhosts(canvas: SkCanvas, frame: Frame): void {
-  for (const key of Object.keys(frame.fx.entries)) {
+/**
+ * Robots that broke down this turn are gone from the view: their ghost tracks carry them. `keys`
+ * are the frame's track keys, listed once per frame by drawBoard.
+ */
+export function drawGhosts(canvas: SkCanvas, frame: Frame, keys: readonly string[]): void {
+  for (const key of keys) {
+    if (!key.startsWith('ghost:')) continue;
     const ghost = frame.fx.entries[key];
-    if (!key.startsWith('ghost:') || ghost === undefined) continue;
+    if (ghost === undefined) continue;
     const alpha = ghost.values[3] ?? 0;
     // Its last step, if it took one this turn, brings it to where it broke.
     const square = trackedSquare(frame, `robot:${key.slice('ghost:'.length)}`, ghost.values);

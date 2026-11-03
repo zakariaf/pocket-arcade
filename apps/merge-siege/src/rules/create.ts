@@ -2,10 +2,12 @@
 // Spec 10 RULES "Start state for a level (from its seed and difficulty)"; spec 8.1: the same seed
 // always makes the same level, and "no level is impossible". Difficulty 0..99 is a level row, 100
 // the endless run. Every level board create() hands out (packs, the daily, any other seed) is
-// proven winnable by the witness, or is the proven fallback board.
+// proven winnable by the witness, or is the proven fallback board. A shipped level's board was
+// proven when its pack was generated, so create() draws it again without the witness.
 import { clampDifficulty, isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
+import { shippedBoard } from './merge-siege-shipped.ts';
 import { TUNING } from './merge-siege-tuning.ts';
 import { MERGE_SIEGE_WITNESS, WITNESS_MAX_NODES } from './merge-siege-witness.ts';
 import { drawNextEnemy } from './next-enemy.ts';
@@ -45,6 +47,12 @@ function drawBoard(rng: RngState, level: number): MergeSiegeState {
     hasContinued: false,
     rng: first.rng,
   };
+}
+
+/** The board of the seed's stream on its `tries`-th draw, unproven (a shipped level's own try). */
+function boardOnTry(rng: RngState, level: number, tries: number): MergeSiegeState {
+  const state = drawBoard(rng, level);
+  return tries <= 1 ? state : boardOnTry(state.rng, level, tries - 1);
 }
 
 /** A search's result: the board found, and whether the witness proved it winnable. */
@@ -90,6 +98,19 @@ export function drawStart(seed: number, difficulty: number): MergeSiegeState {
   return drawBoard(seedRng(seed), clampDifficulty(difficulty));
 }
 
-export function create(seed: number, difficulty: number): MergeSiegeState {
+/**
+ * create()'s search with the tuning budget, for every seed alike: what the level plan generates
+ * from (so a pack never depends on the shipped tries it later records) and what each shipped
+ * level's board is proven equal to.
+ */
+export function createBySearch(seed: number, difficulty: number): MergeSiegeState {
   return createWithin(seed, difficulty, CREATE_BUDGET);
+}
+
+export function create(seed: number, difficulty: number): MergeSiegeState {
+  const level = clampDifficulty(difficulty);
+  const shipped = shippedBoard(seed, level);
+  if (shipped === null) return createBySearch(seed, level);
+  const stream = seedRng(shipped.isFallback ? FALLBACK_SEED : seed);
+  return boardOnTry(stream, level, shipped.tries);
 }

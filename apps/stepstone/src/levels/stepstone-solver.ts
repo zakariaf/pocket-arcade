@@ -1,22 +1,27 @@
 // apps/stepstone/src/levels/stepstone-solver.ts
-import { createBfsSolver } from '@e07/game-kit/solver/engine-solver.ts';
 import { applyMove } from '@e07/stepstone/rules/apply-move.ts';
-import { listMoves } from '@e07/stepstone/rules/list-moves.ts';
-import { outcome } from '@e07/stepstone/rules/outcome.ts';
+import { hopRoute } from '@e07/stepstone/rules/hop-distance.ts';
 
 import type { Solver } from '@e07/game-kit/contract/levels.ts';
 import type { StepstoneMove, StepstoneState } from '@e07/stepstone/rules/stepstone-types.ts';
 
 /**
- * Exact par (spec 8.1) by breadth-first search keyed by the frog's stone. Stones sink only behind
- * the frog, and the stone at hop j of a shortest route is exactly j hops from the start, so no stone
- * sunk on a shortest way to a stone lies further along a shortest route from it: the first visit of
- * each stone keeps every shortest route open. A 7 x 7 pond has at most 49 stones to visit.
+ * Exact par (spec 8.1) from the rules' shortest-route search (hopRoute), breadth-first over the
+ * frog's stones. Stones sink only behind the frog, and the stone at hop j of a shortest route is
+ * exactly j hops from the start, so no stone sunk on a shortest way to a stone lies further along
+ * a shortest route from it: the first visit of each stone keeps every shortest route open. The
+ * route's stones become hops, replayed through the engine for the final state. A 7 x 7 pond has
+ * at most 49 stones to visit.
  */
-export const STEPSTONE_SOLVER: Solver<StepstoneState, StepstoneMove> = createBfsSolver({
-  engine: { listMoves, applyMove, outcome },
-  key: (state) => String(state.frog),
-});
+export const STEPSTONE_SOLVER: Solver<StepstoneState, StepstoneMove> = {
+  solve: (start, maxNodes) => {
+    const route = hopRoute(start, maxNodes);
+    if (route.kind !== 'solved') return route;
+    const line = route.line.map((to): StepstoneMove => ({ kind: 'hop', to }));
+    const final = line.reduce((state, move) => applyMove(state, move).state, start);
+    return { kind: 'solved', par: route.par, line, final };
+  },
+};
 
 /** Budget for a hint on the phone: a 7 x 7 pond has at most 49 stones to visit. */
 export const HINT_MAX_NODES = 2_000;

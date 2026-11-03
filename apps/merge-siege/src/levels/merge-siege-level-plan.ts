@@ -4,7 +4,7 @@
 // score thresholds set by the witness's final score, and par (the witness line's length) is only a
 // filter against levels that are over before the siege starts.
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/merge-siege/rules/create.ts';
+import { createBySearch } from '@e07/merge-siege/rules/create.ts';
 
 import { MERGE_SIEGE_SOLVER, WITNESS_MAX_NODES } from './merge-siege-solver.ts';
 
@@ -45,7 +45,8 @@ export const MERGE_SIEGE_LEVEL_PLAN: LevelPlan<MergeSiegeState, MergeSiegeMove> 
   ],
   levelsPerPack: LEVELS_PER_PACK,
   difficultyFor,
-  create,
+  // The search itself, not create(): create() reads the shipped tries these packs record.
+  create: createBySearch,
   solver: MERGE_SIEGE_SOLVER,
   maxNodes: WITNESS_MAX_NODES,
   // Witness losses are retries: in the hardest row about five candidates in six are lost.

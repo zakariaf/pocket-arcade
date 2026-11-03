@@ -7,12 +7,12 @@ import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { nextInt } from '@e07/game-kit/rng/sfc32.ts';
 
-import { CELL_COUNT, COLS, emptyCells } from './board-cells.ts';
-import { listMoves } from './list-moves.ts';
+import { CELL_COUNT, COLS, DIRECTIONS, emptyCells } from './board-cells.ts';
 import { marchEnemies } from './march-enemies.ts';
 import { TUNING, knobsFor } from './merge-siege-tuning.ts';
 import { drawNextEnemy } from './next-enemy.ts';
-import { beats, slideTiles } from './slide-tiles.ts';
+import { hasOverrun, isWaveOver } from './outcome.ts';
+import { beats, hasSlideEffect, slideTiles } from './slide-tiles.ts';
 
 import type {
   ClashPhase,
@@ -23,6 +23,7 @@ import type {
   MergeSiegeState,
   Smash,
 } from './merge-siege-types.ts';
+import type { SlideResult } from './slide-tiles.ts';
 
 /** A turn in progress: the state so far and the events that explain it. */
 type Turn = { readonly state: MergeSiegeState; readonly events: readonly MergeSiegeEvent[] };
@@ -39,9 +40,8 @@ function clashEvents(
   ];
 }
 
-/** The player's slide, as a turn. */
-function slide(state: MergeSiegeState, move: MergeSiegeMove): Turn {
-  const slid = slideTiles(state.cells, move.direction);
+/** The player's slide (already computed once, to check the swipe), as a turn. */
+function slide(state: MergeSiegeState, slid: SlideResult): Turn {
   const events: MergeSiegeEvent[] = [
     ...(slid.steps.length > 0 ? [{ kind: 'tiles-slid' as const, steps: slid.steps }] : []),
     ...(slid.merges.length > 0 ? [{ kind: 'tiles-merged' as const, merges: slid.merges }] : []),
@@ -144,13 +144,25 @@ function spawnTile(turn: Turn): Turn {
   };
 }
 
+/**
+ * The swipe's slide when listMoves offers it, or null: a swipe is legal exactly when the run is
+ * still playing and the swipe changes something. Not overrun, not won and one effective swipe is
+ * outcome's 'playing', so one slide decides what listMoves (and outcome) would slide again.
+ */
+function legalSlide(state: MergeSiegeState, move: MergeSiegeMove): SlideResult | null {
+  if (!DIRECTIONS.includes(move.direction) || hasOverrun(state) || isWaveOver(state)) return null;
+  const slid = slideTiles(state.cells, move.direction);
+  return hasSlideEffect(slid) ? slid : null;
+}
+
 export function applyMove(state: MergeSiegeState, move: MergeSiegeMove): MergeSiegeResult {
-  if (!listMoves(state).some((legal) => legal.direction === move.direction)) {
+  const slid = legalSlide(state, move);
+  if (slid === null) {
     throw new RangeError(
       `merge-siege: the swipe ${move.direction} changes nothing, or the run is over`,
     );
   }
-  const done = spawnTile(enter(march(slide(state, move))));
+  const done = spawnTile(enter(march(slide(state, slid))));
   const points = done.state.score - state.score;
   const scored: MergeSiegeEvent[] =
     points > 0 ? [{ kind: 'score-added', points, total: done.state.score }] : [];

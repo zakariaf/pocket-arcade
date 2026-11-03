@@ -3,6 +3,7 @@ import { clampDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { placeCrashPair, placeHeaps, placeRobots } from './opening.ts';
+import { shippedTry } from './scrap-shove-shipped.ts';
 import { TUNING, knobsFor } from './scrap-shove-tuning.ts';
 import { solveFloor } from './solve-floor.ts';
 
@@ -14,7 +15,7 @@ import type { Floor, ScrapShoveState } from './scrap-shove-types.ts';
 export type LayoutBudget = { readonly attempts: number; readonly maxNodes: number };
 
 /** The player on one of the four centre squares, picked by the seed; no robot or heap yet. */
-export function startLayout(seed: number): Layout {
+function startLayout(seed: number): Layout {
   const centre = TUNING.side / 2 - 1;
   const col = nextInt(seedRng(seed), 2);
   const row = nextInt(col.state, 2);
@@ -55,6 +56,21 @@ function stateOf(floor: Floor): ScrapShoveState {
   };
 }
 
+/** The layout of a stream on its `tries`-th try: each try lays robots and heaps again. */
+function layoutOnTry(start: Layout, knobs: DifficultyKnobs, tries: number): Layout {
+  const laid = layFloor(start, knobs);
+  return tries <= 1 ? laid : layoutOnTry({ floor: start.floor, rng: laid.rng }, knobs, tries - 1);
+}
+
+/**
+ * The floor of the seed's stream on its `tries`-th try at this difficulty, unproven: what
+ * create()'s search would test on that try, and a shipped level's own floor on its proven try.
+ */
+export function floorOnTry(seed: number, difficulty: number, tries: number): ScrapShoveState {
+  const knobs = knobsFor(clampDifficulty(difficulty));
+  return stateOf(layoutOnTry(startLayout(seed), knobs, tries).floor);
+}
+
 /** A layout search's result: the floor found, and whether the solver proved it winnable. */
 type Search = { readonly state: ScrapShoveState; readonly isProven: boolean };
 
@@ -70,18 +86,6 @@ function searchLayouts(start: Layout, knobs: DifficultyKnobs, budget: LayoutBudg
   if (isProven || budget.attempts <= 1) return { state, isProven };
   const next = { floor: start.floor, rng: laid.rng };
   return searchLayouts(next, knobs, { ...budget, attempts: budget.attempts - 1 });
-}
-
-/**
- * The first layout of the seed's stream proven winnable within the budget, or the last one tried
- * (then unproven: create() never hands that one out, it takes the fallback floor instead).
- */
-export function firstWinnable(
-  start: Layout,
-  knobs: DifficultyKnobs,
-  budget: LayoutBudget,
-): ScrapShoveState {
-  return searchLayouts(start, knobs, budget).state;
 }
 
 /**
@@ -106,13 +110,25 @@ export function createWithin(
 }
 
 /**
+ * create()'s search with the tuning budget, for every seed alike: what the level plan generates
+ * from (so a pack never depends on the shipped tries it later records) and what each shipped
+ * level's floor is proven equal to.
+ */
+export function createBySearch(seed: number, difficulty: number): ScrapShoveState {
+  const budget = { attempts: TUNING.createAttempts, maxNodes: TUNING.createMaxNodes };
+  return createWithin(seed, difficulty, budget);
+}
+
+/**
  * Start state from (seed, difficulty): the same pair gives the same floor on every phone. The
  * difficulty's tuning row says how many robots of each kind and how many heaps; the opening crash
  * pair counts as two of the normal robots; every floor is proven winnable (or is the proven
- * fallback), so every level and every daily can be won. Nothing is drawn after this: the robots
- * are deterministic, so the state carries no random stream.
+ * fallback), so every level and every daily can be won. A shipped level's floor was proven when
+ * its pack was generated, so it is laid out again without the solver. Nothing is drawn after
+ * this: the robots are deterministic, so the state carries no random stream.
  */
 export function create(seed: number, difficulty: number): ScrapShoveState {
-  const budget = { attempts: TUNING.createAttempts, maxNodes: TUNING.createMaxNodes };
-  return createWithin(seed, difficulty, budget);
+  const level = clampDifficulty(difficulty);
+  const tries = shippedTry(seed, level);
+  return tries === null ? createBySearch(seed, level) : floorOnTry(seed, level, tries);
 }

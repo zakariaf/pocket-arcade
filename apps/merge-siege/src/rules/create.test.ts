@@ -5,14 +5,27 @@
 import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
+import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
+import {
+  MERGE_SIEGE_DAILY_DIFFICULTY,
+  MERGE_SIEGE_DAILY_SALT,
+  MERGE_SIEGE_LEVELS,
+} from '@e07/merge-siege/levels/merge-siege-levels.ts';
 
 import { boardText } from './board-text.ts';
-import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
+import { FALLBACK_SEED, create, createBySearch, createWithin, drawStart } from './create.ts';
 import { TUNING } from './merge-siege-tuning.ts';
 import { MERGE_SIEGE_WITNESS, WITNESS_MAX_NODES } from './merge-siege-witness.ts';
 import { outcome } from './outcome.ts';
 
 import type { MergeSiegeState } from './merge-siege-types.ts';
+import type * as WitnessRules from './merge-siege-witness.ts';
+
+// A counting wrapper around the real witness: create() must not run it for a shipped level.
+jest.mock('./merge-siege-witness.ts', () => {
+  const actual: typeof WitnessRules = jest.requireActual('./merge-siege-witness.ts');
+  return { ...actual, MERGE_SIEGE_WITNESS: { solve: jest.fn(actual.MERGE_SIEGE_WITNESS.solve) } };
+});
 
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
 const difficultyArb = fc.integer({ min: 0, max: 100 });
@@ -100,6 +113,35 @@ describe('create (turn-based: the start state of a level)', () => {
           expect(isProven(create(seed, difficulty))).toBe(true);
         }),
         { numRuns: 60 },
+      );
+    });
+  });
+
+  describe('shipped levels (spec 8.1 and 15.7: proven when their pack was generated)', () => {
+    const solves = jest.mocked(MERGE_SIEGE_WITNESS.solve);
+
+    it('hands every shipped level the board its proven search finds, without the witness', () => {
+      solves.mockClear();
+      const boards = MERGE_SIEGE_LEVELS.table.map((entry) => create(entry.seed, entry.difficulty));
+      expect(solves).not.toHaveBeenCalled();
+      const searched = MERGE_SIEGE_LEVELS.table.map((entry) =>
+        createBySearch(entry.seed, entry.difficulty),
+      );
+      expect(boards).toStrictEqual(searched);
+    });
+
+    it('keeps running the witness for the daily and for any seed no pack ships', () => {
+      solves.mockClear();
+      const daily = create(
+        dailySeed('2026-11-03', MERGE_SIEGE_DAILY_SALT),
+        MERGE_SIEGE_DAILY_DIFFICULTY,
+      );
+      expect(solves).toHaveBeenCalled();
+      expect(daily).toStrictEqual(
+        createBySearch(
+          dailySeed('2026-11-03', MERGE_SIEGE_DAILY_SALT),
+          MERGE_SIEGE_DAILY_DIFFICULTY,
+        ),
       );
     });
   });

@@ -3,6 +3,8 @@ import { listMoves } from './list-moves.ts';
 import { playerMove } from './player-move.ts';
 import { robotsTurn } from './robots-turn.ts';
 
+import type { PlayerResult } from './player-move.ts';
+import type { Turn } from './robots-turn.ts';
 import type {
   Floor,
   ScrapShoveEvent,
@@ -27,6 +29,30 @@ function settled(state: ScrapShoveState, floor: Floor, caughtBy: number | null):
   return { ...state, ...floor, caughtBy, rescue: caughtBy === null ? null : floorOf(state) };
 }
 
+/** A move played out: the player's half, the robots' turn (none once the floor is clear), the result. */
+type Played = {
+  readonly player: PlayerResult;
+  readonly turn: Turn | null;
+  readonly state: ScrapShoveState;
+};
+
+function play(state: ScrapShoveState, move: ScrapShoveMove): Played {
+  const player = playerMove(floorOf(state), move);
+  if (player.floor.robots.length === 0) {
+    return { player, turn: null, state: settled(state, player.floor, null) };
+  }
+  const turn = robotsTurn(player.floor, state.cols);
+  return { player, turn, state: settled(state, turn.floor, turn.caughtBy) };
+}
+
+/**
+ * The state a listed move leads to, exactly applyMove's, without the legality check or the events
+ * list: the solver's apply, whose moves come from listMoves and whose positions never animate.
+ */
+export function advanceFloor(state: ScrapShoveState, move: ScrapShoveMove): ScrapShoveState {
+  return play(state, move).state;
+}
+
 /**
  * Pure: the player steps, shoves or waits, then every robot steps toward the player (spec 13).
  * Returns the next state and the past-tense events that explain it; a move listMoves does not
@@ -36,13 +62,9 @@ export function applyMove(state: ScrapShoveState, move: ScrapShoveMove): ScrapSh
   if (!listMoves(state).some((legal) => isSameMove(legal, move))) {
     throw new RangeError(`illegal move ${JSON.stringify(move)}`);
   }
-  const player = playerMove(floorOf(state), move);
+  const { player, turn, state: next } = play(state, move);
   const cleared: ScrapShoveEvent = { kind: 'floor-cleared' };
-  if (player.floor.robots.length === 0) {
-    return { state: settled(state, player.floor, null), events: [...player.events, cleared] };
-  }
-  const turn = robotsTurn(player.floor, state.cols);
-  const next = settled(state, turn.floor, turn.caughtBy);
+  if (turn === null) return { state: next, events: [...player.events, cleared] };
   const isCleared = turn.caughtBy === null && turn.floor.robots.length === 0;
   const events = [...player.events, ...turn.events, ...(isCleared ? [cleared] : [])];
   return { state: next, events };

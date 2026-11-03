@@ -1,14 +1,16 @@
 // apps/swap-guard/src/levels/swap-guard-solver.ts
 // The exact par of a level: breadth-first over positions, swaps as the cost. The search moves the
-// pieces as applyMove does but without its events and score, reading each position's strikes once
-// for all its swaps (the strikes come from where everyone stands before the swap). Its line is then
-// replayed through the real engine, which gives the final state; the levels contract replays it too.
+// pieces with applyMove's swapBoard, without its events and score, reading each position's
+// strikes once for all its swaps (the strikes come from where everyone stands before the swap).
+// Its line is then replayed through the real engine, which gives the final state; the levels
+// contract replays it too.
 import { bfsSolve } from '@e07/game-kit/solver/bfs-solve.ts';
 import { applyMove } from '@e07/swap-guard/rules/apply-move.ts';
 import { listMoves } from '@e07/swap-guard/rules/list-moves.ts';
 import { outcome } from '@e07/swap-guard/rules/outcome.ts';
 import { planLine } from '@e07/swap-guard/rules/plan-line.ts';
 import { strikesOf, struckSquares } from '@e07/swap-guard/rules/strikes.ts';
+import { swapBoard } from '@e07/swap-guard/rules/swap-board.ts';
 
 import type { Solver } from '@e07/game-kit/contract/levels.ts';
 import type { SearchProblem } from '@e07/game-kit/solver/search-problem.ts';
@@ -38,25 +40,6 @@ export function positionKey(state: SwapGuardState): string {
   return `${state.isHit ? '!' : ''}${String(state.guard)}:${squares.join('')}`;
 }
 
-/** The pieces after the guard swaps to `move.cell`, with the strikes shown before the swap. */
-function swapPieces(
-  state: SwapGuardState,
-  move: SwapGuardMove,
-  struck: ReadonlySet<number>,
-): SwapGuardState {
-  const from = state.guard;
-  const enemies = state.enemies
-    .map((enemy) => (enemy.cell === move.cell ? { ...enemy, cell: from } : enemy))
-    .filter((enemy) => !struck.has(enemy.cell));
-  return {
-    ...state,
-    guard: move.cell,
-    enemies,
-    swaps: state.swaps + 1,
-    isHit: struck.has(move.cell),
-  };
-}
-
 /**
  * The search problem of a level: won is the goal, lost a dead end. A search expands one position
  * at a time, so its struck squares are read once and kept for its swaps.
@@ -70,7 +53,7 @@ export function swapProblem(start: SwapGuardState): SearchProblem<SwapGuardState
   return {
     start,
     moves: listMoves,
-    apply: (state, move) => swapPieces(state, move, struckOf(state)),
+    apply: (state, move) => swapBoard(state, move.cell, struckOf(state)),
     isGoal: (state) => outcome(state).kind === 'won',
     isDeadEnd: (state) => outcome(state).kind === 'lost',
     key: positionKey,

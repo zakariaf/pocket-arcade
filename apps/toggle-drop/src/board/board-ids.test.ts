@@ -1,5 +1,5 @@
 // apps/toggle-drop/src/board/board-ids.test.ts
-import { CELL_UNITS } from '@e07/toggle-drop/rules/simulate-drop.ts';
+import { CELL_UNITS } from '@e07/toggle-drop/rules/timed-fall.ts';
 
 import { BALL_ENTITY, BOARD_UNITS, cupEntity, switchEntity } from './board-ids.ts';
 
