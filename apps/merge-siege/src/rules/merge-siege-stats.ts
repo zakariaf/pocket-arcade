@@ -41,6 +41,8 @@ export const MERGE_SIEGE_STATS: StatsSpec<MergeSiegeEvent> = {
       id: 'biggest-tile',
       labelId: 'merge-siege.stats.biggest-tile',
       aggregate: 'max',
+      // A tile's number, not a multiplier: S10 writes "512", as the design does (never "×512").
+      bestOfStyle: 'plain',
       measure: biggestMergeIn,
     },
   ],
