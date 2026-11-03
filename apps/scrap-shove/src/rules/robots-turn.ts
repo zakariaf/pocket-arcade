@@ -26,6 +26,16 @@ export type Turn = {
   readonly caughtBy: number | null;
 };
 
+/**
+ * A phase of the turn in progress. Its steps and events are new arrays the phase owns, so each
+ * robot's step appends to them instead of copying them (a copy per robot made a turn quadratic in
+ * the robots); nothing outside the phase sees them before it ends.
+ */
+type Phase = Omit<Turn, 'steps' | 'events'> & {
+  readonly steps: RobotStep[];
+  readonly events: ScrapShoveEvent[];
+};
+
 function cellOf(piece: Cell): Cell {
   return { col: piece.col, row: piece.row };
 }
@@ -46,23 +56,24 @@ function withNewHeap(floor: Floor, at: Cell): Floor {
   return { ...floor, heaps: [...floor.heaps, heap], nextId: floor.nextId + 1 };
 }
 
-/** The turn with the robot's step recorded (to equals its square when it waited). */
-function stepped(turn: Turn, robot: Robot, to: Cell): Turn {
-  return {
-    ...turn,
-    steps: [
-      ...turn.steps,
-      { robotId: robot.id, robotKind: robot.kind, from: cellOf(robot), to: cellOf(to) },
-    ],
-  };
+/** The phase with the robot's step recorded (to equals its square when it waited). */
+function stepped(turn: Phase, robot: Robot, to: Cell): Phase {
+  turn.steps.push({
+    robotId: robot.id,
+    robotKind: robot.kind,
+    from: cellOf(robot),
+    to: cellOf(to),
+  });
+  return turn;
 }
 
-function withEvents(turn: Turn, events: readonly ScrapShoveEvent[]): Turn {
-  return { ...turn, events: [...turn.events, ...events] };
+function withEvents(turn: Phase, events: readonly ScrapShoveEvent[]): Phase {
+  turn.events.push(...events);
+  return turn;
 }
 
 /** A normal or fast robot drives into scrap: it is wrecked, the heap stays. */
-function wreckOnScrap(turn: Turn, robot: Robot, heap: Heap): Turn {
+function wreckOnScrap(turn: Phase, robot: Robot, heap: Heap): Phase {
   const crash: ScrapShoveEvent = {
     kind: 'robots-crashed',
     robotIds: [robot.id],
@@ -76,7 +87,7 @@ function wreckOnScrap(turn: Turn, robot: Robot, heap: Heap): Turn {
 }
 
 /** True when a heavy robot cannot shove the heap to `target` (wall, another heap, the player). */
-function isShoveBlocked(turn: Turn, target: Cell): boolean {
+function isShoveBlocked(turn: Phase, target: Cell): boolean {
   const { floor } = turn;
   const isOff = !isOnFloor(target, turn.side);
   return isOff || heapAt(floor, target) !== null || isSameCell(target, floor.player);
@@ -86,7 +97,7 @@ function isShoveBlocked(turn: Turn, target: Cell): boolean {
  * A heavy robot that cannot shove its heap smashes it to pieces and stays put: no heap shields
  * the player for ever, so every floor ends (the bots found endless standoffs without this).
  */
-function smashHeap(turn: Turn, robot: Robot, heap: Heap): Turn {
+function smashHeap(turn: Phase, robot: Robot, heap: Heap): Phase {
   const smashed: ScrapShoveEvent = {
     kind: 'scrap-smashed',
     heapId: heap.id,
@@ -101,7 +112,7 @@ function smashHeap(turn: Turn, robot: Robot, heap: Heap): Turn {
  * A heavy robot shoves the heap ahead of it; a robot behind the heap is crushed. The heap keeps
  * the player's shove mark: a robot wrecked on it later is still the player's twist.
  */
-function heavyShove(turn: Turn, robot: Robot, heap: Heap): Turn {
+function heavyShove(turn: Phase, robot: Robot, heap: Heap): Phase {
   const target = beyond(robot, heap);
   if (isShoveBlocked(turn, target)) return smashHeap(turn, robot, heap);
   const { floor } = turn;
@@ -134,7 +145,7 @@ function heavyShove(turn: Turn, robot: Robot, heap: Heap): Turn {
 type Wreck = { readonly ids: readonly number[]; readonly at: Cell };
 
 /** Robots scrapped into a new heap, with the crash event; the robot is the one that moved. */
-function scrapped(turn: Turn, robot: Robot, wreck: Wreck): Turn {
+function scrapped(turn: Phase, robot: Robot, wreck: Wreck): Phase {
   const { ids, at } = wreck;
   const cause = ids.length === 2 ? 'robot' : 'heavy';
   const crash: ScrapShoveEvent = {
@@ -154,7 +165,7 @@ function scrapped(turn: Turn, robot: Robot, wreck: Wreck): Turn {
  * The robot steps onto another one: two plain robots crash into one heap there; against a heavy
  * robot only the other one breaks, on its own square; two heavy robots just stop.
  */
-function crashInto(turn: Turn, robot: Robot, other: Robot): Turn {
+function crashInto(turn: Phase, robot: Robot, other: Robot): Phase {
   const isMoverHeavy = robot.kind === 'heavy';
   const isOtherHeavy = other.kind === 'heavy';
   if (isMoverHeavy && isOtherHeavy) return stepped(turn, robot, robot);
@@ -165,14 +176,14 @@ function crashInto(turn: Turn, robot: Robot, other: Robot): Turn {
   return scrapped(turn, robot, { ids: [weak.id], at: cellOf(weak) });
 }
 
-function catchPlayer(turn: Turn, robot: Robot, at: Cell): Turn {
+function catchPlayer(turn: Phase, robot: Robot, at: Cell): Phase {
   const caught: ScrapShoveEvent = { kind: 'player-caught', robotId: robot.id, at };
   const moved = stepped({ ...turn, floor: movedRobot(turn.floor, robot.id, at) }, robot, at);
   return withEvents({ ...moved, caughtBy: robot.id }, [caught]);
 }
 
 /** One robot's step of the turn (a robot scrapped earlier in the turn, or a finished turn, skips). */
-export function robotStep(turn: Turn, id: number): Turn {
+function robotStep(turn: Phase, id: number): Phase {
   const robot = turn.floor.robots.find((piece) => piece.id === id);
   if (robot === undefined || turn.caughtBy !== null) return turn;
   const target = stepToward(robot, turn.floor.player);
@@ -199,8 +210,8 @@ export function stepOrder(floor: Floor, isMoving: (robot: Robot) => boolean): nu
  * One phase of the robots' turn: the moving robots step in order, then one robots-stepped event
  * (every step, for the animation) comes before the crashes and the catch it caused.
  */
-export function runPhase(floor: Floor, side: number, isMoving: (robot: Robot) => boolean): Turn {
-  const start: Turn = { floor, side, steps: [], events: [], caughtBy: null };
+function runPhase(floor: Floor, side: number, isMoving: (robot: Robot) => boolean): Turn {
+  const start: Phase = { floor, side, steps: [], events: [], caughtBy: null };
   const done = stepOrder(floor, isMoving).reduce(robotStep, start);
   const stepsEvent: ScrapShoveEvent = { kind: 'robots-stepped', steps: done.steps };
   return { ...done, events: done.steps.length === 0 ? done.events : [stepsEvent, ...done.events] };
