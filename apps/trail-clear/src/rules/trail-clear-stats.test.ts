@@ -104,4 +104,9 @@ describe('TRAIL_CLEAR_STATS', () => {
       ids.map((id) => `trail-clear.stats.${id}`),
     );
   });
+
+  it("asks S10 for the biggest loop as a plain number, the design's 9 (never ×9)", () => {
+    const styles = TRAIL_CLEAR_STATS.counters.map((counter) => counter.bestOfStyle ?? null);
+    expect(styles).toStrictEqual([null, null, 'plain']);
+  });
 });
