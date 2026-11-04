@@ -34,10 +34,16 @@ function recordAdLevelEnd(doc: SaveDoc, summary: { readonly isWon: boolean }): S
   return { ...doc, ads: { ...doc.ads, history } };
 }
 
-function hostWith(extra: Partial<GameHostDeps> = {}) {
+/** The tally game without a continue, as Stepstone and Toggle Drop are (rules continueRun none). */
+const NO_CONTINUE_GAME = {
+  ...TALLY_GAME,
+  rules: { ...TALLY_GAME.rules, continueRun: { kind: 'none' } },
+} as const satisfies typeof TALLY_GAME;
+
+function hostWith(extra: Partial<GameHostDeps> = {}, game: typeof TALLY_GAME = TALLY_GAME) {
   const { save } = createTestSave();
   const order: string[] = [];
-  const host = createGameHost(TALLY_GAME, {
+  const host = createGameHost(game, {
     save,
     clock: TEST_CLOCK,
     errorLog: { record: jest.fn(), entries: () => [] },
@@ -174,5 +180,24 @@ describe('GameHost.debugControls', () => {
       summary: { stars: 3, isNewBest: true, par: 7, levelBestScore: 1840, nextLevel: 13 },
     });
     expect(JSON.stringify(save.doc())).toBe(before);
+  });
+
+  it('offers the continue on the S7 loss frame only when the real lose screen would (spec 8.10)', () => {
+    const lostFrame = (host: ReturnType<typeof hostWith>['host']) => {
+      const opened = host.openSession({ start: 'new', ref: LEVEL_1 });
+      host.debugControls().showFixtureResult(FIXTURE, 'lost');
+      return opened?.handle.getView();
+    };
+    expect(lostFrame(hostWith().host)).toMatchObject({ continueState: 'offered', summary: null });
+    // "When no continue can be offered, the result appears at once (S7)": a game without a
+    // continue, or an app that switches it off, shows the recorded loss and no offer.
+    const recorded = {
+      status: 'lost',
+      continueState: 'none',
+      loseReasonKey: 'tally.lose.overshot',
+      summary: { isWon: false, stars: 0, nextLevel: null },
+    };
+    expect(lostFrame(hostWith({}, NO_CONTINUE_GAME).host)).toMatchObject(recorded);
+    expect(lostFrame(hostWith({ isContinueAllowed: false }).host)).toMatchObject(recorded);
   });
 });
