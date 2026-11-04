@@ -334,7 +334,7 @@ const HOST_WIRING = [
     pattern: /debugControls\s*:/,
     rule: 'debug-controls',
     message: 'the game host has no debugControls() (action=win-level|lose-level and the example screens are refused)',
-    fix: 'Return debugControls: () => controls with createGameDebugControls({ game, runs, openGame }) (game-debug-controls.ts): playTo, openExample, applyFixtureHud, showFixtureResult.',
+    fix: 'Return debugControls: () => controls with createGameDebugControls({ game, runs, isContinueAllowed, openGame }) (game-debug-controls.ts): playTo, openExample, applyFixtureHud, showFixtureResult.',
   },
   {
     fn: 'factsOf',

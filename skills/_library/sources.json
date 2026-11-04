@@ -5070,11 +5070,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.ts": {
-        "recorded": "2026-11-03",
+        "recorded": "2026-11-04",
         "sources": [
           {
             "path": "packages/shell/src/game-host/game-host.ts",
-            "sha256": "b4185b24b73b1a7153709972a1ffb3f6c5986b94d9d1f3fd2d5d391faaa89f30"
+            "sha256": "fd8774fa4488a8ff7ef8b9b4c349ffdbcf09e6a198be4afc519476422fc92c82"
           }
         ]
       },
