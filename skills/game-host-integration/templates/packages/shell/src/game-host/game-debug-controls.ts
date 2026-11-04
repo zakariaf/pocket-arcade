@@ -5,6 +5,7 @@
 // numbers on the game frames (applyFixtureHud, showFixtureResult). Only createDebugParts receives
 // them, and it gets null parts in a store build, so no player can reach them.
 import { fixtureHudViewOf, fixtureResultViewOf } from '@e07/shell/game-host/game-fixture.ts';
+import { continueStateOf } from '@e07/shell/game-host/session-view.ts';
 
 import type { ExampleStateId } from '@e07/game-kit/contract/testing.ts';
 import type { DebugGameControls, DebugGameExample } from '@e07/shell/app/debug-link-routes.ts';
@@ -56,8 +57,10 @@ const EXAMPLES: Readonly<
 export type DebugControlsInput<T extends ShellGameTypes> = {
   readonly game: ShellGameModule<T>;
   readonly runs: DebugRuns<T>;
+  /** game.config isContinueAllowed: the S7 loss frame offers the continue only when it is on. */
+  readonly isContinueAllowed: boolean;
   /** Test builds: pushes the Game route on the app's navigator; absent in unit tests. */
-  readonly openGame?: (params: GameParams) => void;
+  readonly openGame?: ((params: GameParams) => void) | undefined;
 };
 
 /** The example's final state: the game's own win or lose example. */
@@ -66,6 +69,16 @@ export function endStateOf<T extends ShellGameTypes>(
   result: FixtureResult,
 ): T['state'] {
   return result === 'won' ? game.testing.examples.win() : game.testing.examples.lose();
+}
+
+/**
+ * Spec 8.10: the real lose screen offers the continue only when the game has one and the app allows
+ * it, so the S7 loss frame of a game without one (Stepstone, Toggle Drop) shows its recorded loss.
+ */
+function offersContinue<T extends ShellGameTypes>(input: DebugControlsInput<T>): boolean {
+  const freshLoss = { status: 'lost', continuesUsed: 0 } as const;
+  const { continueRun } = input.game.rules;
+  return continueStateOf(continueRun, input.isContinueAllowed, freshLoss) === 'offered';
 }
 
 export function createGameDebugControls<T extends ShellGameTypes>(
@@ -85,7 +98,9 @@ export function createGameDebugControls<T extends ShellGameTypes>(
     },
     showFixtureResult: (fixture, result) => {
       const controller = runs.active();
-      controller?.showFixture(fixtureResultViewOf(controller.handle.getView(), fixture, result));
+      const isContinueOffered = fixture.isContinueOffered && offersContinue(input);
+      const shown = { ...fixture, isContinueOffered };
+      controller?.showFixture(fixtureResultViewOf(controller.handle.getView(), shown, result));
     },
   };
 }
