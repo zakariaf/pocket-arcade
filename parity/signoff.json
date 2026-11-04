@@ -16976,8 +16976,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "bf654c5bd3b3bfdc294eddf0ff946ba7497a2c4840d089332a98756baaf2d8a6",
-      "date": "2026-10-24",
+      "sheetSha256": "3e61a2f38dd9a0a6b124b037f13b3e075a74b583d2e31c4a2ec14f1b73a59350",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -16988,12 +16988,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "splash.tagline was a fixed 290 pt box; a one-line tagline now fits its text as .spl-tag does (e3a2586e)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -17002,8 +16997,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "71019f4ddc2d4f75aa794de1c0960fc79791048c66ba72601b91630207c0b68d",
-      "date": "2026-10-24",
+      "sheetSha256": "b65ae69e30b17ccbffa9411212933666377bbb3c8f013a0f4c535778b86c838b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17014,12 +17009,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "splash.tagline was a fixed 290 pt box; a one-line tagline now fits its text as .spl-tag does (e3a2586e)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -17028,8 +17018,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "daeebafef0541231f72e4bb2e0148fcc3ee392ec5b5f0bb52b86ba36f554cb23",
-      "date": "2026-10-24",
+      "sheetSha256": "8845aeb9c95135c3d331e5a779849d6ed4c3200547c55b441ac6d03aa7bb6a5b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17040,12 +17030,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "splash.tagline was a fixed 290 pt box; a one-line tagline now fits its text as .spl-tag does (e3a2586e)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -17054,34 +17039,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f4dde048cc484b2d8a30b3d1bb0fc646ab6a5e0bd6ac485e486e0b6b3151d14a",
-      "date": "2026-10-24",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "splash.tagline was a fixed 290 pt box; a one-line tagline now fits its text as .spl-tag does (e3a2586e)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "ios",
-      "game": "flockTilt",
-      "frame": "s2-language-choice",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "b7cd4c900e68e494fe199db1641b2f18b0df390d84dc74fd744e5525cb629cd3",
-      "date": "2026-10-24",
+      "sheetSha256": "b10a97df31c407781c2d16e161b0b4faed20525a645f0bb6b16429d292f89b22",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17099,14 +17058,35 @@
       "game": "flockTilt",
       "frame": "s2-language-choice",
       "theme": "dark",
-      "lang": "fa",
+      "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "8ff9ae71504863933528fd76ce325d355c12e7123615d2a9a1939ec4f665388b",
-      "date": "2026-10-24",
+      "sheetSha256": "7e1091414b4da2f40ae4d7baddcccd1ba72a0bdd0e5e3d15606fb0c133a6a3ee",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "flockTilt",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "dc8e27a9354aa1b198ec2a9660c508a6bdcc329757c349a4f3b159d5d3612bcf",
+      "date": "2026-11-04",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17122,12 +17102,12 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "cf140a4d5b5438d1d840afa26d8173fa39a642a85ef7c545935cc106c10ca7b9",
-      "date": "2026-10-24",
+      "sheetSha256": "7f408cda94e53772e33c56173818689d01de56419bd1e81525e432fe8b356528",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17143,12 +17123,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ab6b1ac0b579bfb911f187f6e0432837a0a526aa6331a002f682a9df3334354e",
-      "date": "2026-10-24",
+      "sheetSha256": "1bee9f1df43f7157a268367e36046284058c27701388a79147b34616a5c14e4a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17164,12 +17144,12 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "cd0bca502043202ec5b419bde90c03363ff25bf4c8a3832ebc181a4be0c4bf08",
-      "date": "2026-10-24",
+      "sheetSha256": "7b13b38b60dccb276120709a824c65340a7caddc5292f4ad8a3b5176d5578153",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17185,12 +17165,12 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ec25f099e12e741935fc7507f6d1f6dc11141cb05d0a4c1fefe3fa4c3defd5db",
-      "date": "2026-10-24",
+      "sheetSha256": "a741a0d09b0392599e420399c08cfa72e7cdcc9ffebc0b35b0632475c6badffa",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17206,12 +17186,12 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "450fbc9277814769f88619d26e40ce7dd77bd5b15bb54e3742108c392a69e5b4",
-      "date": "2026-10-24",
+      "sheetSha256": "e582135cbc6ad6eb5619f84a4780abb5a6ea17c531eea73ce4a664d832ab9a0e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17227,12 +17207,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f7f778305d4fa2d93c6eabfca8389253fd21419581ea91ca312ed1cfc4a12630",
-      "date": "2026-10-24",
+      "sheetSha256": "079016e8dc4e22ca93834615f18311e5980aae4c7b01e2460a1ff24506a39a9f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -17248,8 +17228,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "5a0adcd3cd8b35370d36b00badd4b927a81aa56a0990c8a94abdbf792ceb863e",
-      "date": "2026-10-24",
+      "sheetSha256": "25f4f48e806eb5c5d1e0824446e667567528f7024c1f2eab9cb822909b229e98",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17269,8 +17249,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "467e34e7fef3b09d815ba4367288d984378a8888c908bb26232f30f1a54f835d",
-      "date": "2026-10-24",
+      "sheetSha256": "f6894f490e36b4d86508c3dee3b1cd585e26f79720ea338093402f0cc979815f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17290,8 +17270,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4479bffc484f134efc7d46c2cb83c1c59c314b01b401262f641c35a1a42f1f2b",
-      "date": "2026-10-24",
+      "sheetSha256": "d65143968125a7a41302f62c0846004e49656fca3cd6c52fae4f4267d50cb179",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17311,8 +17291,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5bd9cb0540fd24fa68f0f1ebe4647b3e9e8e1014046adb898cda85d77c38841b",
-      "date": "2026-10-24",
+      "sheetSha256": "8acc5438fc46667de2ececbc7b3ec645da86cb53c5d6db1cbeb4f53d87249f11",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17332,8 +17312,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "b21b544c829a0c6be36a3645d50952f05740f7932d30c5eb43859d68d90d3c5f",
-      "date": "2026-10-24",
+      "sheetSha256": "1a307256d761344b84e17d5b88b94893e55a854d1c6dd5f5b6a65972487f3cb9",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17353,8 +17333,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1a18b5bcc4cf7bcba49bfe2e6307cb4842d8e18e2ff5f860edfd23eba3b7cc2a",
-      "date": "2026-10-24",
+      "sheetSha256": "4fc7c3d5d02b1920d6e19c99a7d29a1a73b5e7279b67b914b765381ba17ff3dd",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17374,8 +17354,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "e5f96aaeee6dd17a9446e9c9a5f03f2378c81c2c981c1b23e5dd87867ed93c06",
-      "date": "2026-10-24",
+      "sheetSha256": "16648fdebee6adfd3a74ff7d0d5cf418316d674899e8a44890fae9ebcf40094d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17395,8 +17375,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "17e6ac0dc82f3f9ec5e01e0ce1e356c040c36567cba610e985837c72c4549a10",
-      "date": "2026-10-24",
+      "sheetSha256": "bc4845845bcc681e9c912bfd66d1d8a6e59fbdba61c96c5d571d13679be803ea",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17416,8 +17396,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "ba9026b905434bd0b1a0fc0adf18c27968cd4990ac42444eb6ede500b9980e4f",
-      "date": "2026-10-24",
+      "sheetSha256": "dfe82c3a0d34a76fee0403fe0aa243bd169d0646c187171fc5b3e9abae74af6c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17430,7 +17410,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -17442,8 +17422,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "566d7e8188564f554a57ab40a91ce2494840648a289125710199dab6c26797b9",
-      "date": "2026-10-24",
+      "sheetSha256": "5c41fc312ee5cb27623b09bbee79424cd8d8f620bc8ea6acf2d8c5cc61f01278",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17456,7 +17436,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -17468,8 +17448,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c4d6f2be278c7862277c6469e53c40a2c2859f09a813d0297636870f8e794c1b",
-      "date": "2026-10-24",
+      "sheetSha256": "4014468343ccef282bb8688ef88b7d48987b89ab5176ca79e3092a4600162997",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17482,7 +17462,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -17494,8 +17474,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "364514dcf18011bd325779bea450f79da360abd8a6642bd129080fb2a5471318",
-      "date": "2026-10-24",
+      "sheetSha256": "ac8891d1ef444334ced5db9df60b2e68200949da0afce9e096c9c424300c6fa0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17508,7 +17488,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -17520,8 +17500,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "085dea95f98fc96a9bf2d6cab742254ba1b00277016b24f4112e6024fafc756a",
-      "date": "2026-10-24",
+      "sheetSha256": "ccdcc12d82e8107974ba7e014ec04be35ebb7f641c0e13a58db5ae15ba75b18e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17541,8 +17521,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 374,
-      "sheetSha256": "9ad36d0e0c1d4e42ab88282ed4f7de434347925b098c24bbd41df6951be2fe77",
-      "date": "2026-10-24",
+      "sheetSha256": "1e3c9883e812f3b582299b9904120b6d5f0dcab2fa35598ff09f9b217d17a382",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17562,8 +17542,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 741,
-      "sheetSha256": "e906bcc398883ddee696142393e3af42a0a45d1894071c6e5f2698b8fc0b072e",
-      "date": "2026-10-24",
+      "sheetSha256": "41bc680ec0bd6edf534ab3d422e0a885172947b704ffe5a0d3d2183440766524",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17583,8 +17563,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "a0ce4af5182833c85a8efb86e192d29b6d3ab4cc8005dcfb0d2433af7e5c874c",
-      "date": "2026-10-24",
+      "sheetSha256": "b114078a094d64d905410ac3a0f1edb431afb57d36a759fea840466c276ef488",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17604,8 +17584,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 418,
-      "sheetSha256": "67c73ddeacad08c18bfc56e19905f5a1ecb94527ca131ae101c7acfb4c54337b",
-      "date": "2026-10-24",
+      "sheetSha256": "d0916d9278c5acdb1cc49b1575d0df4f2d8b4c88d3d377d5292cb91c3e96627e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17625,8 +17605,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 807,
-      "sheetSha256": "ffebd7244a1d953d00b82298fa4e7c8f026394df128da0aeca33deb7986afef1",
-      "date": "2026-10-24",
+      "sheetSha256": "b4ed31fe1ca01d7b35b0b76c1cc02cdaef013e5239d765de761773d2a5ce3949",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17646,8 +17626,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "7ce5c22dbfdb6c6282ab2938dd93bebcf56c20245c36f406d12b8b4ec1555968",
-      "date": "2026-10-24",
+      "sheetSha256": "a68922d81f0897638c0bb715a92058720ea99a53a29d2ef585d1b632e3572849",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17667,8 +17647,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 374,
-      "sheetSha256": "20a178c5e346d06e69fba773e76605a18dba7cda04e3d0fdd36006b886c3b2f2",
-      "date": "2026-10-24",
+      "sheetSha256": "80f2a746219e6b72a01fdc39b7864bce2e0ff865912db4b6d8d6c317ba57ba66",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17688,8 +17668,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 741,
-      "sheetSha256": "183302c031771b50080a63fcc1410cb41409312c2dabff566054d1403816b3b9",
-      "date": "2026-10-24",
+      "sheetSha256": "d3bd120396ffcabd47874f96f0cb7d662eaa6829194f392783768318e99e25ae",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17709,8 +17689,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1fc96cf771e808d6a7a88941e4e458a1ad53a0aabb1bc3f96f6ba9229edf308c",
-      "date": "2026-10-24",
+      "sheetSha256": "192400f52da6b8a5375e2ea1cdcf4fa6499a712e186d9cd74a189c997a163c1e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17730,8 +17710,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 418,
-      "sheetSha256": "33f55a6f281c46094db118c23dfa27020d985aae4870f3d3ed733828c0248d68",
-      "date": "2026-10-24",
+      "sheetSha256": "c9d69b31077f51fc2730b19224b8dd59149438a36e74e4b89113723ae12aa092",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17751,8 +17731,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 807,
-      "sheetSha256": "c1dc1b1a40461ac9973bee1317138fa4fe5408bc6a37b9b77c9c9b8cb71f506b",
-      "date": "2026-10-24",
+      "sheetSha256": "07ec0f270a6e3e6073ba06603e4c2b5ee566c2e83369c7d5acf774ee80dafd4e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17772,8 +17752,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "deffb045da85da870e33dd09f4a4b3b565bf29bff84169733a69c2863be1eff1",
-      "date": "2026-10-24",
+      "sheetSha256": "2477ad9ccda55a7dfede5b19c01ae4764fba1ebbd5a2f93de89f6d8aa3e3e8ef",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17793,8 +17773,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "4b74bac63e2c5a36123d075601cfe5aca213583f618209a53ca03b4f27fdb90a",
-      "date": "2026-10-24",
+      "sheetSha256": "954fdd197e8e3661fc9f666c09d195d7400ed902a37302d1970b07ac48c22480",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17814,8 +17794,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "58bfce3431cbf791a2e5e2c031b13acb3967108cb9fb39833ec9484e45a7060f",
-      "date": "2026-10-24",
+      "sheetSha256": "ff413bc667d07a66b6f24e6a1efc2400cfb7b6fe35c72ef1bb20a149ad0afabf",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17835,8 +17815,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5828ce93393a2acba698415f0c67ce430de3df57cd25aba15df35e09d40383ac",
-      "date": "2026-10-24",
+      "sheetSha256": "ae3cbe0d61dcf606c85382d0656f51228752e3acbb9b9521e3195a0192ad231a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17856,8 +17836,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "3cf8df1a80e006d41ea8926b9b37706dc465062eb8f763e0dcfb0a38d97fb561",
-      "date": "2026-10-24",
+      "sheetSha256": "0593f4acf04537d9db1c7d06b86690a163b8b54d8598315c9c0f4a578ee105c7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17877,8 +17857,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "45d829c01ed0ab8d5bb134bad11c34a185da8371222a8d1c5e4582cb4921e191",
-      "date": "2026-10-24",
+      "sheetSha256": "a75940c1ccc63c20daa00dfed16698e28ad756d5a0a96799f5bc9bb53020d2b2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17898,8 +17878,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "b4f8d3ff802085b080f1a5622b471e15b1a539f17e8fdb7f7b35091c816d7d82",
-      "date": "2026-10-24",
+      "sheetSha256": "e1567a944facc284d4797fa71097b896bd3d924b63e2ea0a85c3e8e03f36fc20",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17919,8 +17899,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "400cdf236d11df16e5d615379d11691374e5d839ee4205d128c3c0f0c05c5674",
-      "date": "2026-10-24",
+      "sheetSha256": "8ceff9bdf60a65efb385117fac38eee2d2296ddeecc5df56310174b5b2cbb698",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17940,8 +17920,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "85bee39a1514a689ebced03b92025b07258a19ef9340c8c4ad41359cfb31c521",
-      "date": "2026-10-24",
+      "sheetSha256": "67e839169d85272ac126b65321ea1eb6baeb191c5f6303d8e3b0519a7bb0b331",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17961,8 +17941,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "d0381a5ac0ed0779a5abf92946e0391468c861db73240ca0ca4bf56782912334",
-      "date": "2026-10-24",
+      "sheetSha256": "bb97d00de0bb5942351d8b4542a1f498349e24f87614efd0d14fcb1ca0511de8",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -17982,8 +17962,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4a3ecc9e550842dcb25fe77187cb0baa0ce4099a4ae24176c9f8a5dc18149620",
-      "date": "2026-10-24",
+      "sheetSha256": "2c733cc40ff5343e699d6cbc5a816e430f47e48ea7bb9948fb79744348b55249",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18003,8 +17983,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ff4f8559d8ccd7e6eb7779c2266ce01b4ef8aa2df3ba571f9934a433ec06dfb5",
-      "date": "2026-10-24",
+      "sheetSha256": "36cf4f9e865d65e04f6961dccb6e6b17082bba19b74ff83afe8e6fa57f859702",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18024,8 +18004,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d91e6e610d6566cfbc81323287ae64ff414e6192c95215e8d61aa8fc77988c12",
-      "date": "2026-10-24",
+      "sheetSha256": "785d67fe2154c62f1b35c414c545e5d26b8e4ab42748c3138a9540bf2d55cfe7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18045,8 +18025,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 125,
-      "sheetSha256": "2b6e558bef3f00485b86a9220634c99479a114751f678b6a77baae54e6e27c7c",
-      "date": "2026-10-24",
+      "sheetSha256": "5ab595017e842f18ed310ff867c374a0ba61d9a42ca65a3d5cfa08c5b1f76cf0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18066,8 +18046,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "4aafa71b9398ea7d0182180ed7a5723f06a5837ecbf1d5ab605047759dfe0c48",
-      "date": "2026-10-24",
+      "sheetSha256": "957531288c4ac740986d4cde742d4ce3911fb0be6f86a0ddca975b9db596581d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18087,8 +18067,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 234,
-      "sheetSha256": "71bc053ad411517ffa476eecc356a28c763a2d7231fcb6621ed4602dc7842a59",
-      "date": "2026-10-24",
+      "sheetSha256": "347bceb7d848099f69250d50cf37fde2a23a52d1a9a623adec6ea8c002fde45b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18108,8 +18088,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "0e511788a88731c364769c6435a82cabc076d90f4a3c620ab89b32b9dca44037",
-      "date": "2026-10-24",
+      "sheetSha256": "ec69eede9b761c46c34600efa99a336388dabbd8f943d7c6a164315002a352c2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18129,8 +18109,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 125,
-      "sheetSha256": "794fc3eb13410df00e8ed6e62d702ef2d3cfe2a4d9c73fcadc3825e87e08bd7c",
-      "date": "2026-10-24",
+      "sheetSha256": "72ee56d634f6481543020c3fdc88ee1942c79f818a45d6b9ba49e8c1e532ddc6",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18150,8 +18130,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c9c1c50d6883aaf168faab1b65c8b57717bb730f20b9166fa9884c132f8cffc2",
-      "date": "2026-10-24",
+      "sheetSha256": "0a1903329c53ba00f899b15c467a52713f9580ea37da758425d1574015b3a816",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18171,8 +18151,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 234,
-      "sheetSha256": "5b452fd16d863581c87f57191c1f0e1ebecc2bf853fd77aa1ba90f822ee6d87e",
-      "date": "2026-10-24",
+      "sheetSha256": "dd7267cab189388b4ce4cacafabce8f43d25965ffc16ccd4198e0bf906160d56",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18192,8 +18172,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4a404ab57322b7b756f38963a64a9719cd05bdde353d876394719e82e7151899",
-      "date": "2026-10-24",
+      "sheetSha256": "91227eceabf884fed251f3fa09ac9845c0c1138f06a61e91bf69120c2d29fba1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18213,8 +18193,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 392,
-      "sheetSha256": "3381b24ca5baf6368b03527ef8c431e1a70c06c856d261fa17d13a9384c9b13d",
-      "date": "2026-10-24",
+      "sheetSha256": "90f9ab50402877e82bf566b1a2c17464cd9b595ad86200b55909432fc99aa30b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18234,8 +18214,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 660,
-      "sheetSha256": "c00ce9501442c885cc67d27aa45586805e092bcf1373f74c80e4a7599529a763",
-      "date": "2026-10-24",
+      "sheetSha256": "922fc089ad2204763ff8252e77210c4000c67eaa61e8edd024f3fb1aca43f647",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18255,8 +18235,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "cf6791a81e0e5529eb18fc218a7a8139ca625d4976f98edb5b398b70af525bb8",
-      "date": "2026-10-24",
+      "sheetSha256": "cdc230ab9d0e0b4eb1fe5c1b9009afa6a376147cccde91c79a3a41fab154280c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18276,8 +18256,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 402,
-      "sheetSha256": "130a05215aad54da1c9de847aa8648e1e740fb49ad1d423d832188c3709eb7de",
-      "date": "2026-10-24",
+      "sheetSha256": "eddbcf097fa290986838ccd0ac7df07b0d0455135fbdb06ee0d53fd6b33f42c6",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18297,8 +18277,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 761,
-      "sheetSha256": "e2f0ecaa9be092f45bbf768661ffcafd7cb1e0bbb52e92dfe30f1533d8b58a0e",
-      "date": "2026-10-24",
+      "sheetSha256": "668d67c91933dd7c6fb0d5eb5fe436fa8e0e7a9b528e4b5cb3bd6dfc69fd1b0d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18318,8 +18298,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "f9e59f64311f5bf3e1629c57b2aedf4f5ca4986ab0031595fb4f5f3521b0b209",
-      "date": "2026-10-24",
+      "sheetSha256": "ee210989af901f583196cbc09f5ff0a065dc6104fbe41d7fcb627c8445b82ff5",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18339,8 +18319,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 392,
-      "sheetSha256": "9b22024b2c433415e5d83a71139735c35a6dafb2cc7da835f6c3ec6e425054ef",
-      "date": "2026-10-24",
+      "sheetSha256": "90f93abbd3550ce482510308377813a2307ae2a95b626502b0b89dd390d337c7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18360,8 +18340,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 660,
-      "sheetSha256": "ab98ef94f9a85b77dff6f73d13e6a368e4625f95a33feed4dd313912e4e9fd24",
-      "date": "2026-10-24",
+      "sheetSha256": "e0a7c8b978f5b6e64885a085a33be99d3aee24d93cc2b2a03b9706886642bb3a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18381,8 +18361,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f7850f15ff0aae248c98d83cb65b7ce472baf6b952578aaf82d08a9c988a8605",
-      "date": "2026-10-24",
+      "sheetSha256": "37bb02af6c6b97621db6280ff7b22a04887e63d59f1d50743d54ef72db38ab67",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18402,8 +18382,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 402,
-      "sheetSha256": "ab745628a991119094b701fa163ad341925dadc488516dd732600e3233d101b6",
-      "date": "2026-10-24",
+      "sheetSha256": "105b1459264b387917ee59088bb3ad2a7137f727a24dfa9cd03bf5b8e721ce68",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18423,8 +18403,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 761,
-      "sheetSha256": "7c0c40269b8f68b1c53b637add9d0363f86241af9caf2a5eeab13ce549283852",
-      "date": "2026-10-24",
+      "sheetSha256": "9b259b5b679039277118b5893485ce05c766349fecd82c6241655fd42ada5b70",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18444,8 +18424,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "056080c1c11162accb46b68a9602df34012e64cc52ae499880b0cf5d112386c7",
-      "date": "2026-10-24",
+      "sheetSha256": "7a0a61baa9e022c036f1dc7e27ed3a905a977e80b2f56c95789e886d43e8a94a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18465,8 +18445,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 1056,
-      "sheetSha256": "85cc03f064e026f8eb9be82df6f7fc0f2a9a731c6666fa5889ff856b51bd8579",
-      "date": "2026-10-24",
+      "sheetSha256": "d637caf367a63bac60eb6df229060307d31b69de00407ca0bb56b20567349559",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18486,8 +18466,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 1086,
-      "sheetSha256": "5ec94d750b2201da694023c86eab7a04a97539d754a60e9b0915404fab3276c9",
-      "date": "2026-10-24",
+      "sheetSha256": "348f60ff1f9acd89e438d70ad4b337def137dbe6294d2223eb8eb9d2614e2c13",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18507,8 +18487,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 459,
-      "sheetSha256": "f163225305a756d66aeb98f0995439a55b6800224de94eb33129750bf5af80fc",
-      "date": "2026-10-24",
+      "sheetSha256": "f1e548fc995c957bd2e38821a78fb8d810f81db99d00b7d9ad7588f2b162d832",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18528,8 +18508,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "97a1bd75e7ae1f3799f0b772705f96c336fb31c6d123ea21960459a1cb3be9c7",
-      "date": "2026-10-24",
+      "sheetSha256": "1a92a73404ccfc92ff800a02a235d51c5560b23bd2e97ea7068261d1036c054e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18549,8 +18529,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 1042,
-      "sheetSha256": "278c36a1cee2c67feb811493cace35a7f7e5c446b95a001403f0900fd2b5f936",
-      "date": "2026-10-24",
+      "sheetSha256": "e6f74d67c460a295700183784a787ead478502488985bf00fefcecb998841266",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18570,8 +18550,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 1110,
-      "sheetSha256": "429f49a49077d0eeda656ea8cf805b123793552c281ec1d151d19c36c9bff1b6",
-      "date": "2026-10-24",
+      "sheetSha256": "592ec388c7e18a52a91388864275c5ee7e98bc65b13ac5de7e529177e320c355",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18591,8 +18571,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 475,
-      "sheetSha256": "27bc274bd7a9ab72ea9cf68ed53d75d43224ee147fdc7f9f5f0e3a9e5c4af570",
-      "date": "2026-10-24",
+      "sheetSha256": "03ce777b5cdb8a783b2a923aea1044a4fc9ce535eb9537dc2b1da89e3ebc6a4d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18612,8 +18592,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "af1784027bd2433e5b23c887760d2279bf7cd382749d9422cf3f1b2409cd369e",
-      "date": "2026-10-24",
+      "sheetSha256": "bc1f4f81669caf2945721dde2d54e855e023a6e51ac1bf4af4ba0cc924ef18e7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18633,8 +18613,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 1056,
-      "sheetSha256": "5b54c4b6171d2ba513bb4ad663cba8e44295674849e23caacdd44c0d893ce251",
-      "date": "2026-10-24",
+      "sheetSha256": "c2f059fce3f20e293a428cb9873c178e2b198eed78c0dbf6449edc540a54b55f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18654,8 +18634,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 1086,
-      "sheetSha256": "8f54071e0d34da51fcc1000a8f54efbd1b8f7f035c0a9dec4a86ac7e33e8b2e5",
-      "date": "2026-10-24",
+      "sheetSha256": "25a108dac9b83c5293c517a25bbf60e5f3a682162802be5c63facd80452f6266",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18675,8 +18655,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 459,
-      "sheetSha256": "84ae95583ae4dff9e0a1fe114d13acc08702b95fb8f311b047c9788fcd7b5853",
-      "date": "2026-10-24",
+      "sheetSha256": "039ccc1fe882b567acd4632663008d582b09cef76984f5157f47646197ff3643",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18696,8 +18676,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "d096a0e69bfe1020de340a67f48d4e00e4eba7388be201c7a4209be263a6bd3f",
-      "date": "2026-10-24",
+      "sheetSha256": "b77576e3cc6f38f0aec58b2f7614d69178f890660dec1cd7691a417af2d11c3a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18717,8 +18697,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 1042,
-      "sheetSha256": "685b6db3458a85db1382c54a9da21a8c167d80edf283bc91b0f4063b7f293011",
-      "date": "2026-10-24",
+      "sheetSha256": "d6696a6597e13d18ce57e8f94b9c2b4a8b1140047937e6f7f68484fee81b68c1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18738,8 +18718,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 1110,
-      "sheetSha256": "7a63422ca9648b2b376d1874856a667ce6933b6b920402b9652d77737ae4c9e3",
-      "date": "2026-10-24",
+      "sheetSha256": "bc2c311ac413ee076979d47fc65f288bb803bf9fae2e0c123ddc485427fa331a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18759,8 +18739,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 475,
-      "sheetSha256": "29e51a9ef1d7ec1bd4469be14455675149a8f5cd918bf7485ee12de9147b2234",
-      "date": "2026-10-24",
+      "sheetSha256": "961e99d61d10ed75680e2fae393231cc1dc1598de5ce9d966819ab26618ba1b0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18780,8 +18760,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "95b4ef6aec045777ff43766cc95feabac5a9a9ee3f486377df7155bf60cf6e64",
-      "date": "2026-10-24",
+      "sheetSha256": "38560254204f45ee612cc9e58b77c4392da364bbdc03917ea968fc9a7e8d2466",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18801,8 +18781,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "a978b139e6e5ac9e24b839b47c9456f9a7f70f0b707205333771f9ce7c0fff4a",
-      "date": "2026-10-24",
+      "sheetSha256": "6e2d2c25b0f3ec80a0a456c78d10ed95b5b0c38d11ef788f8a1f192322a3ecfa",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18822,8 +18802,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "6a064b0bf6bbb34bf692723a1617c228c897514f4367c1f5152345f87245610d",
-      "date": "2026-10-24",
+      "sheetSha256": "4d9773187bf1485e9337178e9f8f7fd200c3c09301025c6c53842195822a64e0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18843,8 +18823,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "3b02cd3cec0d5bec4d6e8b46bdc6709e8046be81797df80fe9451b5da3d6ee6e",
-      "date": "2026-10-24",
+      "sheetSha256": "f2c859f3c9c2031da9917cc1f64b53af3489254a4e09dbfac049639f7c55abcb",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18864,8 +18844,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "2d17f9844e6b111bbd5ffc5fb2100e50f87a87d1a4d24c2f83644fe30dbaa8b4",
-      "date": "2026-10-24",
+      "sheetSha256": "6f0668b3d53be93eb0690d2c8d68912138c0e6d9f960ffb4fa64dd2f40af10c3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18885,8 +18865,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "32ecdb66f8936ad07a2c428a2bb84a8efc2f73d3965c7ccae08d5a5a196e2563",
-      "date": "2026-10-24",
+      "sheetSha256": "d53bd5fdc957932491d917659bfd175e07b65de94fca16d7d799f1b39acda592",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18906,8 +18886,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "3470ab6c3f8adbd38250fb8f5ca8f502e5205a8031498d624fb1a7eed682a634",
-      "date": "2026-10-24",
+      "sheetSha256": "0ed9b50bb16f382c8ea3527f10b9fc907102c0e30942802e33ada4130477a374",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18927,8 +18907,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1e9a8d952dbc6582086b4470dc748d61291a87ac8b5f928b54036693453ed4f4",
-      "date": "2026-10-24",
+      "sheetSha256": "1145ded6b8b0af331f316eefc9cb5a02024188bc252e8151969c2a884676c039",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18948,8 +18928,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "f057d57455128f651f3ffe212f1c1f7cce7eb9e96230721eb478210a09a48db3",
-      "date": "2026-10-24",
+      "sheetSha256": "5dd9cb46aaa237330cc9969714b7ed121d60db7cd9de139018fef8f1dd690f34",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18969,8 +18949,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f9bc30d93b4747958c6560eb7a0b092640d74354e881146f5709df417f14c8b2",
-      "date": "2026-10-24",
+      "sheetSha256": "7ad2a2f5d52356f658fb522178f28270563aaa06b2eb1ab1a3d21d17ea73cb20",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -18990,8 +18970,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "9b939c8adc2d8f4a066fe60327fa10bdf50f8e19345fa6041021b2fe0dbb3aca",
-      "date": "2026-10-24",
+      "sheetSha256": "7110279a6c1daf90147cc6cafa2088bb50b9c057f64cf425e135dde9619adb2a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19011,8 +18991,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "08d47462570a6414924e8a752dd909d46b2653edd842917a85bfe07c85cf6af6",
-      "date": "2026-10-24",
+      "sheetSha256": "1b7b25d5698709e202bcfea04624c73949efc360636c865a21078e6cc7236c86",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19032,8 +19012,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "20f5ac756e8403abf015363d2f3f7fc8abb01f534e5c6d30ccf16c054f8aaa49",
-      "date": "2026-10-24",
+      "sheetSha256": "e54c2fcf8831f5c92d3ec094ea8a5093adfde0dac03f32550e8007915e97cabf",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19053,8 +19033,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "e519bc26e7a79fd41089d891fc7073d357dc0be4157f8a529546c644bf9e5906",
-      "date": "2026-10-24",
+      "sheetSha256": "37483e00c94a5141981e44cb06f7b8402678cf891dba2997c3215c883afa0cc3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19074,8 +19054,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "75b9269d228e270f11e48cddf48341d69251565018488db4fead279e9b8e72f2",
-      "date": "2026-10-24",
+      "sheetSha256": "45abebe60008424e776a26d7894174337527f2f5ece9406dd23eacdb3ff4b3d9",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19095,8 +19075,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "a0ed5bea3e6286b17df5d93e68bd7312b8e99883ac2b79b684aef1f231b1b2c2",
-      "date": "2026-10-24",
+      "sheetSha256": "fd6e3a06da96e972635acaefa9f385b0c07dfbe2af53a38f8878a5b177f4f649",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19116,8 +19096,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "bc0c4b678ebd0d0e818e351e52f050a38569b48607a7f317b104004cdf323fef",
-      "date": "2026-10-24",
+      "sheetSha256": "9e56e1d350836721257adf366155d1c73cf2f01b8c82feaf7c43831b477756ff",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19137,8 +19117,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "6af4240f1191f5b8fed2fad05d0ee9104d4d96525aa73337087c8ea61c9c3977",
-      "date": "2026-10-24",
+      "sheetSha256": "dbbd136a7ab5d44fe25afdb2c3d44b59ce508cd7548e9efbbd14d24dbc37805d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19158,8 +19138,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "e795d31c4fcef2aae309abc106b7cc396afbbb6e9d989568f01531d240702952",
-      "date": "2026-10-24",
+      "sheetSha256": "f5bf178c160bdfd3f5d9bc2e96a2124991c2c7d15b71adcd070d0557ca11d213",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19179,8 +19159,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1b0bdf3ab69647c5ea903de159acbf36ee5c6902649c3112c67095ea8183a8d8",
-      "date": "2026-10-24",
+      "sheetSha256": "99d47e199f6dc516bb7908b49d5471aab2c80226af52369d2a3dfe2e87ccd0ed",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19200,8 +19180,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "154ac0cf8f64b863c07b121f0a7e6d621e6d003e0769c45dde2e136c8fb2e777",
-      "date": "2026-10-24",
+      "sheetSha256": "72489a07f7e607f0dae23a5957eef7c4ee0529c32ba02e290e5e2027cb4b154d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19221,8 +19201,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1a2c44f6cff42343336cfa5e8c00689fc01754617dcce287d1497ebb29f9f81e",
-      "date": "2026-10-24",
+      "sheetSha256": "9b36de18311230d640f46eafb91f55c48232efadb2b863c1a13d15eb2301758b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19242,8 +19222,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "77c27951fe2167b549f43155479de6497f1ff1ed110a53d0e1e5dfe2423aa1bd",
-      "date": "2026-10-24",
+      "sheetSha256": "35fa777bfe6c940cee5154487f0b041cb3744f639bf9d13b57ae00772aa894cd",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19263,8 +19243,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c82000067410e631320d621e862d671704984c8d754688e31a62dd660ce4acd1",
-      "date": "2026-10-24",
+      "sheetSha256": "683424cc22b677042ebc492ffd18c3fb4b6d2e9aa011265a98fe134e19a8c732",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19284,8 +19264,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "7a19290cd4482423c8671cda6605d6f08b57baaee9b7db80bf4d5fbeb7bd72cc",
-      "date": "2026-10-24",
+      "sheetSha256": "45a506c94d9633976095a8aff8db0c946723537b531998b11e010f19f794a502",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19305,8 +19285,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "aa92762a1e312fd0fc9f2d4f2bc3f97b1e954909c9bc950b3d4195a1f64da663",
-      "date": "2026-10-24",
+      "sheetSha256": "5b9c5473072bf53223e92e996efdebd43d1155d8b8e6397195c44d59839110ce",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19326,8 +19306,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c8a28f9e1a5e49cda754e8e04cd94ff3da27a406fa7d6ba9ee8074e6aebb5647",
-      "date": "2026-10-24",
+      "sheetSha256": "991fec5b41790754676b7c987b02eebf9ceb4cb586716e9aed4f6898988b8793",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19347,8 +19327,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "99d5f4cf4c92feb0cf3e294390e29245302eade67826469ea77701c8962a54bd",
-      "date": "2026-10-24",
+      "sheetSha256": "2f8a3602c7e431888686eaab89c82205ef4bc903c02d6ffaa62bd3b3ee304f8d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19368,8 +19348,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "f09960b164fc6b1ea8029cba71696b3c84a78db21805ff4a7abe53aa0f73cea4",
-      "date": "2026-10-24",
+      "sheetSha256": "d070755f269382fe58e0c6e9e652922c1e387304b8efe53e62d7e0700a939cb1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19389,8 +19369,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "7b0c40d960922c1113c34f01523f4e39a0fae5416f7f3130a456f706c2932cc6",
-      "date": "2026-10-24",
+      "sheetSha256": "68aadb82e7637626cc3bd4d1a0e6e1b06c64a2ee8fafa4f9641f64aa7b1fe67e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19410,8 +19390,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "9d52a45d6a9ff5232b3ffe2855ac12ac509680679c338ac4c2183db20af71f09",
-      "date": "2026-10-24",
+      "sheetSha256": "800e4562a10eaa48cfa33b465edd6207dd64150ce99b3726202557e164d0a226",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19431,8 +19411,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "b19465368798f0ce4b2e924c615887cbbbc2d7ef03fea05ae2306f8a51a3b109",
-      "date": "2026-10-24",
+      "sheetSha256": "8ee1dd1617deaff9f696f549ce7b77cc7209b8ade60519eaaf25b7d1a2090163",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19452,8 +19432,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d25de8b75a368a2ad860006449a7dda810ac68a6e7fa5d6f6354a6fa601935a1",
-      "date": "2026-10-24",
+      "sheetSha256": "0e9c7f5e29a31048d7377f905924a62108d66b53dfd057e6777f2c872fb87e9c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19473,8 +19453,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "0c6fd0e0597dda661f21c0b8ccfc2016dc761194b0dc484e757aa531f26ef3a8",
-      "date": "2026-10-24",
+      "sheetSha256": "0092b59f44e3d4c7eb67fb0112817bd562850789a73da8aa939af4c2d09040ca",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19494,8 +19474,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c5768a99ed1d3c1a1e2df94fe501aec41b90e1afa77f1c303ae5196643916aa6",
-      "date": "2026-10-24",
+      "sheetSha256": "e24f02692743922c0cf950c8c8947bdfd9fd729cc57c98a388e1b09319f0e265",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19515,8 +19495,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "9fbe5a1c0f91890f6a3b5ba2c00af39083e2483a6d3a73a4686ecd878f4d1d77",
-      "date": "2026-10-24",
+      "sheetSha256": "ce079869e94e4430917cea6b6164453cdb2f76cb742e533e907830856123d259",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19536,8 +19516,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "59f2046334e4f7f1d753c2989e456a1753c7470ebd1bfc4ecaac3ebd05a8f066",
-      "date": "2026-10-24",
+      "sheetSha256": "12b2c805c08d997b8da389b55e2a38ade9002d75947f78b161c965d0c543581e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19557,8 +19537,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "86c5b4761bc1b83ded56e977194d5ef76bc0d14448b69292ae451e78a90dfef4",
-      "date": "2026-10-24",
+      "sheetSha256": "6a067b4e4552e617daa995e365dba4135f525e933abc14667448fc9c366cf348",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19578,8 +19558,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "fe203da852a676c78f08cc8fe7b0a4a96e3c983738d712dfc58b876a509cc90c",
-      "date": "2026-10-24",
+      "sheetSha256": "472599a9b7f133c68d22225cf6c800d912fa49fcac277a24642d01c1aef749cc",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19599,8 +19579,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "6be77d7d051eba67a483917ca3512357fdf0a4f46608c973ce51153094e14a9a",
-      "date": "2026-10-24",
+      "sheetSha256": "f822ffd8cbd62324d8c77b437f220e2858f4329fb3ab1256e00e1eb725c08c21",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19620,8 +19600,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "a9c542e9b729314e6132bcc1755102a9f2f35349c92575326fadc29200749952",
-      "date": "2026-10-24",
+      "sheetSha256": "b21093d6dc41016a718ad7314a2412db1f25f8222f2f66ab70efe4b21a828dc1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19641,8 +19621,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "8a7511472c450d649518ee9d8013f1186d5edcac0c5d991a221506e5e7062f92",
-      "date": "2026-10-24",
+      "sheetSha256": "216cd8b9ba26d3196a4bcb501f6c2cce24475b4ba5c22ba8746438a8c2f3b44f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19653,7 +19633,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "In fa the dialog card's lower edge differs by a 1.3 pt band (committed waiver: the S14 restart card in fa); title, body, keys and icon match.",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -19662,8 +19647,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "be80b83bbe13b40156cea942907046ed7afa0117ae0bfeeed01b339c82139160",
-      "date": "2026-10-24",
+      "sheetSha256": "87d841f4647663711cb148d362fa1c4075bcb3b4ed5490b9079935a6acb7fc71",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19683,8 +19668,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "fffbbdeefec4575cc58b3a015cbdbda8c534e6a9f66c1d7291967df59fa1532d",
-      "date": "2026-10-24",
+      "sheetSha256": "aca6adff766280d27510bd3521fc8221590d8035901cd0e0b7352ffec1db4119",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19695,7 +19680,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "In fa the dialog card's lower edge differs by a 1.3 pt band (committed waiver: the S14 restart card in fa); title, body, keys and icon match.",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -19704,8 +19694,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "57bc6dd4a08d23a6ae0596840d9a7ba410e1d191dbf0e923f9192422f917d316",
-      "date": "2026-10-24",
+      "sheetSha256": "379158367d9574d3d937fb1773b4b52c8d0385f6f1d426b5847480209e3d5710",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19733,8 +19723,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "1fefb6babe8b2b7c5438529e5fa989df0cfbbf04b2210c2bdc4c53ff55e98a45",
-      "date": "2026-10-24",
+      "sheetSha256": "cd5cac1188ae638584ee85e3cc128a8ddf921b8a82c7256fe3c87b5d26360478",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19762,8 +19752,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "194adc9f9255bd5bad6d20267918d99d450e8d60ca1a0c1ae0efb27cf675c326",
-      "date": "2026-10-24",
+      "sheetSha256": "4ced5893a0ada415408d7e3e8eca998756879a84d0ae820abebb8ce8353d8bc4",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19791,8 +19781,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "8ba4202a9088ea6a6630cb362ad349855a28fe37d0b2a25a4dce3353170de5c9",
-      "date": "2026-10-24",
+      "sheetSha256": "3d56582ca227584726d82a3bc7e508c81affcf303d10c8e999110e51a01bb95f",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19820,8 +19810,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "dda7b6177140f122dfc078c8a1560cec04d0960084c081c8495e344864d08787",
-      "date": "2026-10-24",
+      "sheetSha256": "1828afe4c5d060ae588e965f2e5a3dda09e4e32918d4c5ba4834e344a85fb43e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19832,12 +19822,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "How-to stage was 16 pt shorter than the design: Flock Tilt's illustration is 320 x 222, the board now gives exampleAspect (flock-tilt-board.ts)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -19846,8 +19831,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c48cd346e13e6506da2f8c9f671eea225fc07a098411ffa62f9575de468e7bde",
-      "date": "2026-10-24",
+      "sheetSha256": "6c6a1264d23c5ed2efd30ab503764528bebe3adecb934860a96fbf0005fcaeb3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19858,12 +19843,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "How-to stage was 16 pt shorter than the design: Flock Tilt's illustration is 320 x 222, the board now gives exampleAspect (flock-tilt-board.ts)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -19872,8 +19852,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "320e87da648ec0e2c9d9e9843f88ed7e0591bfd756a473590457f2715135f422",
-      "date": "2026-10-24",
+      "sheetSha256": "81aa934559dc1066c406e2cd52ebc6cfd3972b5aef5ab402bc7d81501d0f940b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19884,12 +19864,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "How-to stage was 16 pt shorter than the design: Flock Tilt's illustration is 320 x 222, the board now gives exampleAspect (flock-tilt-board.ts)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -19898,8 +19873,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ffb020d5101efcfc248d3dcdb175bbc0317e4e7cbdb7eb3d93b6166d6d42ef85",
-      "date": "2026-10-24",
+      "sheetSha256": "147c426fa450dbd13e681f8fef80d4d38ee62c7e8516f783bb00af2d545e198c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -19910,12 +19885,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "How-to stage was 16 pt shorter than the design: Flock Tilt's illustration is 320 x 222, the board now gives exampleAspect (flock-tilt-board.ts)",
-          "status": "fixed"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -19924,8 +19894,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "58a3a4b644c4ba1a7ee1a2d8e69627b43691c2abd8f976beb1c71a68e3cbd29d",
-      "date": "2026-10-24",
+      "sheetSha256": "2250f73fcc0118a05ea63b1ee143b986a2628ed03b12821a894a3718c73fdc37",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19939,7 +19909,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -19948,11 +19918,7 @@
       },
       "differences": [
         {
-          "what": "Pack 2 Locked sticker dropped below a one-line heading; it now stays beside it (shell fix 94796bd5)",
-          "status": "fixed"
-        },
-        {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -19964,8 +19930,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "a838f6a59f89fcb16dbeb1dd6569f0a9450d1d1a2476962dcb01cd509f54affb",
-      "date": "2026-10-24",
+      "sheetSha256": "a08fcad781062ca769a3fa5377a9181af8536c26f720031f5b8f0493a1aca882",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -19979,7 +19945,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -19988,11 +19954,7 @@
       },
       "differences": [
         {
-          "what": "Pack 2 Locked sticker dropped below a one-line heading; it now stays beside it (shell fix 94796bd5)",
-          "status": "fixed"
-        },
-        {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -20004,8 +19966,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c448a93c04e969a36e340d8a0ca6070a70c85d4e9fd59a410d1e37fbed838aa2",
-      "date": "2026-10-24",
+      "sheetSha256": "5f2dc742c8e19e25cc3d665d56cd5a74b50b3ee6e868dc5d02475234ed31a5bb",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -20019,7 +19981,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20028,11 +19990,7 @@
       },
       "differences": [
         {
-          "what": "Pack 2 Locked sticker dropped below a one-line heading; it now stays beside it (shell fix 94796bd5)",
-          "status": "fixed"
-        },
-        {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -20044,8 +20002,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f95709195b905313006793f780ff3e4b75aaf61d9d32d409c3af61b76fd37098",
-      "date": "2026-10-24",
+      "sheetSha256": "c77afdb1e87ddd97489b786c965d8434987dcd909a1be1933e72d885999036ea",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -20059,7 +20017,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20068,11 +20026,7 @@
       },
       "differences": [
         {
-          "what": "Pack 2 Locked sticker dropped below a one-line heading; it now stays beside it (shell fix 94796bd5)",
-          "status": "fixed"
-        },
-        {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -20084,8 +20038,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "94c54f8e86e6e9f2a44a7522308b4be25d47214e50d8fd5d052582aab3f2d4d5",
-      "date": "2026-10-24",
+      "sheetSha256": "cb626e1d24cf02cb3a63b665b1940db4201278ccc22d75c2daa578da27e4817d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20098,7 +20052,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -20110,8 +20064,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ac69d75ea83b1495479a6d5e9fedfbf2fbaab00be784b17d71d10324d167f6e1",
-      "date": "2026-10-24",
+      "sheetSha256": "10d325aed948f8017f1198a1bdd733fb751245ea82d6883c89dc5cd9fcfc2b76",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20124,7 +20078,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -20136,8 +20090,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "0506d7d75e7e769609b966afbeb92169d66ecfaa76c6a1bffbb4048867d49502",
-      "date": "2026-10-24",
+      "sheetSha256": "94d4d42b4664879e63576a0219ad69c70023225708771c5b0db98972df6aec17",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20150,7 +20104,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -20162,8 +20116,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "7a5d7d155d78a2917cf1123050e9ead48a83a2d37a5219925c3b571d2fd425dc",
-      "date": "2026-10-24",
+      "sheetSha256": "ac3d959b97cf693e8d96bb70ef726d50ee08741a3faeeffc69333151b4107244",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20176,7 +20130,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -20188,12 +20142,12 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "11fe1e6c51a2b4958071ecfed024ddda76f537f93d0baf3868d5708cb7bd594a",
-      "date": "2026-10-24",
+      "sheetSha256": "502fbf38c45db3c325bb17bb56246718d89317955bdab60a71e1a9d387b8216b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20202,7 +20156,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -20214,12 +20168,12 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "d6402807939d43ce118bbf529dfaeb05d57febc3298296a774639e87653c0087",
-      "date": "2026-10-24",
+      "sheetSha256": "b76cc3d0241486565332d200e4b52a0171dc6634e0a3fa998fb64b93b7b41bde",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20228,7 +20182,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -20240,12 +20194,12 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "af08027b6b4b74b038ace7bdfef84bb631bc353eaacfc2dd31e68718efab675d",
-      "date": "2026-10-24",
+      "sheetSha256": "e1b85a1732318364efcad21dd1e277db8393588dc1de6c9c95fea37c811b3fd8",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20254,7 +20208,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -20266,12 +20220,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "46b96b4e009cee349731ec8bb829067f22b33587bf8ebe285e7fe0f5b0f4bdae",
-      "date": "2026-10-24",
+      "sheetSha256": "0063ada7dfd0252488d16b533eaa017fcfef52da320a985e711aad7cb5f2fbdb",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20280,7 +20234,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -20292,8 +20246,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "efaf6035edf07c21eb3b8afc011101e8d0a84edbdb32c5f4bf3f26b06440c7bb",
-      "date": "2026-10-24",
+      "sheetSha256": "6f4f13efe1028e11bf4d4bb1978919b25857955a6cbf5b936aad555d0440d28b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20306,7 +20260,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
@@ -20318,8 +20272,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "90748b6d5f07d6928d4c6ebd3c112774a30dc27e0cd695d032d92ee952a66f6f",
-      "date": "2026-10-24",
+      "sheetSha256": "f7ea2fd8f3238112c56a5b8ed7e181d3b26b0ae08058bbee9691969d9984dc18",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20332,7 +20286,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
@@ -20344,8 +20298,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "97a85527955e797944218880d2754ad77b445059bda678ec8f17a6471728fdc9",
-      "date": "2026-10-24",
+      "sheetSha256": "aad7bfed6ccbb29a7b67d823cea64e7ddfd8559ece84c454c8e8d3e359acf582",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20358,7 +20312,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
@@ -20370,8 +20324,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5cc01f1b529e9971a6a2b45f10066c7ab57ad7eb14dd616a20039aadb4bf9c1a",
-      "date": "2026-10-24",
+      "sheetSha256": "07487e4b56b8bb00326406d441f3c97b19a4b06988f7691d03f0e40262760618",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20384,7 +20338,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
@@ -20396,8 +20350,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "7fea02c4ecfc46b3b6e1c6d428b399867f28e6fa943d86c11e3660f75bafd452",
-      "date": "2026-10-24",
+      "sheetSha256": "4c81611f67c264a3c94492644ae7603005ec9a2eb33ba505bb4f9086bbc7da90",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20417,8 +20371,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "142ec7cf8628f49a06707400f3e3ba121e9a219bf7f55cb34ba05b2a4e470b0a",
-      "date": "2026-10-24",
+      "sheetSha256": "5efdfe398638cfae9c2f0b1a9131ff07c6eb3fd6cadfbc0a2771fcdca4de9662",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20438,8 +20392,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "5729159ace17586b5f5907b19e7ec2e73d50d4a3841949dfe352fcdba45f215f",
-      "date": "2026-10-24",
+      "sheetSha256": "7559c51d923e99e141823fdbbdc9310d2569fef7a45960189a25b3f68d556b92",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20459,8 +20413,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "98d2420cee68c5dbecc1d9d3ad7cae55c2bddc150d966cfab1d556060d24a88f",
-      "date": "2026-10-24",
+      "sheetSha256": "881c0c3ed000995a48cd8d3e62e2c2601cc60e0c246d4dd5ce012ee7bf00f5e5",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20480,12 +20434,12 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "14a3307d345a7342db7029fd8551d00c754e2ff25483a68867a9913ad03d1e92",
-      "date": "2026-10-24",
+      "sheetSha256": "000c8a4cc2dff91b02a8c3e08788e861c9bb0e1fa7af6ac005e9a0f4ddbc7752",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20501,12 +20455,12 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "cf3006df96519613b64b5fdbe4e0314472711472f0f2306f9e8364a35e6f6fce",
-      "date": "2026-10-24",
+      "sheetSha256": "7ac3a735152606a7545a91035cca4a5875d2dd586dc1f395393794c3fd4d3e6f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20522,12 +20476,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "0ae6677d58a73c9b81b88757c991a699a677e0afc197c7b184f183f1e604f997",
-      "date": "2026-10-24",
+      "sheetSha256": "4b12f9e22a1cd175ed8218a94fdc0fdf8bcf92d6482656043da332ce48dffc02",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20543,12 +20497,12 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "3de21e6e8ee437920e2d7f62d04c0e900492dffbb3724922bb5f5037d0a96de5",
-      "date": "2026-10-24",
+      "sheetSha256": "20a13a67c6f3ada1ae9c991466b4afccea89319a06ef454973ffb0a03fa246f9",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20564,12 +20518,12 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "142c6f34611426bb7ec0acde291e4d47e925bb11cb2685857dff67793892c9d4",
-      "date": "2026-10-24",
+      "sheetSha256": "0bba5720a7d9f11c42465c03e58b6b4d616f1b06cbf15923943fed88669e0002",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20585,12 +20539,12 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "4b2434e8b91ae6022a538e8ef019ca2822976a1d69ed58b786893cc1dfb8b478",
-      "date": "2026-10-24",
+      "sheetSha256": "83db2d605c2f10879c8e565ff1a63bd5113a8ed7552077f9412a6bb79e12cf8e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20606,12 +20560,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "d7a2e79b69210c83a7325b41363708182978b6d9d80c53ff93066c271980afe7",
-      "date": "2026-10-24",
+      "sheetSha256": "daac84fff9353edbda32c1236dc4ab769b0932b0b3d7389734a03f21b92bf0da",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -20627,8 +20581,29 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "23036b5585658ef33149d89281169a46db0889e255a591b02cd5c930c1728239",
-      "date": "2026-10-24",
+      "sheetSha256": "76fe144787be3c89a4e79009b8fd9e4fa7a55cc47c726ba3915466ca13077c24",
+      "date": "2026-11-04",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "flockTilt",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "72fcddeb09e096bf34f98e05d98e9b0b38dd5be45257587aecd43d9ccab2839a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20646,31 +20621,10 @@
       "game": "flockTilt",
       "frame": "s4-home-premium",
       "theme": "dark",
-      "lang": "ckb",
-      "scrollY": 0,
-      "sheetSha256": "a79139dd880fe69a0273ae01fc3ae9bbf21b75d643d7ff287c3c2887b471bd8b",
-      "date": "2026-10-24",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "flockTilt",
-      "frame": "s4-home-premium",
-      "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "3e0ae601b0829ad6e8946bd956c175245f127f0b7e95be55c3b4bd03f08cc89a",
-      "date": "2026-10-24",
+      "sheetSha256": "064bf660fb50ae4d08fbc723ac9c0fb99bb27b5d1254dd2f4ec66484cc30e342",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20690,8 +20644,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "94c893a092d8b8f043bd6de4c1cfc677fe9c0c6da0234d50e77c265fece7b09f",
-      "date": "2026-10-24",
+      "sheetSha256": "1880c23db3637d763a13d2ecb34f402c84b70bd7bf7613aaf83cd0807f5442f0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20711,8 +20665,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "77feb5153588602447e5c3c1936deefc40374bf4cc017424201dd8c39291ed63",
-      "date": "2026-10-24",
+      "sheetSha256": "9c54de081110112e41e3ed41fb273d00415ebff406c9b0205f5a3695c57cd78a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20732,8 +20686,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "62a4f5386c72dbf52735f5b1957bcb14cb0b37af840a5167933389b45680bb2a",
-      "date": "2026-10-24",
+      "sheetSha256": "85e1bf55f83bb80bc71f36b058ed09d9c49d5c3416e1042668b7b5cbceafcd27",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20753,8 +20707,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "9a139d5f5f88a84ffcada92ce252d4a30c3cdabf61eec8a9382a6607fa1c3dfa",
-      "date": "2026-10-24",
+      "sheetSha256": "bd3a8dd8d9666801c9ea8e31692b08a0800275d1f9d6bc58bc224b703e84f0a4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20774,8 +20728,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "a577413c61a36842cad437a01dac5b8c5a22c7185ac361ed34b1134f85a53839",
-      "date": "2026-10-24",
+      "sheetSha256": "32c956c9165a6f81feb2d78455e0f688e30c69aa16fffed82a9d240750f6b645",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20795,8 +20749,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "d28ef9c0ef71066b26dc26b6b032803c4914a0cbe85f2712acaa56d13e971b77",
-      "date": "2026-10-24",
+      "sheetSha256": "e9ccb06309397ed159cb0c0ce01ef18162fafd0f4caffdaf5942aac0b10e847f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20816,8 +20770,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "66726f0ed81ee0e131705ec68a8c4f51e35d16c848a85c56acd0357ffdb408a8",
-      "date": "2026-10-24",
+      "sheetSha256": "be4ce378888ec41b31d0682b7f4c274cf4a7334ea7f81657d3a8c2a4842c142d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20830,7 +20784,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -20842,8 +20796,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "611aaefbdbcfbdb3e843d4db8f73d7a873b2fcbddd8d8852f4740a82111c4b5f",
-      "date": "2026-10-24",
+      "sheetSha256": "0d7e0248338036f55d771065a3e8ca2e9440d9373b4f9c97fc45b57e396af604",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20856,7 +20810,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -20868,8 +20822,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "00db3542e826b16c406c28fcb0f6bf2d4aad3c837ee399b332d5d12f2297ec17",
-      "date": "2026-10-24",
+      "sheetSha256": "09808f9a765f7121b71b45a2bfa30825c46756938ebce1345034fcd973524d7c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20882,7 +20836,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -20894,8 +20848,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "cf9f246f8dfdeba30e3d3af775d26243efe642d1b0ecae3781426b1d16291623",
-      "date": "2026-10-24",
+      "sheetSha256": "2509514a62de6d2641394be23982dfc539cb676426a8e5b815266eba8390da86",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20908,7 +20862,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the missed and today day cells: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Missed and today day cells: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); calendar, streak cards, strip and legend match.",
           "status": "waived"
         }
       ]
@@ -20920,8 +20874,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "52a89acfb14850cc7ad3d8a29bce560b5d01569bd60002e5a216d8bbf0432202",
-      "date": "2026-10-24",
+      "sheetSha256": "2b4e9219f813d1c9f00e1d15e3534950a65d901927e55ebd2a93794b002f3597",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20941,8 +20895,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "2788c277aba46160707ea7fb410c4d2511c8173ec4e7d7c3b83be3ac1a8613f3",
-      "date": "2026-10-24",
+      "sheetSha256": "304ed47f0fb38bc63ed7c31755c8dc2141f67b117343c4ebc30d083afd9710de",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20962,8 +20916,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "33fc71558fd88855ad8e342e291aa373d29d332538e569470487bb894e4a8cde",
-      "date": "2026-10-24",
+      "sheetSha256": "9e165fd932f14542259d40dfcad012954610adcbae79372fc533b7a313b9b146",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -20983,8 +20937,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "00f1e1ed685abaafef1c820d4db996b342a0d96750c6d0913d3ca89683cecf0e",
-      "date": "2026-10-24",
+      "sheetSha256": "1e9b8b9f17de6598e77f1f0e8bead3f9499fbd634f3dd4db9887f022368efb62",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21004,8 +20958,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "a92b1e6c29c28e56bfde6fc6a9b5586888841e7236e0c1d4b4f02b639e7187b5",
-      "date": "2026-10-24",
+      "sheetSha256": "35801e700acee9996d0ee624554f917b5e905d8d245444eccfaafde21056bf7a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21025,8 +20979,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 418,
-      "sheetSha256": "316471151fcb3ea48129e1171812e231b358cc4daaf5c6ac7643c8294bacc7e9",
-      "date": "2026-10-24",
+      "sheetSha256": "2c3ea890c79b06c7dc85660108a242f3db64d6f1aee0517abc49a9bdad94b78f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21046,8 +21000,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 807,
-      "sheetSha256": "09fdf0f0b6d45bb31e5ec96f9094b062f044adbf25843e075610b113d234f33a",
-      "date": "2026-10-24",
+      "sheetSha256": "f45578e133fbb1ffae5750f64a54f7628c72e9023e286ed86471b0d89be2f5a9",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21067,8 +21021,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "86450bb6f05c252b72e1fba11d628b454d74c336b893774baad78703857af071",
-      "date": "2026-10-24",
+      "sheetSha256": "d5c732829f59ba49275e5bfc0ad5745f109893ffc46034b156d4da2247d85864",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21088,8 +21042,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 407,
-      "sheetSha256": "4121bf3c549bfcbc3de5a78c68754b3eaa1f5a88b1f05deef61f9e60bf779fc9",
-      "date": "2026-10-24",
+      "sheetSha256": "1856b6634796e66906db694a1531d9ef9b6cf535d92e67dbbd7a2c0f994c0cd2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21109,8 +21063,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 774,
-      "sheetSha256": "de525a510d1f6d83e4f01251844bbb3998d19a5752c8cb0843a32dde51296c2c",
-      "date": "2026-10-24",
+      "sheetSha256": "b8af28eb4b144089652e6d63ca1187c6e802adea87a1084b3a701ebd00443a05",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21130,8 +21084,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "1fe53461fac206e421c9db8353cc2ec26dd9122169fec44fb39c888a93a1a21a",
-      "date": "2026-10-24",
+      "sheetSha256": "593e5b3e522b00dd550fe9679a22a3ea09a17c1de56315ab6d063a16dc3d3ba8",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21151,8 +21105,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 418,
-      "sheetSha256": "3683e30d0d2f4e4e1dff5c155ace08a48a63bd628c701f8dce320977d6587a69",
-      "date": "2026-10-24",
+      "sheetSha256": "ab9e47c8a223f0bac6e7dadb1a0d893f8630bd29da3782db13e831517225bf9b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21172,8 +21126,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 807,
-      "sheetSha256": "4e064dce0d4304c0d90ee471f585c361c16bd2d2d882a9032b433d8643d77bf0",
-      "date": "2026-10-24",
+      "sheetSha256": "1546c4e0f4b73370b2ed878c8aec3143999739cbebb830fdd736d0a6bd6531c1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21193,8 +21147,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "4e670c21d1a1f953d8231481b5aed40f03a2832d6becbebcde4d1262f8cdefcc",
-      "date": "2026-10-24",
+      "sheetSha256": "ec567d9ae5bb5cd254c21a63cdbb12b14a88984a9a625883fbb922c8f7b97b7b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21214,8 +21168,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 407,
-      "sheetSha256": "87a23b87c34873b783cf0771c067bf4c2557745329b73d1f6c98960a9ac92ebd",
-      "date": "2026-10-24",
+      "sheetSha256": "d059be50ee8631add1112f4949617fd6bc5cc86a3c6afa305a56d7e82359dd5a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21235,8 +21189,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 774,
-      "sheetSha256": "7ae3e29d94d36dc63fa115e80a14ba6c9d539b1e708d7253afc723e5f970ee39",
-      "date": "2026-10-24",
+      "sheetSha256": "e3068382814c83e258648fd25e1e1624663a942196460fbc91d718636823232e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21256,8 +21210,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "f45e14cbc44c9f5421a78f372c795dcf22a9ee72918423c0381b39bfc20f3775",
-      "date": "2026-10-24",
+      "sheetSha256": "7b056237ffd85889c62bebb6c55c636dbef1ab919b0768d64531a5e6f36fbd24",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21277,8 +21231,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 1042,
-      "sheetSha256": "835ae6d10f96daeed8acaaea656a07082f72789b40728ce945b5c755dda5f439",
-      "date": "2026-10-24",
+      "sheetSha256": "ac07641cef3540d2118ee6f0fe91870564c4d3d823b5018d459ac18187acd1f0",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21298,8 +21252,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 1110,
-      "sheetSha256": "23d97d57c1b946229826eb0fbc5df9a9ccd68acc4893869d6c3073edb0febb8b",
-      "date": "2026-10-24",
+      "sheetSha256": "0a2e117ed894f01fc14c25da4c242890dd2166c0a7a418d1c15c57cfec92958a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21319,8 +21273,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 475,
-      "sheetSha256": "dceba7febaf24a7bedff7874cc3c90b3a70aaa29d64117985afd4ff10ca975b6",
-      "date": "2026-10-24",
+      "sheetSha256": "f0c1c84b4e8678ca9486099c56804ff54a9cda9648bd9723e5b7090300eeb394",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21340,8 +21294,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "bf3e02f5a334335746f0cb8dad1af5c8d9ae7182d5932d9a62eab3a982060337",
-      "date": "2026-10-24",
+      "sheetSha256": "95af9408fd68f319889c85e94a08af95c55686fcd89c64f1873c5ed71a879d21",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21361,8 +21315,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 1048,
-      "sheetSha256": "2786ba30d13d37d9b4f9913fd0cd7cfa0650fc1700cfd2a60656e31fbdd369d1",
-      "date": "2026-10-24",
+      "sheetSha256": "d5139e47f9ce9624c636a91a0a75154c68dfa717e14b479f1053aed63a80177e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21382,8 +21336,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 1123,
-      "sheetSha256": "bf37700671779ea36ba519141a0efb198c5b77b7f246f53d9781361d6f36851f",
-      "date": "2026-10-24",
+      "sheetSha256": "c2ecaee340580bda876dc6edb679d3355ef324d2140477ac29498df7d85ff44f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21403,8 +21357,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 473,
-      "sheetSha256": "53ad310395d5a61c4847d2d84ab8a0ae5ac4cf9692150f78af8a4049d9460550",
-      "date": "2026-10-24",
+      "sheetSha256": "774316bff0eedef069757c73529fe5b06802d64a212a53ef0190fc46ec4b5f77",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21424,8 +21378,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e3cdefb24722a46531c0b440656e4f9de6719d8cf6f822322a0339d46f7c7f7b",
-      "date": "2026-10-24",
+      "sheetSha256": "e37cf7af87c52354c16ed06f202f5ddc5daa7d14e1439b86ff5cdfcf847f6b35",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21445,8 +21399,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 1042,
-      "sheetSha256": "b57e78d45182b186786f352a59c5e2498b87cbee06619f1d5477a704216e1abc",
-      "date": "2026-10-24",
+      "sheetSha256": "7b6aefe99e234a39be62b3bc7c0ee41a8615e3b0fa5587636d74dbb20f4a6565",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21466,8 +21420,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 1110,
-      "sheetSha256": "f66b08a531a4e1c1a9a1e69d5e310443497280989e657f1782d67e74bf079377",
-      "date": "2026-10-24",
+      "sheetSha256": "f720b1acbef8f3ee9caec144e2f44180b5ed74f41c0e0d0afe866c6b1c16e135",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21487,8 +21441,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 475,
-      "sheetSha256": "f769241a1f76e8efd991727198fe9454d99e1bba445627009c631a37de4dd960",
-      "date": "2026-10-24",
+      "sheetSha256": "af332800a6852b2fc751c69eda91158314d6a001c58ec1d920ffe0bcafea21ea",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21508,8 +21462,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "15d4f0192632b61e01a95f96de8cbd8703dcc8147cde46c16a1ba43b6c3950c3",
-      "date": "2026-10-24",
+      "sheetSha256": "7d334f41e733e911f9939b89c86eeaa35e72975a03e98bb46cacc73f329c3a00",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21529,8 +21483,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 1048,
-      "sheetSha256": "5c66e558b4893150156dbe20425508dacd3f00af7a35f09edefa1f0f875acece",
-      "date": "2026-10-24",
+      "sheetSha256": "08677d652cc17fe6742b5e2b7eae749aa7a13d1aa8742a6e5d8e72031a7ce6db",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21550,8 +21504,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 1123,
-      "sheetSha256": "55388caf3a440d2531b679c3d6b42adb8c6fc696bbfd1a99fe75cca1c3f5913b",
-      "date": "2026-10-24",
+      "sheetSha256": "33efca6a00b5737765908bad962c1ef5a4e9c0fb2082ed63e31c09661a063f95",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21571,8 +21525,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 473,
-      "sheetSha256": "2d37632ec6e27038fdf21904bb6a57deae9283815820675ec14122f10299b541",
-      "date": "2026-10-24",
+      "sheetSha256": "1a856d4ff860061e6f1a68555cfe2a2f929a701a065ba737d799f0f777fdadbc",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21592,8 +21546,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "2077a71ee67284c27f51ad18b9134dc8355a3e2175409a1854ca025b8e3484a1",
-      "date": "2026-10-24",
+      "sheetSha256": "039726b9d793b0796d39cfd5b8d474683dc8ada05407f19f6c1b2f65e3c103a5",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21613,8 +21567,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "d7ab0efa4d9b41a33baf1a0d9360055299f721c50c9a966341ca7e2df1549e17",
-      "date": "2026-10-24",
+      "sheetSha256": "419af2216e618f850bc148c9fe7fe8dedb6132b027fc84b30bb297b2c4b74384",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21634,8 +21588,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "7d0fbccf34cd3423015ff5d5d4a8e12008e1cb3b09ab113b3b4697a477f68b05",
-      "date": "2026-10-24",
+      "sheetSha256": "1dff5ed04178cdf96e5ac0ad37230fc2da256f4cdbbdd879fc8fd55bbebab7a3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21655,8 +21609,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "c41f71949706b16bbcb8aaa453336fcc3a6060abd9cd104d1908ee74b17bfc60",
-      "date": "2026-10-24",
+      "sheetSha256": "24f0e2626a0a9239e9ba39e91a6ffa2a02ff303c2188a86617c1ac8ab88a943d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21676,8 +21630,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "0748f4779f61ee8add99fef22f92e00ecfe3fd0eee400521aaa15a5446e49305",
-      "date": "2026-10-24",
+      "sheetSha256": "eeda227cfb41dc0f69e75235be51b1d3009dcce137cb8b30bdc5b1eaa291745a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21697,8 +21651,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 262,
-      "sheetSha256": "fc08c662192c19db08b17569baba63582005a40c464d386ad49dedb28183b26c",
-      "date": "2026-10-24",
+      "sheetSha256": "9bc448267439445e2b7b7c1822d48c03abb722423750767425b06013837ae836",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21718,8 +21672,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "e267c45d00cc63fe2d1ad1f54378a48e5ef56e28b7cec88b1bd83700d28828bb",
-      "date": "2026-10-24",
+      "sheetSha256": "2db561b6760b75e88e94a296b4b6ca6a99de26a66272270c8bdd4d6ee52e629e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21739,8 +21693,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 221,
-      "sheetSha256": "f523b341af48158b555694648f0aceb5325198a5cd087b1da7ad219dee16991a",
-      "date": "2026-10-24",
+      "sheetSha256": "6e7d8c4b74c0e32906c34a976d076fc3f99bda9751c339186ddd3f3461f877cb",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21760,8 +21714,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "23fa54e98aae97865917100ac387fa46346285bee95d83682bc1fe64b1296ec5",
-      "date": "2026-10-24",
+      "sheetSha256": "a06aac38addca2b4727225a786e9ca733e2bf7c38e943f303007f1a03824dd7a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21781,8 +21735,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 262,
-      "sheetSha256": "4c263af18dfc301cee5b95bc2fc5ec2842728c2fba42dce9f90819f14d9e408d",
-      "date": "2026-10-24",
+      "sheetSha256": "2149b683eda08b5e2fc206c765d268ae96f07e081133bfdf0914f22ad9e2567b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21802,8 +21756,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "9ee10eb9c6f8ce5bd0509e7746419cf8637402866e4fe6bde5b4497987ad8961",
-      "date": "2026-10-24",
+      "sheetSha256": "abf765d799139024175e14b1c242f7dabc6dc3b01f88f96e16c992f2e80da3ea",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21823,8 +21777,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 221,
-      "sheetSha256": "5a7ae969ee5fc689ea04e8ab827382fcb81a347af6b9f6f5071075cfd8d588c1",
-      "date": "2026-10-24",
+      "sheetSha256": "a840f3770bf55cf7beb630a14884b57c8d8f1baf01b9999870360fa61cb2ea4b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21844,8 +21798,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "9dce0c572133c32da295fd737f4c2b801512cb058a589615091ce2ea1ea0bd4f",
-      "date": "2026-10-24",
+      "sheetSha256": "dbfd488ebad0a17d9674ab12c2cc839fc9e8d3ee88d1df2acd0daa63a168f69b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21865,8 +21819,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 402,
-      "sheetSha256": "13740ed0d5f1c10b7ac6a48acd7e8499b451da0327b17331538c22a847e2b6f5",
-      "date": "2026-10-24",
+      "sheetSha256": "642a48258e3524633fc967f5a913f9160ce727a70b020ee7efc3c1034286e3f4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21886,8 +21840,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 761,
-      "sheetSha256": "e05f10432ee71140f7169fa6b0b7020d2380bef3b14527d852be2a2e6ad690f3",
-      "date": "2026-10-24",
+      "sheetSha256": "b374f576703cf9fe452bf38403b7f39ebb66812ae3efb55ad8e16804467d12eb",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21907,8 +21861,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "360d3c9c7de423ab6f0158c611cbf921df58a806b9c9056e8fcabaccada6a3ec",
-      "date": "2026-10-24",
+      "sheetSha256": "3d16aeebb6122ad50fadc1775302ebb3e018579285e58477b74f1ced3e9fd55c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21928,8 +21882,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 392,
-      "sheetSha256": "25e2eda75e15955cbdd70870febb286714ec90deb7158eebd6819edf0d8b073d",
-      "date": "2026-10-24",
+      "sheetSha256": "5e9c7243fef203cfc7b8dbee225c1cceb3b80364abc432145306822bc415eaaa",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21949,8 +21903,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 660,
-      "sheetSha256": "e6546fa92c8760c464c009bd5afd5ab6e4e7490791bb286a1a92c082a0b0d502",
-      "date": "2026-10-24",
+      "sheetSha256": "78d23e57d4e98cbf436db00224e34a1fd9a1f14ab9b02755715a9fcd9ea52557",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21970,8 +21924,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "453ce22763a0958d702bb5e76d331ddaab6945e08ba9db9983f846c2f899d3c7",
-      "date": "2026-10-24",
+      "sheetSha256": "4094572987ad02ae76151649afe0f5f607194882c3add23fab2c837747906a65",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -21991,8 +21945,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 402,
-      "sheetSha256": "fa0302cb07b889b279e45a768ef6dc37dd9dab896633e692e35f02b5714c5619",
-      "date": "2026-10-24",
+      "sheetSha256": "0567ce110ed3ffe08bd401807251fd27d6f03e2b234f60cd70a045d5d1c35d6f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22012,8 +21966,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 761,
-      "sheetSha256": "4cbc366bd2022ede9eac261f3c670df71081bbaba2bcd8fae7e258131c3cedc0",
-      "date": "2026-10-24",
+      "sheetSha256": "ec117dd29f4b0740452dc85c554f3800f3ca7bb598ac8bd2ebcd8b3155ecd170",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22033,8 +21987,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "137be34a9f150a68421533a280d716868e379b9cea1e02beb3f9299c2d4d1c67",
-      "date": "2026-10-24",
+      "sheetSha256": "ab8b38520a1e06c0993fe7582807df05d56edd02e0be306f79a0ab57d889b8e8",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22054,8 +22008,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 392,
-      "sheetSha256": "0102c72ddfb58a1d4bba0511b2aba0d27a68feee0675974e1a0b6d23af3de60e",
-      "date": "2026-10-24",
+      "sheetSha256": "b1213a6e187b51338722b4a56050e665a2ceaa0c43c41a07d42986e5f4d56e8d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22075,8 +22029,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 660,
-      "sheetSha256": "2ef5c9a90b705059edb80ebbf409a58b2b1ab5051f054e1912b6c648fcd03a88",
-      "date": "2026-10-24",
+      "sheetSha256": "d3779b21d3eb541fca5dcb40d66740128ffd4522a79c223967db212e92487ee6",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22096,8 +22050,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "ffd5e6d2e20beab237401edd79ac6ce7955f201c1003665ad9ea852dc5e8c3a1",
-      "date": "2026-10-24",
+      "sheetSha256": "53bb58ab51ce2ed9ed15ac3eb46f7976fbd9ddb8d8282a539f600a0497820ea7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22110,7 +22064,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22122,8 +22076,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "b249531ef8e2fa641c89d2a2a141c128a31eec0b90bd392ca96827b2b5c0a36c",
-      "date": "2026-10-24",
+      "sheetSha256": "3a742547b2b6aee5d9a892cdf3c560cd3b0c8eae68f0131c98b831ac594b213e",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22136,7 +22090,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22148,8 +22102,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e0afbe7be5603b33b8e270a00f4417d524e668793511b14c16a6fcd4e8f30ddb",
-      "date": "2026-10-24",
+      "sheetSha256": "3e9071e5787e053974927a2011040133a35ff691da52eb7450db5916729591c3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22162,7 +22116,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22174,8 +22128,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "00e80e4f8a9dd9d19fffad11762403d63965e9cfe2365089894668276d480bad",
-      "date": "2026-10-24",
+      "sheetSha256": "81500878f1c9e0f19c147b8d9cb9048ee2e9ae8281cd6d1472e16edb28632b1a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22188,7 +22142,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22200,8 +22154,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "dd11513b400f13cd5c37ff8eb2c7c32ec0d88d971e3c486bea76d2316e21322a",
-      "date": "2026-10-24",
+      "sheetSha256": "9958f90cb2d0e93e51cefed426d76cb003c0c2cbf803ecfceca4c83679f88186",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22221,8 +22175,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "c83b2e2e4b3bd665001fb01da87bd06644d2f9968e59d30ab7c5d84a3a907454",
-      "date": "2026-10-24",
+      "sheetSha256": "a157451dc7edf6b9563712f74f7cf22378659e97b28b03a7f06b574e091005b4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22242,8 +22196,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "1731617f728110844be48dc8711a7dafd48a1eaea303dad5f1979cfd82b926ce",
-      "date": "2026-10-24",
+      "sheetSha256": "3f1ecef6e1e18ed1e272159c42b8ec187cca45ea96fa3251104b6bb85d34ea51",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22263,8 +22217,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "aaf3e3109ef04465d38b1e9c9799d07138e6c4b4d9bf13d4d251f369b46a8dbc",
-      "date": "2026-10-24",
+      "sheetSha256": "18b4bd3f4515806a1c57d15dbbecda9ad256d5b997d4613cac617b79643d2607",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22284,8 +22238,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "b49c95d01aaf24397a5cee9550dc30b62d7db272ef72fa0940ea9bfa25dd87ca",
-      "date": "2026-10-24",
+      "sheetSha256": "44ade1123db7a649d17db9658029337bc336f82c53e8af7fb4fa9956416d30b1",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22305,8 +22259,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "9e2031929d8dc730e156c6441b31a9629f157a3e4a57dcfccf30de464985f3fe",
-      "date": "2026-10-24",
+      "sheetSha256": "db8258161adc3b9d67abd302026037c1e43dd6fc93cd2050332686be6bea0de2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22326,8 +22280,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "dec09dc02170e5028fe6693120eb5b12da471323238a08b47bfa86bb5193836b",
-      "date": "2026-10-24",
+      "sheetSha256": "48468a4d1cbf23b0c5b87ac428671be7190be789e91d7c22de1f71a39fc8520c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22347,8 +22301,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "8b17b02264ac25bedc048db3c8167376a2d7f38b1c81a3c651c9ac56e07c653a",
-      "date": "2026-10-24",
+      "sheetSha256": "02260eab4d3f7534ada9989833d1a19df9f0286d689e558e5e0f0eda9d120f8c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22368,8 +22322,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "b74eabf1cd33fa87fa438d08bfa8c9c21abb28013b156362bc7565fde8c1c6ba",
-      "date": "2026-10-24",
+      "sheetSha256": "ce17b4f9ae012f3d338a3e4d2cb4f738529d94210a4e31449533a7976f2d104b",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22389,8 +22343,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "b020d9cf2f850830dec6a8a8e748b317f63f5ec8042818a40b7bd4f5b641dc21",
-      "date": "2026-10-24",
+      "sheetSha256": "fc2469586b53c004023cb74fd92ec1f65cf5ada23cab6ca3ab5dca6d99ac1127",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22410,8 +22364,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e35b8545ec402b0fd305d4f966ce9b5389492cc03b64bc58371ae845f5ecaf14",
-      "date": "2026-10-24",
+      "sheetSha256": "db91623a0af8f41b88f1e7cbdd65435f1c59e6f404ab64fa6572c91a2b6ba60c",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22431,8 +22385,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "48f0575e2fd526c726c5cd26baedfe797ae3defac800a5e8757fb08ecf432e1c",
-      "date": "2026-10-24",
+      "sheetSha256": "adc1762c24943188512220f8b6903c808646eb8846780ee271d4ec62dae5fe48",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22452,8 +22406,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e27d3283cad41ba02affb09eae3dc2884aab13d3550dea0ecd97437dc0852aeb",
-      "date": "2026-10-24",
+      "sheetSha256": "09cca1019f1ac3872ca605838bd96f16e75f24d50c0ce279c31678b7ae80ec41",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22473,8 +22427,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "1532a5c992123d21d6d54d26f15d6ff6813779c97c02ad33329772de525a8896",
-      "date": "2026-10-24",
+      "sheetSha256": "010706246c51045d8b22435632a3a41597a9921d20993d38e87e2692c60563e2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22494,8 +22448,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "35af6382b4a7d745012d574b29ebde5dbd517312e495bf193d7648b7d6e08974",
-      "date": "2026-10-24",
+      "sheetSha256": "75032c138b8f9c7df737f4f32c4de127b7120b59288347ff79ed2ca1e10ea7ed",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22515,8 +22469,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "5aec04adb6b256344930e60dc00617c82d966f2d8a0dd3866c6d4b76f70808b4",
-      "date": "2026-10-24",
+      "sheetSha256": "85eec959dfbd246ffb2f0d20f7dcf9b094f0f7762976d70d9f227c82e67af956",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22536,8 +22490,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "a336bf4c174ea60e88839b4eed7fc4a03d50950842e3a44ad463fe207efb1037",
-      "date": "2026-10-24",
+      "sheetSha256": "54c68842d255594ad9d9097345e713b7f4e1ebcd29a2eb19ff3962f4cf1c6dca",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22557,8 +22511,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "bacf2963d63a45e463c7d0dd32667bac4e149aa688757b738973858417cabdfb",
-      "date": "2026-10-24",
+      "sheetSha256": "af989cd00b93029c3bcc86ece0445d207d63a1bbd4246343f36d6926ebb510d3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22578,8 +22532,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "44aa1557c9cc6d6e9ae98b57523b7e4aef28b104d2df918fd2002d164bf7f7cf",
-      "date": "2026-10-24",
+      "sheetSha256": "0efbadfbd2a5ed4a3f27a6d1cbf3da8e167d0ac987967c87cb1d6b8aebf450d2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22599,8 +22553,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "a9dadda9784330881d309487d00deeb69313a135a14aafb56a7c4199bae999de",
-      "date": "2026-10-24",
+      "sheetSha256": "3580ddb2212766a33093118973499361386a138e4ce6c4bb62210e4b25ca0d2d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22620,8 +22574,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "9940efaaffce6e88aaee48e2f913ae16d0e5a19ab90a035984a9582dd418066f",
-      "date": "2026-10-24",
+      "sheetSha256": "d27d2a9bdd6fdb8163e1c11b2595459c9a0b95cad95894ff9ef7ce91128d60f4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22641,8 +22595,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "235d044503d194025ca8bd3bbe75d97a18b20dbb88da2d343e2ffea91f1e35a2",
-      "date": "2026-10-24",
+      "sheetSha256": "66bd0fa2c775428ee9461f5ab2ff8c55e0052b910be2b665c60cac72657cddd3",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22662,8 +22616,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "cc70bb471620106725ced2b41ca5608c06c7acb565ce53b3e1dd038a46a9c8fe",
-      "date": "2026-10-24",
+      "sheetSha256": "65fc3e7cd2e70159cbf223e67a746a8dde42fec761cb4b678ce036c28dc09297",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22683,8 +22637,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "21d0b0144864f931a8ad5bb7389fa097ee089847beb71406118d8dce7eff0156",
-      "date": "2026-10-24",
+      "sheetSha256": "953926e5c132fc39e62d66cc550ae6fc9e4bb0a8f77ff8168a9bd6ca64597b9d",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22704,8 +22658,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "2c3dc847d08eab178c18712a95fa972bf3b80eac66303f43af72b63276e59869",
-      "date": "2026-10-24",
+      "sheetSha256": "5b2c5ebcbadec87dfb9f2b3f50823e10b1a4e70e4fe8ca7cf73bdecc90d78bb4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22725,8 +22679,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "8d5f63e34f13588175a0acce0e17f45d9801f04553216b782ff3df62a1b607ea",
-      "date": "2026-10-24",
+      "sheetSha256": "f45c84e7aead7f18e6f7d870f1a520cc77565b49de918e6179d8c7abba733fae",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22746,8 +22700,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "084073767e9ddd83d695868608648218d86558cdff721e01168c376bce050e27",
-      "date": "2026-10-24",
+      "sheetSha256": "1d84eccd3fdb599bb4995a251c8cbf6c705a501cacc55412bae2fecc1f19de57",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22767,8 +22721,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "cefe44cb124f949cb442b11e8627c373250f6507a97c63fb8867afb26607aa45",
-      "date": "2026-10-24",
+      "sheetSha256": "4a440143348b3c13dfd9e8e9578616c0194e1030b26af28717cdfaf0af271818",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22788,8 +22742,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "33dc42acf557afdbc77428d34180fedbb12af291f3330bcd38a7aa22734238c5",
-      "date": "2026-10-24",
+      "sheetSha256": "9499a629bfab857f0a34f2ce601d2b54b1862547f99411a252180733b1166bbf",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22809,8 +22763,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "c7288cc19adbc1e8047504dd65892205a5a74f5d37245d4c5cc876996ac45534",
-      "date": "2026-10-24",
+      "sheetSha256": "b4ad696bb18fa69b8e17c8d961a8f6550f1fdde0a08ca35735cfe1806fdec3fc",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22830,8 +22784,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "55ed3ef4c98b4c605eb98ade8e30a6ad585b05d3b4085c1fc7d8db85e9df7af8",
-      "date": "2026-10-24",
+      "sheetSha256": "36c95db51c1612df7251ed5d2fe40b7b8d69d8fc648149b022f29809422de939",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22851,8 +22805,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "f20f01a2ff2632957fed260f9490f7f541ec7d802e1305d7b658b7342f698428",
-      "date": "2026-10-24",
+      "sheetSha256": "6505d996d5258f13e6ba8faea6228f9072f1273f8ddc5f0d7fe0ece919d88675",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22872,8 +22826,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "1bdbf216ee1e0ef0925b769eb30bda7e85f3424846cd831f3af910fd4aba9c24",
-      "date": "2026-10-24",
+      "sheetSha256": "dda1c27f4176590fcf54837ec839c41480e27ee31ec4927ec63751e99fa7c3b4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22886,7 +22840,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22898,8 +22852,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "fb3286d9182d97c7bc97c340791207a41b9688a437056eada55cfdd027b43cdc",
-      "date": "2026-10-24",
+      "sheetSha256": "4f967a6e2e14da60e9c8b3307ca512569c97ad307e701bf7c9323ad82ce5a6a7",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22912,7 +22866,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22924,8 +22878,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "ba145638e229eb108ceb8b3fb010b0da4bae656fbc488517618c0373324b7249",
-      "date": "2026-10-24",
+      "sheetSha256": "1357c9b6406c770da3c7702bf374d7a32dad590e4511e74f171d89f920f9abfb",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22938,7 +22892,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22950,8 +22904,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "e34006393d866294df9097e1d95a95e5ae8237ed4ce9715f082879238f1f9d1f",
-      "date": "2026-10-24",
+      "sheetSha256": "01b32e30eccace00837067dee42f313be2b74e94d4697dd7c18b6cf2420e9125",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -22964,7 +22918,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the disabled Buy key: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "The disabled Remove ads key's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); key size, crown tile, offline card and restore link match.",
           "status": "waived"
         }
       ]
@@ -22976,8 +22930,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 181,
-      "sheetSha256": "afc89991cedfc1cf723a8af788305ba27f852d120b7c1dc9301a272848b18bca",
-      "date": "2026-10-24",
+      "sheetSha256": "463e3b876b76f789ef0e86d960fa8be232a3d7d918fc2f9de0db763169c094f5",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -22996,12 +22950,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "Below the list, scrolled runs show the top of the test-only network counter debug.network-attempts, which the design does not draw (toybox-screens s15: test builds only, never translated).",
-          "status": "waived"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -23010,8 +22959,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 173,
-      "sheetSha256": "63c3fab6f6803b9d621038237dee4ffd8fff8d1f4a961cbb42d754e4eb56b38e",
-      "date": "2026-10-24",
+      "sheetSha256": "7b06b8dd7d6f717ac5cfbdf993c652624d309b8b9e0b1c78c3ebc90392adca76",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23030,12 +22979,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "Below the list, scrolled runs show the top of the test-only network counter debug.network-attempts, which the design does not draw (toybox-screens s15: test builds only, never translated).",
-          "status": "waived"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -23044,8 +22988,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 181,
-      "sheetSha256": "34cc78ebbd92b3d5d61013b03221de9d8a8db5550b745088469860b75bf36c5f",
-      "date": "2026-10-24",
+      "sheetSha256": "833e48511c37308e6282e040a08dee125b917952e6c5b26c8ddbeb6e5e53ba86",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23064,12 +23008,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "Below the list, scrolled runs show the top of the test-only network counter debug.network-attempts, which the design does not draw (toybox-screens s15: test builds only, never translated).",
-          "status": "waived"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -23078,8 +23017,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 173,
-      "sheetSha256": "6a5bd8889b572952e9e83fa61afbe85935da19018e35ac2c83d5d90856ef8baf",
-      "date": "2026-10-24",
+      "sheetSha256": "6c374a09a7d95def2fa8dc1aea560e07d3345733d0f28abce243d1a33bd8c675",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23098,12 +23037,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [
-        {
-          "what": "Below the list, scrolled runs show the top of the test-only network counter debug.network-attempts, which the design does not draw (toybox-screens s15: test builds only, never translated).",
-          "status": "waived"
-        }
-      ]
+      "differences": []
     },
     {
       "platform": "ios",
@@ -23112,8 +23046,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "1a6ece72c1e731f718e8158fe480783190eecba4fd77e1ba75e8e49236458012",
-      "date": "2026-10-24",
+      "sheetSha256": "bdcb3201445c7ba24da04f9a2b14eacee22d2bf2eba2f12f6bf28d0974dad0bd",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23133,8 +23067,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "6fb95428fd073d259ff79bdcc568ef0673fb5b4d63a7a7466ac96791fe5399d6",
-      "date": "2026-10-24",
+      "sheetSha256": "0eccc50132558843f86a3d3ac6ee1bd6fa4489bb21a60933437804218565f6cf",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23154,8 +23088,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "dc6dcc6b6f1dc66bc96e8a58d220128309abad6350a73a1ea7db5fe1b43858b3",
-      "date": "2026-10-24",
+      "sheetSha256": "01736b8ebea6dcd68f875e95f51ea3bb3dbf532bc446840202d6d8e41c824105",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23175,8 +23109,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "8b010c56a8d1ded7b46609fe7ab0f1de6fdd3eadabde37c29a50a5c2097bd78c",
-      "date": "2026-10-24",
+      "sheetSha256": "d0075709faef1d6f9153758c4b3096d7dda5f8eac9a3a5c80c3c4d1970e06afd",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23196,8 +23130,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "10b9bf1396b923bd3e9605ed800dd3f65e96ab00d481a67fd5ae0887b8827a68",
-      "date": "2026-10-24",
+      "sheetSha256": "2776f8dd35fe6ce236f41442e2eb31c961f207aba8095c20a7e5cb0909d75d73",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23225,8 +23159,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "150590aafaf16224ed5a7379966d4975f0bccc2a0e6bc2b828ec396c518ec151",
-      "date": "2026-10-24",
+      "sheetSha256": "7fc1875221f9c5ef02f58e18afb97f595cc56c14c751b7e1602a8e458758461a",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23254,8 +23188,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "56a5156971be5e879df6e2b639b9944c7d6b125ca70f7b64afa6a860c12133d8",
-      "date": "2026-10-24",
+      "sheetSha256": "957171119f374d1628c0c67383892ffae300dd23a33d8381f167d480d9e24cad",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23283,8 +23217,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "7260a791e1256b1ebbb5b5cac2d462edfe23d6ae6c50a27ceff1628fe4a09805",
-      "date": "2026-10-24",
+      "sheetSha256": "4f25eb74162ad58a00a9b7b1e6ebdec5056f7c7007f197db65d7ce623c2b7a37",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23312,8 +23246,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 173,
-      "sheetSha256": "a78c179fb60e09f4352022f01f0d98608aabf56ff566d961b58e682561e8c4f1",
-      "date": "2026-10-24",
+      "sheetSha256": "3b3364b855ee57ea674c43d52e3cc69357248209482bf5c6a8f00e50078dfee4",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23341,8 +23275,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 181,
-      "sheetSha256": "325148e043607e76f6b6ea234922aa03563f7a82ef5742287cf28e5bcff17a4d",
-      "date": "2026-10-24",
+      "sheetSha256": "694aa3c59070cf489e859317e36d88c6c6126ad9a0530884ad10bb4ae03e1236",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23370,8 +23304,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 173,
-      "sheetSha256": "46f145ea06ed12cc7da97492c7d6088a371ddd674c806313f20576ac2810bf32",
-      "date": "2026-10-24",
+      "sheetSha256": "3272d3028715610c28bd06019ee335a38cfa1f7c2d6346b702e12b28dd4458fa",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23399,8 +23333,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 181,
-      "sheetSha256": "c11b24389e271653bbc6ed16e45d583ce97edf3f52ce05d1bb4397467ef5851e",
-      "date": "2026-10-24",
+      "sheetSha256": "4b2aab29dc5e1d999e5bf1dbad008f8f99d425a66cb320975850d8cf4b34f8eb",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23428,8 +23362,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "2b8ea338d92f46f9355118c6ebd2047590ca2b7946a16c20b8b81f5a10fd9b25",
-      "date": "2026-10-24",
+      "sheetSha256": "3f1a42dbccc49b9fb62a0b725cf4dd7acc434adff7911cd47d143f02fa09b79b",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23443,7 +23377,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23452,7 +23386,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -23464,8 +23398,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "6092fc5248ef00de245a4180fb65f57e2af58c4cc8b23dd2c9b5a2dc0773f377",
-      "date": "2026-10-24",
+      "sheetSha256": "343e59dd1cadef83ad319b7915b85cdc0bdb84bc98ab299e8340478c1728902b",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23479,7 +23413,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23488,7 +23422,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -23500,8 +23434,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "554f01ea030f9f2a3c9d1dad0e5fcd6799782e4e4651932fed1c6080faf0c7cd",
-      "date": "2026-10-24",
+      "sheetSha256": "315fa057be72d649f2a421636cdb3ba7cb46bf9324a8fcec0aaa8e801720d575",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23515,7 +23449,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23524,7 +23458,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -23536,8 +23470,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "a1d3db9f451a386e6b2f66cafa3a6d89d647f70109b4d9d2a461a83f8389277d",
-      "date": "2026-10-24",
+      "sheetSha256": "90075d9b1431140b8b7f05223769e723b6af2b9a6a27821d4798acfa3ccba935",
+      "date": "2026-11-04",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -23551,7 +23485,7 @@
       ],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23560,7 +23494,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edges of the locked level tiles and the pack 2 card: iOS draws its own dash length and phase (the pre-listed platform waiver).",
+          "what": "Locked tiles and the Pack 2 card: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); sizes, digits, stars, lock icons and the tooltip match.",
           "status": "waived"
         }
       ]
@@ -23572,12 +23506,12 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "69e39d63f39106fded1f47e9935469a065c10f93b86541283920c28d1ed1e2a0",
-      "date": "2026-10-24",
+      "sheetSha256": "ba48454ac7fb76c72802b3e1902a13e89b15599c0323562c91bb175c9f2b2d11",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23586,7 +23520,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -23598,12 +23532,12 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "e4c6534dbaa2a12d64aff15946a33d90d0a2d1eb08a0ede579f43200a25e2a3b",
-      "date": "2026-10-24",
+      "sheetSha256": "6536148ed5f6eb6cc6ccfe43c66cc07061aca43a14bd83bf69f7abe152b309f4",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23612,7 +23546,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -23624,12 +23558,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "2df25ec3ead12d8168d046d8b5c5c4a4655c49bed6562f005322647172a10596",
-      "date": "2026-10-24",
+      "sheetSha256": "a4f4feb08cd875f52ae0f0e81be9cce8fde059d777e028683f2d0161208958ec",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23638,7 +23572,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -23650,12 +23584,12 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "205804a93b210eee4e8b46a7f2d61437af090486e6faf86ffdced025f21fd94b",
-      "date": "2026-10-24",
+      "sheetSha256": "46530899a06a8d78bb888c1841515559815d57709a439d72ef45ab10612cf8b8",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -23664,7 +23598,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads Flock Tilt's own \"Sheep 2 / 4\": the known owner question 1 (game-host-integration vs the design), wanted waiver in reports/final-pass/waivers-wanted/flock-tilt.json",
           "status": "waived"
         }
       ]
@@ -23676,8 +23610,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "fdf8cafd1a662066f8302be28fe1105afd1ec3067a5a0c87e4d601478ccbb0ae",
-      "date": "2026-10-24",
+      "sheetSha256": "7cd98e9c47b4ddfe832e46807ad8c8c50138e428451ad9874ad6aceecc17e4cf",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23690,7 +23624,7 @@
       },
       "differences": [
         {
-          "what": "Top border of the dialog card measures 4.3 pt vs 3.7 pt: in ckb the home's continue key (two-line tagline above it) ends right at the card's top edge, and its dark hard shadow under the scrim merges with the border, about 0.6 pt more than in the design; seen in two captures; waiver requested, not yet in waivers.json.",
+          "what": "The card's top edge reads 4.3 pt against 3.7 pt because the Home's Continue key shadow under the scrim meets it (the ckb hint wraps to two lines); the card's own stroke, radius, icon, texts and OK key match: wanted platform waiver in reports/final-pass/waivers-wanted/flock-tilt.json.",
           "status": "waived"
         }
       ]
@@ -23702,8 +23636,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "85f0308f6f1f0f6dfffffd66629103eb2803340cd9f76c7eaec81e5ee7cefbda",
-      "date": "2026-10-24",
+      "sheetSha256": "ccd94750391e109b29c872f19a493e16458c0a5e13de337c457039278241fe99",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23723,29 +23657,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "f5023f2b8dec1313fe80891b9448393c856f02b33f6084490691d7c491f8fea4",
-      "date": "2026-10-24",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "flockTilt",
-      "frame": "s11a-language",
-      "theme": "light",
-      "lang": "ckb",
-      "scrollY": 0,
-      "sheetSha256": "d398ae1b2886052f7d5179d7b3fcc865396cb9ae35f8f8ebc28d7b5152b75a24",
-      "date": "2026-10-24",
+      "sheetSha256": "bca6217df4b2675f4235a43b6a89848cbb140e9af66b1731911c55160ea26fd2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23763,10 +23676,31 @@
       "game": "flockTilt",
       "frame": "s11a-language",
       "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "6bad4cb9508248c3c1d0fe67af3f0237f9909a76d4e6d4490638a28741918e3a",
+      "date": "2026-11-04",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "flockTilt",
+      "frame": "s11a-language",
+      "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "66a6f23896e34a8ec6ad6f51ecfcc9c83adba243d881b09d578522edb0a51fb2",
-      "date": "2026-10-24",
+      "sheetSha256": "9b9e15c5681d65ee5387054f603e6512616f600eac5e1a573c5a51ee75286165",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23786,8 +23720,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "67b4593608a5b39a86b189cc26ea93d13b95628216e938854098153cdd4d5843",
-      "date": "2026-10-24",
+      "sheetSha256": "8d83ea00fc44f168f4300be9bdd814a13d3f235dcb20d490484a204da0aac931",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23807,8 +23741,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "02d48bde94832036bcce1714b72c765a5896b17360372c4a774069f6c61c34d7",
-      "date": "2026-10-24",
+      "sheetSha256": "f6e266a1673d92cb80c9ca594126c83521422001d8921fd5c50a6bb66b95fa93",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23828,8 +23762,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "59901b4da2d42e1d00b98f0ca0dc0da2fede3ae04b12c3ac765976d73a059aba",
-      "date": "2026-10-24",
+      "sheetSha256": "813f98bc1d4d32d390bb235f81a2873c5b1d88c26219547a694a09633a3401f2",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23849,8 +23783,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "9eee8c98fa9bd6d94c75b96c0e60ffca3a000bd247fb303146d611dc34b4f9ca",
-      "date": "2026-10-24",
+      "sheetSha256": "ca89ca21f6c1be67a99b37ce6860f44ed09e345747f1ede47c69867f8a5fde73",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23870,8 +23804,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "5cf891c1726127fc03a0a231341046f8e2e98a0c898a4ebd9468ce03f370ee9b",
-      "date": "2026-10-24",
+      "sheetSha256": "721ebc5542ece2aff3b92bbd872781086750faf9bfbb895ee295a06b6136d7db",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23891,8 +23825,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "02afed6380682cb355f8781fce49782decc707da59e0c350248b339f9773a274",
-      "date": "2026-10-24",
+      "sheetSha256": "7507fba5765828011f8a07a9283f4200daa08a08f3a20db310d8c2b4ec3b8b37",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23912,8 +23846,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "5191eba0e7cb6920309bd553656e92ae51803c0db6f76ff13eb4f43a8221c7f0",
-      "date": "2026-10-24",
+      "sheetSha256": "d29498a77715c5845d8cf6c3859490b015fd50581f72e72b74405a5718c3de4a",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23933,8 +23867,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "c0e304032a392045fa7d5772ad1233512847de666ecec2fa5e3095e9c3a1e48a",
-      "date": "2026-10-24",
+      "sheetSha256": "e5a3ecde94abdba14b64c04ee2f765aaaec14c2ac2cad54f5e24ab8c243850ce",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23945,7 +23879,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "The Sorani key label wraps to three lines where the mockup lets the long word overflow, so both keys and the centred card grow 25 pt and the dialog sits 12.6 pt higher (committed ckb design-artefact waivers); everything else matches.",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -23954,29 +23893,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "ccc0f6aed831b29ba9b344893e4622f9be9c61b9e45b2bb675f818625715f13a",
-      "date": "2026-10-24",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "flockTilt",
-      "frame": "s14-restart-to-apply",
-      "theme": "light",
-      "lang": "ckb",
-      "scrollY": 0,
-      "sheetSha256": "f1059d1d57b493b009135a54c2dc41f70b827b6cbe25863da0674edc81fb4c0a",
-      "date": "2026-10-24",
+      "sheetSha256": "0d69dfc1b8cb9e03fb93192794db6bcccc9b9d5623724e1b6caa5dd7d7985533",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -23994,10 +23912,36 @@
       "game": "flockTilt",
       "frame": "s14-restart-to-apply",
       "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "d04b1765ae100ca601ac0af8aec8179c894ed330c5c2cf7bbe0c479ac5e36243",
+      "date": "2026-11-04",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Sorani key label wraps to three lines where the mockup lets the long word overflow, so both keys and the centred card grow 25 pt and the dialog sits 12.6 pt higher (committed ckb design-artefact waivers); everything else matches.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "flockTilt",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "f188d9bc5e41c55de974ab21789fce289bca06a66dbab6f2ec7786776a61a7f4",
-      "date": "2026-10-24",
+      "sheetSha256": "39af748d22f89c0301c9f2b05a9de383c51f21d9f3604f82cf61a0b57c63f214",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24017,8 +23961,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "97e6e87549332875b897729e54d532fe95eba7487bb38fab5acb3b7af07541a8",
-      "date": "2026-10-24",
+      "sheetSha256": "3f69db9b372f62311bd0e3b47325bb43c18a6ea36a8a78e0237b931b5ba35569",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24031,7 +23975,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -24043,8 +23987,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "0a2071d315c9bc81125462ac647241d180439edc2561d248e8ee152d33363b88",
-      "date": "2026-10-24",
+      "sheetSha256": "5e3e4d86981dfc361e6d1ef96031f91593d4b5617b112d67cf260b016a27b349",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24057,7 +24001,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -24069,8 +24013,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "df54bdba1a6185d49e6d73586001acb263b9b7b739da19ea5378d298b2f749c9",
-      "date": "2026-10-24",
+      "sheetSha256": "71868cc6682bf0e8086525e5e32769ae7d52c4bedbb9af4a5cdcf4dd17765ccc",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24083,7 +24027,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -24095,8 +24039,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "8b86c887404cc10ef22a30f9d75fc4bbd2c0264dee691f479c47656f163b5349",
-      "date": "2026-10-24",
+      "sheetSha256": "7641fd189771a8a10631f8ca7fdefaa5367b2112e9b933b0329d8a4538a6938f",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24109,7 +24053,7 @@
       },
       "differences": [
         {
-          "what": "Dashed edge of the continue offer: iOS draws longer dashes with its own phase than the design (the pre-listed platform waiver).",
+          "what": "The continue slot's dashed edge: iOS draws shorter, rounder dashes than Chrome (pre-listed platform dashed-edge waiver); slot size, button and note match.",
           "status": "waived"
         }
       ]
@@ -24121,8 +24065,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "cfafa280a213270211c68352c76ba7adf3efb06ca760d51c83f84445d4cbd479",
-      "date": "2026-10-24",
+      "sheetSha256": "67664e52584e00ac9d9ecc085df48e8cb8b50722dbe657550d61e73703a753da",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24135,11 +24079,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
-          "status": "waived"
-        },
-        {
-          "what": "Premium line wraps 'für / 1,99 €.' where the design wraps '1,99 / €.': Intl keeps the price together with a no-break space; the design's lone '€.' is a mockup artefact; no gate flags it.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par. Also the Premium nudge breaks before the price (…für / 1,99 €.) where the mockup breaks inside it (…1,99 / €.), pre-listed de waivers.",
           "status": "waived"
         }
       ]
@@ -24151,8 +24091,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "98af87553f9531ca4bbd87ae5b68868a14b67deb2cd6e2878c110c5c0411b505",
-      "date": "2026-10-24",
+      "sheetSha256": "24ec654de8e1f39dab30663a520b6e586b5c15bca556107880e7ed0d40d56809",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24165,11 +24105,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
-          "status": "waived"
-        },
-        {
-          "what": "Premium line wraps 'für / 1,99 €.' where the design wraps '1,99 / €.': Intl keeps the price together with a no-break space; the design's lone '€.' is a mockup artefact; no gate flags it.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par. Also the Premium nudge breaks before the price (…für / 1,99 €.) where the mockup breaks inside it (…1,99 / €.), pre-listed de waivers.",
           "status": "waived"
         }
       ]
@@ -24181,8 +24117,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "073e9395138af8e4c12478466b0bbca8a36ed85832a6398b02e2bd765f2051cd",
-      "date": "2026-10-24",
+      "sheetSha256": "d9dae116cb3d1225aa45052c1e97b220b3756692be7bede7d5fd5a86db819890",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24195,7 +24131,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
@@ -24207,8 +24143,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e4386e06833480d6592d7abbd93ef6dfac090b560ab2abde3260de5b9a93fdc2",
-      "date": "2026-10-24",
+      "sheetSha256": "6697ab9842627f7e9e1d2ebc0170739b70fd62093795f21f0a3216e5c6be2097",
+      "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -24221,11 +24157,7 @@
       },
       "differences": [
         {
-          "what": "Progress line shows the Shell's 'Moves n / Par n' on par levels (game-host-integration) where the design draws the game's 'Sheep n / 4': the skills disagree; waiver requested from the owner, not yet in waivers.json.",
-          "status": "waived"
-        },
-        {
-          "what": "The checker finds no ink in the win sticker (it reads the sticker's green fill as the text colour in dark ckb); by eye the sticker, its text and tilt match the design; seen in two captures; waiver requested, not yet in waivers.json.",
+          "what": "The score card's first line reads the Shell's Moves 7 / Par 7 where the design reads Flock Tilt's own Sheep 4 / 4: wanted waiver, owner question 1, default keep Moves / Par.",
           "status": "waived"
         }
       ]
