@@ -26133,27 +26133,6 @@
     {
       "platform": "ios",
       "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "3916f7e9ef37bace57d65a1591184d0287125f6702eb6df50fe8fb62e1436278",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
       "frame": "s13-how-to-play",
       "theme": "light",
       "lang": "en",
@@ -62122,7 +62101,7 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "3ac8dcac3711f9b0fbaca8302c7cddf88a3055c260c6eeb7995651f59915a527",
+      "sheetSha256": "d97272941d0a96340fc282ad56fcd23b3f8140c7038ea49dfaea1de3a4e509ca",
       "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -62130,13 +62109,17 @@
         "pictures": "match",
         "shadows": "match",
         "alignment": "match",
-        "wrapping": "match",
+        "wrapping": "waived: the nudge breaks before the price, an iOS design-artefact waiver (171-172)",
         "direction": "n/a",
         "feel": "match"
       },
       "differences": [
         {
           "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Cups n / 3\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/toggle-drop.json",
+          "status": "waived"
+        },
+        {
+          "what": "The Premium nudge breaks before the price (\"... für / 1,99 €.\") where the mockup breaks inside it (\"... 1,99 / €.\"), one underline per line (iOS design-artefact waivers 171-172).",
           "status": "waived"
         }
       ]
@@ -62226,7 +62209,7 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "4cf77cff61ee9a22ea3f17f3fd7947ce8c4c244314f19c49391b03e91ac97e6b",
+      "sheetSha256": "333148f708a6846aed1fcfc749b5b0c7b6520f5a4c4b1b7932dc9751059a4f52",
       "date": "2026-11-04",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -62234,13 +62217,17 @@
         "pictures": "match",
         "shadows": "match",
         "alignment": "match",
-        "wrapping": "match",
+        "wrapping": "waived: the nudge breaks before the price, an iOS design-artefact waiver (171-172)",
         "direction": "n/a",
         "feel": "match"
       },
       "differences": [
         {
           "what": "progress line reads the Shell's \"Moves 7 / Par 7\" where the design reads the game's \"Cups n / 3\": the known owner question (game-host-integration vs the design), wanted waivers in reports/final-pass/waivers-wanted/toggle-drop.json",
+          "status": "waived"
+        },
+        {
+          "what": "The Premium nudge breaks before the price (\"... für / 1,99 €.\") where the mockup breaks inside it (\"... 1,99 / €.\"), one underline per line (iOS design-artefact waivers 171-172).",
           "status": "waived"
         }
       ]
@@ -62270,153 +62257,6 @@
           "status": "waived"
         }
       ]
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "0784315b83a2e3f974c31bbacb04f5f6b7e38891ee6e56955c638b3eaa623353",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "light",
-      "lang": "de",
-      "scrollY": 0,
-      "sheetSha256": "596767b557125230bd8447d7cc05276912009f5faed40cfc2cd3940b890ca725",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "light",
-      "lang": "ckb",
-      "scrollY": 0,
-      "sheetSha256": "fbac5c62eda3a8d8f90bc160041fddd768000df76487d0cac1e4555e2cede9f9",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "d41f68cc350a2025423c9974f681d6691b8e8ea4998c852c2a5018eddb9e9782",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "7a62447494597ca12bea646efc648fb5e53744762bb8d405c172968ded14b3db",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "dark",
-      "lang": "de",
-      "scrollY": 0,
-      "sheetSha256": "d647e1ee252a19aac62228491f435d12447f6758583859239ad2d1cbe5f7af78",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "ios",
-      "game": "toggleDrop",
-      "frame": "s7-result-lose",
-      "theme": "dark",
-      "lang": "ckb",
-      "scrollY": 0,
-      "sheetSha256": "274a04e4546ffff119ee4786746294af0083455f7e451e137e93e3943bbc0300",
-      "date": "2026-11-04",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
     },
     {
       "platform": "ios",
