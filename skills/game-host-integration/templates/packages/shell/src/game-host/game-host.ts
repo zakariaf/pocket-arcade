@@ -333,8 +333,8 @@ export function createGameHost<T extends ShellGameTypes>(
   const resume = createResumer(game, deps);
   const lifecycle = createFullscreenGate();
   const runs = createRunTracker<T>();
-  const openGame = deps.openGame;
-  const controls = createGameDebugControls({ game, runs, ...(openGame ? { openGame } : {}) });
+  const { openGame, isContinueAllowed } = deps;
+  const controls = createGameDebugControls({ game, runs, isContinueAllowed, openGame });
   const opener = { game, boardGame, deps, lifecycle, runs, resume };
   return {
     ...factsOf(boardGame),
