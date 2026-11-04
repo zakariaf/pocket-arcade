@@ -1,5 +1,6 @@
 // apps/jump-chain/src/rules/jump-chain-stats.ts
-// Spec S10 game card for Jump Chain: "Pieces captured", "Longest chain", "Ranks cleared".
+// Spec S10 game card for Jump Chain, in the design's order: "Pieces captured", "Ranks cleared",
+// "Longest chain" (the design's ×5).
 import type { JumpChainEvent } from './jump-chain-types.ts';
 import type { StatsSpec } from '@e07/game-kit/contract/stats.ts';
 
@@ -29,16 +30,16 @@ export const JUMP_CHAIN_STATS: StatsSpec<JumpChainEvent> = {
       measure: (events) => countOf(events, 'piece-jumped'),
     },
     {
-      id: 'longest-chain',
-      labelId: 'jump-chain.stats.longest-chain',
-      aggregate: 'max',
-      measure: chainOf,
-    },
-    {
       id: 'ranks-cleared',
       labelId: 'jump-chain.stats.ranks-cleared',
       aggregate: 'sum',
       measure: (events) => countOf(events, 'rank-cleared'),
+    },
+    {
+      id: 'longest-chain',
+      labelId: 'jump-chain.stats.longest-chain',
+      aggregate: 'max',
+      measure: chainOf,
     },
   ],
 };
