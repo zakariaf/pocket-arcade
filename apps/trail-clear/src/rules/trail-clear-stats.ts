@@ -38,6 +38,8 @@ export const TRAIL_CLEAR_STATS: StatsSpec<TrailClearEvent> = {
       id: 'biggest-loop',
       labelId: 'trail-clear.stats.biggest-loop',
       aggregate: 'max',
+      // A loop's tile count, not a multiplier: S10 writes "9", as the design does (never "×9").
+      bestOfStyle: 'plain',
       measure: biggestLoopOf,
     },
   ],
